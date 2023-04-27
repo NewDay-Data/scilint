@@ -1,0 +1,15 @@
+[tool.nbqa.mutate]
+isort = 1
+black = 1
+autoflake = 1
+
+[tool.nbqa.addopts]
+autoflake = ["--in-place",
+             "--recursive",
+             "--expand-star-imports",
+             "--remove-all-unused-imports",
+             "--remove-unused-variables"
+            ]
+            
+[tool.isort]
+profile = "black"
