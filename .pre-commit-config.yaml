@@ -1,0 +1,11 @@
+#TODO come back to thsi once on gituhb
+repos:
+- repo: https://donal_simmie@bitbucket.org/newdaydigitaldevelopment/sciflow.git
+  rev: 0.0.4
+  hooks:
+   - id: nbqa-black
+     additional_dependencies: [black==20.8b1]
+   - id: nbqa-pyupgrade
+     additional_dependencies: [pyupgrade==2.7.3]
+   - id: nbqa-isort
+     additional_dependencies: [isort==5.6.4]

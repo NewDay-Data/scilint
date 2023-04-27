@@ -1,0 +1,9 @@
+#TODO come back to this once on github
+-   id: sciflow-precommit-build
+    name: Trim Trailing Whitespace
+    description: This hook trims trailing whitespace.
+    entry: trailing-whitespace-fixer
+    language: python
+    types: [text]
+    
+https://github.com/nbQA-dev/nbQA/blob/master/.pre-commit-hooks.yaml
