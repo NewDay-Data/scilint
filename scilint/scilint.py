@@ -2,8 +2,9 @@
 
 # %% auto 0
 __all__ = ['run_nbqa_cmd', 'sciflow_tidy', 'get_function_defs', 'count_func_calls', 'replace_ipython_magics', 'safe_div',
-           'get_cell_code', 'calls_per_func', 'mean_cpf', 'median_cpf', 'count_asse', 'calc_ifp', 'ifp', 'mcp', 'tcl',
-           'lint_nb', 'format_quality_warning', 'lint_nbs', 'sciflow_lint']
+           'get_cell_code', 'calls_per_func', 'mean_cpf', 'median_cpf', 'count_inline_asserts', 'iaf', 'mean_iaf',
+           'median_iaf', 'calc_ifp', 'ifp', 'mcp', 'tcl', 'lint_nb', 'format_quality_warning', 'lint_nbs',
+           'sciflow_lint']
 
 # %% ../nbs/scilint.ipynb 2
 import ast
@@ -11,6 +12,8 @@ import os
 import re
 from collections import Counter
 from pathlib import Path
+import pandas as pd
+import numpy as np
 
 import nbformat
 from fastcore.script import call_parse
@@ -39,7 +42,7 @@ def sciflow_tidy():
     tidy_tools = ["black", "isort", "autoflake"]
     [run_nbqa_cmd(c) for c in tidy_tools]
 
-# %% ../nbs/scilint.ipynb 13
+# %% ../nbs/scilint.ipynb 12
 def get_function_defs(code, ignore_private_prefix = True):
     
     func_names = []
@@ -50,7 +53,7 @@ def get_function_defs(code, ignore_private_prefix = True):
                 func_names.append(stmt.name)
     return func_names
 
-# %% ../nbs/scilint.ipynb 15
+# %% ../nbs/scilint.ipynb 14
 def count_func_calls(code, func_defs):
     func_calls = Counter({k: 0 for k in func_defs})
     for stmt in ast.walk(ast.parse(code)):
@@ -61,18 +64,18 @@ def count_func_calls(code, func_defs):
                     func_calls[func_name] += 1
     return func_calls
 
-# %% ../nbs/scilint.ipynb 19
+# %% ../nbs/scilint.ipynb 18
 def replace_ipython_magics(code):
     # Replace Ipython magic and shell command symbol with comment
     code = code.replace("%", "#")
     code = re.sub(r"^!", "#", code)
     return re.sub(r"\n\W?!", "\n#", code)
 
-# %% ../nbs/scilint.ipynb 21
+# %% ../nbs/scilint.ipynb 20
 def safe_div(numer, denom):
     return 0 if denom == 0 else numer / denom
 
-# %% ../nbs/scilint.ipynb 23
+# %% ../nbs/scilint.ipynb 22
 def get_cell_code(nb):
     pnb = nbformat.from_dict(nb)
     nb_cell_code = "\n".join(
@@ -84,33 +87,49 @@ def get_cell_code(nb):
     )
     return nb_cell_code
 
-# %% ../nbs/scilint.ipynb 24
+# %% ../nbs/scilint.ipynb 23
 def calls_per_func(nb):
     nb_cell_code = get_cell_code(nb)
     func_defs = get_function_defs(nb_cell_code)
     func_calls = count_func_calls(nb_cell_code, func_defs)
     return func_calls
 
-# %% ../nbs/scilint.ipynb 25
+# %% ../nbs/scilint.ipynb 24
 def mean_cpf(nb):
     return pd.Series(calls_per_func(nb)).mean()
 
-# %% ../nbs/scilint.ipynb 26
+# %% ../nbs/scilint.ipynb 25
 def median_cpf(nb):
     return pd.Series(calls_per_func(nb)).median()
 
 # %% ../nbs/scilint.ipynb 38
-def count_asse(code, func_defs):
-    func_calls = Counter({k: 0 for k in func_defs})
+def count_inline_asserts(code, func_defs):
+    inline_func_asserts = Counter({k: 0 for k in func_defs})
+    
     for stmt in ast.walk(ast.parse(code)):
-        if isinstance(stmt, ast.Call):
-            func_name = stmt.func.id if "id" in stmt.func.__dict__ else stmt.func.attr
-            if func_name in func_defs:
-                if func_name in func_calls:
-                    func_calls[func_name] += 1
-    return func_calls
+        if isinstance(stmt, ast.Assert):
+            for assert_st in ast.walk(stmt):
+                if isinstance(assert_st, ast.Call):
+                    func_name = assert_st.func.id if "id" in assert_st.func.__dict__ else assert_st.func.attr
+                    if func_name in inline_func_asserts:
+                        inline_func_asserts[func_name] += 1
+    return inline_func_asserts
 
-# %% ../nbs/scilint.ipynb 44
+# %% ../nbs/scilint.ipynb 39
+def iaf(nb):
+    nb_cell_code = get_cell_code(nb)
+    func_defs = get_function_defs(nb_cell_code)
+    return count_inline_asserts(nb_cell_code, func_defs)
+
+# %% ../nbs/scilint.ipynb 46
+def mean_iaf(nb):
+    return pd.Series(iaf(nb)).mean()
+
+# %% ../nbs/scilint.ipynb 47
+def median_iaf(nb):
+    return pd.Series(iaf(nb)).median()
+
+# %% ../nbs/scilint.ipynb 51
 def calc_ifp(nb_cell_code):
     stmts_in_func = 0
     stmts_outside_func = 0
@@ -128,7 +147,7 @@ def calc_ifp(nb_cell_code):
         else (stmts_in_func / (stmts_outside_func + stmts_in_func)) * 100
     )
 
-# %% ../nbs/scilint.ipynb 46
+# %% ../nbs/scilint.ipynb 53
 def ifp(nb):
     nb_cell_code = "\n".join(
         [
@@ -139,7 +158,7 @@ def ifp(nb):
     )
     return calc_ifp(nb_cell_code)
 
-# %% ../nbs/scilint.ipynb 49
+# %% ../nbs/scilint.ipynb 56
 def mcp(nb):
     md_cells = [c for c in nb.cells if c["cell_type"] == "markdown"]
     code_cells = [c for c in nb.cells if c["cell_type"] == "code"]
@@ -151,53 +170,67 @@ def mcp(nb):
         else (num_md_cells / (num_md_cells + num_code_cells)) * 100
     )
 
-# %% ../nbs/scilint.ipynb 52
+# %% ../nbs/scilint.ipynb 59
 def tcl(nb):
     return sum([len(c["source"]) for c in nb.cells if c["cell_type"] == "code"])
 
-# %% ../nbs/scilint.ipynb 54
+# %% ../nbs/scilint.ipynb 61
 def lint_nb(
     nb_path,
     tpf_warn_thresh=None,
     ifp_warn_thresh=None,
+    afr_warn_thresh=1,
+    iaf_med_warn_thresh=0,
+    iaf_mean_warn_thresh=0.5,
     mcp_warn_thresh=None,
     tcl_warn_thresh=None,
     rounding_precision=3,
 ):
+    nb = read_nb(nb_path)
     result = (np.nan, np.nan, np.nan, np.nan)
-    try:
-        nb, module_code = load_nb_module(nb_path)
-    except ValueError:
-        # print(f"Skipping notebook with no associated module: {nb_path.name}")
-        return result
-    nb_tpf = round(tpf(nb, module_code), rounding_precision)
+    nb_cpf_median = round(median_cpf(nb), rounding_precision)
+    nb_cpf_mean = round(mean_cpf(nb), rounding_precision)
     nb_ifp = round(ifp(nb), rounding_precision)
+    nb_afr = round(afr(nb), rounding_precision)
+    nb_iaf_median = round(median_iaf(nb), rounding_precision)
+    nb_iaf_mean = round(mean_iaf(nb), rounding_precision)
     nb_mcp = round(mcp(nb), rounding_precision)
     nb_tcl = round(tcl(nb), rounding_precision)
-    # print(f"NB: {nb_path.name} TestsPerFunction: {nb_tpf} In-FunctionPercent: {nb_ifp} MarkdownToCodeRatio: {nb_mcr} TotalCodeLen: {nb_tcl}")
-    return (nb_tpf, nb_ifp, nb_mcp, nb_tcl)
+    # print(f"NB: {nb_path.name} CallsPerFunction (Median): {nb_cpf_median} CallsPerFunction (Mean): {nb_cpf_mean} \
+    # In-FunctionPercent: {nb_ifp} AssertsPerFunction: {nb_cpf_median} InlineAssertsPerFunction (Median): {nb_iaf_median} \
+    # InlineAssertsPerFunction (Mean): {nb_iaf_mean} MarkdownToCodeRatio: {nb_mcp} TotalCodeLen: {nb_tcl}")
+    return (nb_cpf_median, nb_cpf_mean, nb_ifp, nb_afr, nb_iaf_median, nb_iaf_mean, nb_mcp, nb_tcl)
 
-# %% ../nbs/scilint.ipynb 55
+# %% ../nbs/scilint.ipynb 62
 def format_quality_warning(metric, warning_data, warn_thresh, direction):
     for warning_row in warning_data.reset_index().itertuples():
         print(f'"{warning_row.index}" has: {metric} {direction} {warn_thresh}')
 
-# %% ../nbs/scilint.ipynb 56
+# %% ../nbs/scilint.ipynb 63
 def lint_nbs(
-    tpf_warn_thresh=1,
+    cpf_med_warn_thresh=1,
+    cpf_mean_warn_thresh=1,
     ifp_warn_thresh=20,
+    afr_warn_thresh=1,
+    iaf_med_warn_thresh=0,
+    iaf_mean_warn_thresh=0.5,
     mcp_warn_thresh=5,
     tcl_warn_thresh=20000,
     rounding_precision=3,
 ):
-    nb_paths = nbglob(recursive=True)
+    nb_paths = [Path(p) for p in nbglob()]
     lt_metric_cols = [
-        "tests_per_function",
-        "in_function_percent",
-        "markdown_code_percent",
+        "calls_per_function_median",
+        "calls_per_function_mean",
+        "in_function_pct",
+        "asserts_function_ratio",
+        "inline_asserts_per_function_median",
+        "inline_asserts_per_function_mean",
+        "markdown_code_pct",
     ]
     gt_metric_cols = ["total_code_len"]
-    lt_metrics_thresholds = [tpf_warn_thresh, ifp_warn_thresh, mcp_warn_thresh]
+    lt_metrics_thresholds = [cpf_med_warn_thresh, cpf_mean_warn_thresh, ifp_warn_thresh, afr_warn_thresh,
+                             iaf_med_warn_thresh, iaf_mean_warn_thresh, mcp_warn_thresh]
     gt_metrics_thresholds = [tcl_warn_thresh]
     results = []
     nb_names = []
@@ -206,7 +239,7 @@ def lint_nbs(
         results.append(lint_nb(nb_path))
     lint_report = pd.DataFrame.from_records(
         data=results, index=nb_names, columns=lt_metric_cols + gt_metric_cols
-    ).sort_values(["tests_per_function", "markdown_code_percent"], ascending=False)
+    ).sort_values(["calls_per_function_median", "markdown_code_pct"], ascending=False)
 
     # TODO persist to remote storage
     # needs to be tied to a flow execution rather than a build
@@ -246,7 +279,7 @@ def lint_nbs(
 
     return lint_report
 
-# %% ../nbs/scilint.ipynb 59
+# %% ../nbs/scilint.ipynb 66
 @call_parse
 def sciflow_lint():
     lint_nbs()
