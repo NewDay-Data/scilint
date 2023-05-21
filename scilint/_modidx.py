@@ -88,6 +88,4 @@ d = { 'settings': { 'branch': 'main',
                                                       'scilint.test.test_nbdev_high_quality.preprocess': ( 'example_nbs/nbdev_high_quality.html#preprocess',
                                                                                                            'scilint/test/test_nbdev_high_quality.py'),
                                                       'scilint.test.test_nbdev_high_quality.serve_num_topics': ( 'example_nbs/nbdev_high_quality.html#serve_num_topics',
-                                                                                                                 'scilint/test/test_nbdev_high_quality.py')},
-            'scilint.utils': { 'scilint.utils.load_nb': ('utils.html#load_nb', 'scilint/utils.py'),
-                               'scilint.utils.load_nb_module': ('utils.html#load_nb_module', 'scilint/utils.py')}}}
+                                                                                                                 'scilint/test/test_nbdev_high_quality.py')}}}
