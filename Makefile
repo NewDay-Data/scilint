@@ -39,15 +39,15 @@ art_pip: dist
 	twine upload --repository local dist/*
     
 build:
-	scilint_build_lib && \
-	nbdev_test_nbs && \
+	nbdev_export && \
+	nbdev_test && \
 	scilint_tidy && \
 	scilint_lint && \
 	echo "Build completed"
     
 clean:
-	scilint_build_lib && \
-	nbdev_test_nbs && \
+	nbdev_export && \
+	nbdev_test && \
 	scilint_tidy && \
 	scilint_clean && \
 	scilint_lint && \
