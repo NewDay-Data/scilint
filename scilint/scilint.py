@@ -230,6 +230,7 @@ def lint_nbs(
     mcp_warn_thresh=5,
     tcl_warn_thresh=20000,
     rounding_precision=3,
+    csv_out_path='/tmp/lint.csv'
 ):
     nb_paths = [Path(p) for p in nbglob()]
     lt_metric_cols = [
@@ -290,6 +291,8 @@ def lint_nbs(
         print("No issues found")
     print("*********************End Scilint Report***********************")
 
+    lint_report.to_csv(csv_out_path)
+    
     return lint_report
 
 # %% ../nbs/scilint.ipynb 66
