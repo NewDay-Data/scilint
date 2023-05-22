@@ -49,7 +49,6 @@ clean:
 	nbdev_export && \
 	nbdev_test && \
 	scilint_tidy && \
-	scilint_clean && \
 	scilint_lint && \
 	echo "Full clean completed"
 
@@ -65,6 +64,3 @@ pypi: dist
 dist: clean
 	python setup.py sdist bdist_wheel
 	rm -rf build
-
-clean:
-	rm -rf dist
