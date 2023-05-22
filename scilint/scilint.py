@@ -2,9 +2,9 @@
 
 # %% auto 0
 __all__ = ['run_nbqa_cmd', 'scilint_tidy', 'get_function_defs', 'count_func_calls', 'replace_ipython_magics', 'safe_div',
-           'get_cell_code', 'calls_per_func', 'mean_cpf', 'median_cpf', 'count_inline_asserts', 'iaf', 'mean_iaf',
-           'median_iaf', 'calc_ifp', 'ifp', 'mcp', 'tcl', 'lint_nb', 'format_quality_warning', 'lint_nbs',
-           'sciflow_lint']
+           'get_cell_code', 'calls_per_func', 'mean_cpf', 'median_cpf', 'afr', 'count_inline_asserts', 'iaf',
+           'mean_iaf', 'median_iaf', 'calc_ifp', 'ifp', 'mcp', 'tcl', 'lint_nb', 'format_quality_warning', 'lint_nbs',
+           'scilint_lint']
 
 # %% ../nbs/scilint.ipynb 2
 import ast
@@ -101,6 +101,19 @@ def mean_cpf(nb):
 # %% ../nbs/scilint.ipynb 25
 def median_cpf(nb):
     return pd.Series(calls_per_func(nb)).median()
+
+# %% ../nbs/scilint.ipynb 32
+def afr(nb):
+    nb_cell_code = get_cell_code(nb)
+    func_defs = get_function_defs(nb_cell_code)
+    num_funcs = len(func_defs)
+
+    assert_count = 0
+    for stmt in ast.walk(ast.parse(nb_cell_code)):
+            if isinstance(stmt, ast.Assert):
+                assert_count += 1
+                
+    return safe_div(assert_count, num_funcs)
 
 # %% ../nbs/scilint.ipynb 38
 def count_inline_asserts(code, func_defs):
@@ -281,5 +294,5 @@ def lint_nbs(
 
 # %% ../nbs/scilint.ipynb 66
 @call_parse
-def sciflow_lint():
+def scilint_lint():
     lint_nbs()
