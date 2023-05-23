@@ -18,9 +18,9 @@ import numpy as np
 import pandas as pd
 from execnb.nbio import read_nb
 from fastcore.script import call_parse
-from nbdev.doclinks import nbglob, nbdev_export
-from nbdev.test import nbdev_test
 from nbdev.clean import nbdev_clean
+from nbdev.doclinks import nbdev_export, nbglob
+from nbdev.test import nbdev_test
 from nbqa.__main__ import _get_configs, _main
 from nbqa.cmdline import CLIArgs
 from nbqa.find_root import find_project_root
