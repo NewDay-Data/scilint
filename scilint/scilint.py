@@ -4,7 +4,7 @@
 __all__ = ['run_nbqa_cmd', 'scilint_tidy', 'get_function_defs', 'count_func_calls', 'replace_ipython_magics', 'safe_div',
            'get_cell_code', 'calls_per_func', 'mean_cpf', 'median_cpf', 'afr', 'count_inline_asserts', 'iaf',
            'mean_iaf', 'median_iaf', 'calc_ifp', 'ifp', 'mcp', 'tcl', 'lint_nb', 'format_quality_warning', 'lint_nbs',
-           'scilint_lint']
+           'scilint_lint', 'scilint_build']
 
 # %% ../nbs/scilint.ipynb 2
 import ast
@@ -18,7 +18,9 @@ import numpy as np
 import pandas as pd
 from execnb.nbio import read_nb
 from fastcore.script import call_parse
-from nbdev.doclinks import nbglob
+from nbdev.doclinks import nbglob, nbdev_export
+from nbdev.test import nbdev_test
+from nbdev.clean import nbdev_clean
 from nbqa.__main__ import _get_configs, _main
 from nbqa.cmdline import CLIArgs
 from nbqa.find_root import find_project_root
@@ -320,3 +322,12 @@ def lint_nbs(
 @call_parse
 def scilint_lint():
     lint_nbs()
+
+# %% ../nbs/scilint.ipynb 68
+@call_parse
+def scilint_build():
+    nbdev_export()
+    nbdev_test()
+    scilint_tidy()
+    scilint_lint()
+    nbdev_clean()
