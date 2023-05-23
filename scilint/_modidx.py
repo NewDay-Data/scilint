@@ -2,8 +2,8 @@
 
 d = { 'settings': { 'branch': 'main',
                 'doc_baseurl': '/scilint/',
-                'doc_host': 'https://newdaydata.github.io',
-                'git_url': 'https://github.com/newdaydata/scilint/tree/{branch}/',
+                'doc_host': 'https://newday-data.github.io',
+                'git_url': 'https://github.com/newday-data/scilint/tree/{branch}/',
                 'lib_path': 'scilint'},
   'syms': { 'scilint.scilint': { 'scilint.scilint.afr': ('scilint.html#afr', 'scilint/scilint.py'),
                                  'scilint.scilint.calc_ifp': ('scilint.html#calc_ifp', 'scilint/scilint.py'),
