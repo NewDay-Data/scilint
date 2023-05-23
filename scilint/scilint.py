@@ -12,12 +12,12 @@ import os
 import re
 from collections import Counter
 from pathlib import Path
-import pandas as pd
-import numpy as np
 
 import nbformat
-from fastcore.script import call_parse
+import numpy as np
+import pandas as pd
 from execnb.nbio import read_nb
+from fastcore.script import call_parse
 from nbdev.doclinks import nbglob
 from nbqa.__main__ import _get_configs, _main
 from nbqa.cmdline import CLIArgs
@@ -43,12 +43,13 @@ def scilint_tidy():
     [run_nbqa_cmd(c) for c in tidy_tools]
 
 # %% ../nbs/scilint.ipynb 12
-def get_function_defs(code, ignore_private_prefix = True):
-    
+def get_function_defs(code, ignore_private_prefix=True):
     func_names = []
     for stmt in ast.walk(ast.parse(code)):
         if isinstance(stmt, ast.FunctionDef):
-            inner_cond = False if ignore_private_prefix and stmt.name.startswith("_") else True
+            inner_cond = (
+                False if ignore_private_prefix and stmt.name.startswith("_") else True
+            )
             if inner_cond:
                 func_names.append(stmt.name)
     return func_names
@@ -110,20 +111,24 @@ def afr(nb):
 
     assert_count = 0
     for stmt in ast.walk(ast.parse(nb_cell_code)):
-            if isinstance(stmt, ast.Assert):
-                assert_count += 1
-                
+        if isinstance(stmt, ast.Assert):
+            assert_count += 1
+
     return safe_div(assert_count, num_funcs)
 
 # %% ../nbs/scilint.ipynb 38
 def count_inline_asserts(code, func_defs):
     inline_func_asserts = Counter({k: 0 for k in func_defs})
-    
+
     for stmt in ast.walk(ast.parse(code)):
         if isinstance(stmt, ast.Assert):
             for assert_st in ast.walk(stmt):
                 if isinstance(assert_st, ast.Call):
-                    func_name = assert_st.func.id if "id" in assert_st.func.__dict__ else assert_st.func.attr
+                    func_name = (
+                        assert_st.func.id
+                        if "id" in assert_st.func.__dict__
+                        else assert_st.func.attr
+                    )
                     if func_name in inline_func_asserts:
                         inline_func_asserts[func_name] += 1
     return inline_func_asserts
@@ -200,7 +205,7 @@ def lint_nb(
     rounding_precision=3,
 ):
     nb = read_nb(nb_path)
-    result = (np.nan, np.nan, np.nan, np.nan)
+    (np.nan, np.nan, np.nan, np.nan)
     nb_cpf_median = round(median_cpf(nb), rounding_precision)
     nb_cpf_mean = round(mean_cpf(nb), rounding_precision)
     nb_ifp = round(ifp(nb), rounding_precision)
@@ -212,7 +217,16 @@ def lint_nb(
     # print(f"NB: {nb_path.name} CallsPerFunction (Median): {nb_cpf_median} CallsPerFunction (Mean): {nb_cpf_mean} \
     # In-FunctionPercent: {nb_ifp} AssertsPerFunction: {nb_cpf_median} InlineAssertsPerFunction (Median): {nb_iaf_median} \
     # InlineAssertsPerFunction (Mean): {nb_iaf_mean} MarkdownToCodeRatio: {nb_mcp} TotalCodeLen: {nb_tcl}")
-    return (nb_cpf_median, nb_cpf_mean, nb_ifp, nb_afr, nb_iaf_median, nb_iaf_mean, nb_mcp, nb_tcl)
+    return (
+        nb_cpf_median,
+        nb_cpf_mean,
+        nb_ifp,
+        nb_afr,
+        nb_iaf_median,
+        nb_iaf_mean,
+        nb_mcp,
+        nb_tcl,
+    )
 
 # %% ../nbs/scilint.ipynb 62
 def format_quality_warning(metric, warning_data, warn_thresh, direction):
@@ -230,7 +244,7 @@ def lint_nbs(
     mcp_warn_thresh=5,
     tcl_warn_thresh=20000,
     rounding_precision=3,
-    csv_out_path='/tmp/lint.csv'
+    csv_out_path="/tmp/lint.csv",
 ):
     nb_paths = [Path(p) for p in nbglob()]
     lt_metric_cols = [
@@ -243,8 +257,15 @@ def lint_nbs(
         "markdown_code_pct",
     ]
     gt_metric_cols = ["total_code_len"]
-    lt_metrics_thresholds = [cpf_med_warn_thresh, cpf_mean_warn_thresh, ifp_warn_thresh, afr_warn_thresh,
-                             iaf_med_warn_thresh, iaf_mean_warn_thresh, mcp_warn_thresh]
+    lt_metrics_thresholds = [
+        cpf_med_warn_thresh,
+        cpf_mean_warn_thresh,
+        ifp_warn_thresh,
+        afr_warn_thresh,
+        iaf_med_warn_thresh,
+        iaf_mean_warn_thresh,
+        mcp_warn_thresh,
+    ]
     gt_metrics_thresholds = [tcl_warn_thresh]
     results = []
     nb_names = []
@@ -292,7 +313,7 @@ def lint_nbs(
     print("*********************End Scilint Report***********************")
 
     lint_report.to_csv(csv_out_path)
-    
+
     return lint_report
 
 # %% ../nbs/scilint.ipynb 66
