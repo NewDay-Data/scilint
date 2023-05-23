@@ -69,3 +69,5 @@ Thumbs.db
 *.wmv
 
 core.*
+
+*.nfs*

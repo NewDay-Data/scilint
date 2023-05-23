@@ -88,22 +88,22 @@ def get_cell_code(nb):
     )
     return nb_cell_code
 
-# %% ../nbs/scilint.ipynb 23
+# %% ../nbs/scilint.ipynb 24
 def calls_per_func(nb):
     nb_cell_code = get_cell_code(nb)
     func_defs = get_function_defs(nb_cell_code)
     func_calls = count_func_calls(nb_cell_code, func_defs)
     return func_calls
 
-# %% ../nbs/scilint.ipynb 24
+# %% ../nbs/scilint.ipynb 25
 def mean_cpf(nb):
     return pd.Series(calls_per_func(nb)).mean()
 
-# %% ../nbs/scilint.ipynb 25
+# %% ../nbs/scilint.ipynb 26
 def median_cpf(nb):
     return pd.Series(calls_per_func(nb)).median()
 
-# %% ../nbs/scilint.ipynb 32
+# %% ../nbs/scilint.ipynb 33
 def afr(nb):
     nb_cell_code = get_cell_code(nb)
     func_defs = get_function_defs(nb_cell_code)
@@ -116,7 +116,7 @@ def afr(nb):
 
     return safe_div(assert_count, num_funcs)
 
-# %% ../nbs/scilint.ipynb 38
+# %% ../nbs/scilint.ipynb 39
 def count_inline_asserts(code, func_defs):
     inline_func_asserts = Counter({k: 0 for k in func_defs})
 
@@ -133,21 +133,21 @@ def count_inline_asserts(code, func_defs):
                         inline_func_asserts[func_name] += 1
     return inline_func_asserts
 
-# %% ../nbs/scilint.ipynb 39
+# %% ../nbs/scilint.ipynb 40
 def iaf(nb):
     nb_cell_code = get_cell_code(nb)
     func_defs = get_function_defs(nb_cell_code)
     return count_inline_asserts(nb_cell_code, func_defs)
 
-# %% ../nbs/scilint.ipynb 46
+# %% ../nbs/scilint.ipynb 47
 def mean_iaf(nb):
     return pd.Series(iaf(nb)).mean()
 
-# %% ../nbs/scilint.ipynb 47
+# %% ../nbs/scilint.ipynb 48
 def median_iaf(nb):
     return pd.Series(iaf(nb)).median()
 
-# %% ../nbs/scilint.ipynb 51
+# %% ../nbs/scilint.ipynb 52
 def calc_ifp(nb_cell_code):
     stmts_in_func = 0
     stmts_outside_func = 0
@@ -165,7 +165,7 @@ def calc_ifp(nb_cell_code):
         else (stmts_in_func / (stmts_outside_func + stmts_in_func)) * 100
     )
 
-# %% ../nbs/scilint.ipynb 53
+# %% ../nbs/scilint.ipynb 54
 def ifp(nb):
     nb_cell_code = "\n".join(
         [
@@ -176,7 +176,7 @@ def ifp(nb):
     )
     return calc_ifp(nb_cell_code)
 
-# %% ../nbs/scilint.ipynb 56
+# %% ../nbs/scilint.ipynb 57
 def mcp(nb):
     md_cells = [c for c in nb.cells if c["cell_type"] == "markdown"]
     code_cells = [c for c in nb.cells if c["cell_type"] == "code"]
@@ -188,11 +188,11 @@ def mcp(nb):
         else (num_md_cells / (num_md_cells + num_code_cells)) * 100
     )
 
-# %% ../nbs/scilint.ipynb 59
+# %% ../nbs/scilint.ipynb 60
 def tcl(nb):
     return sum([len(c["source"]) for c in nb.cells if c["cell_type"] == "code"])
 
-# %% ../nbs/scilint.ipynb 61
+# %% ../nbs/scilint.ipynb 62
 def lint_nb(
     nb_path,
     tpf_warn_thresh=None,
@@ -228,12 +228,12 @@ def lint_nb(
         nb_tcl,
     )
 
-# %% ../nbs/scilint.ipynb 62
+# %% ../nbs/scilint.ipynb 63
 def format_quality_warning(metric, warning_data, warn_thresh, direction):
     for warning_row in warning_data.reset_index().itertuples():
         print(f'"{warning_row.index}" has: {metric} {direction} {warn_thresh}')
 
-# %% ../nbs/scilint.ipynb 63
+# %% ../nbs/scilint.ipynb 64
 def lint_nbs(
     cpf_med_warn_thresh=1,
     cpf_mean_warn_thresh=1,
@@ -316,7 +316,7 @@ def lint_nbs(
 
     return lint_report
 
-# %% ../nbs/scilint.ipynb 66
+# %% ../nbs/scilint.ipynb 67
 @call_parse
 def scilint_lint():
     lint_nbs()
