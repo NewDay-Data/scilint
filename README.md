@@ -14,6 +14,8 @@
 
 # Getting Started
 
+[WIP] - (reviewers) this requires that the library is published to pypi which has not yet happened
+
 `pip install scilint`
 
 `scilint` has the following main features/commands:
@@ -21,6 +23,10 @@
 * `scilint_tidy`: run an in-place opinionated flavour of [nbQA](https://github.com/nbQA-dev/nbQA) to tidy up your ntoebooks
 * `scilint_lint`: inspect the notebooks for potential quality correlates and report on the findings
 * `scilint_build`: the build command for notebooks: ensuring they all run, pass their tests and meet a consistent style/quality standard
+
+# Development
+
+Clone the repository and run an editable pip install `pip install -e .`.
 
 # Contributing
 
