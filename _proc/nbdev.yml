@@ -1,9 +1,0 @@
-project:
-  output-dir: docs
-
-website:
-  title: "scilint"
-  site-url: "https://newday-data.github.io/scilint/"
-  description: "A quality assurance build tool for notebook based workflows"
-  repo-branch: main
-  repo-url: "https://github.com/newday-data/scilint/tree/{branch}/"
