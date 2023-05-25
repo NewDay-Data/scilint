@@ -1,0 +1,14 @@
+[MESSAGES CONTROL]
+
+disable=
+    attribute-defined-outside-init,
+    invalid-name,
+    missing-docstring,
+    protected-access,
+    too-few-public-methods,
+    # handled by black
+    format,
+    too-many-arguments,
+    # We anticipate #3512 where it will become optional
+    fixme,
+    consider-using-assignment-expr,
