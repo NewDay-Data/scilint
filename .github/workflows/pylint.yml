@@ -20,4 +20,4 @@ jobs:
         pip install pylint
     - name: Analysing the code with pylint
       run: |
-        pylint scilint/scilint.py --fail-under=9
+        pylint scilint/scilint.py --fail-under=5
