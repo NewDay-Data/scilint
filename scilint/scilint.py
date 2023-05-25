@@ -197,13 +197,6 @@ def tcl(nb):
 # %% ../nbs/scilint.ipynb 64
 def lint_nb(
     nb_path,
-    tpf_warn_thresh=None,
-    ifp_warn_thresh=None,
-    afr_warn_thresh=1,
-    iaf_med_warn_thresh=0,
-    iaf_mean_warn_thresh=0.5,
-    mcp_warn_thresh=None,
-    tcl_warn_thresh=None,
     rounding_precision=3,
 ):
     nb = read_nb(nb_path)
@@ -328,8 +321,8 @@ def scilint_lint():
 # |include: false
 @call_parse
 def scilint_build():
+    tidy()
     nbdev_export()
     nbdev_test()
-    tidy()
     lint_nbs()
     nbdev_clean()
