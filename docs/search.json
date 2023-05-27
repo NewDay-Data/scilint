@@ -1,0 +1,121 @@
+[
+  {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "🧐 scilint",
+    "section": "",
+    "text": "scilint is written on top of the excellent nbdev library. This library is revolutionary as it truly optimises all the benefits of notebooks and compensates for some of their weaker points. For more information on nbdev see the homepage or github repo"
+  },
+  {
+    "objectID": "index.html#what-is-a-test-in-a-notebook",
+    "href": "index.html#what-is-a-test-in-a-notebook",
+    "title": "🧐 scilint",
+    "section": "What is a test in a Notebook?",
+    "text": "What is a test in a Notebook?\nWe view every assert statement as being a test"
+  },
+  {
+    "objectID": "scilint.html",
+    "href": "scilint.html",
+    "title": "Data Science Notebook Linting",
+    "section": "",
+    "text": "nbdev_path = Path(Path(\".\").resolve(), \"example_nbs\", \"nbdev.ipynb\")\nnbdev_hq_path = Path(Path(\".\").resolve(), \"example_nbs\", \"nbdev_high_quality.ipynb\")\nnon_nbdev_path = Path(Path(\".\").resolve(), \"example_nbs\", \"non_nbdev.ipynb\")\nnon_nbdev_lq_path = Path(\n    Path(\".\").resolve(), \"example_nbs\", \"non_nbdev_low_quality.ipynb\"\n)\n\nnbdev_nb = read_nb(nbdev_path)\nnbdev_hq_nb = read_nb(nbdev_hq_path)\nnon_nbdev_nb = read_nb(non_nbdev_path)\nnon_nbdev_lq_nb = read_nb(non_nbdev_lq_path)"
+  },
+  {
+    "objectID": "scilint.html#definitions",
+    "href": "scilint.html#definitions",
+    "title": "Data Science Notebook Linting",
+    "section": "Definitions",
+    "text": "Definitions\n\nFunction (\\(f\\)) = function in # export block\nTest (\\(\\tau\\)) = call of exported function outside # export block"
+  },
+  {
+    "objectID": "scilint.html#metrics",
+    "href": "scilint.html#metrics",
+    "title": "Data Science Notebook Linting",
+    "section": "Metrics",
+    "text": "Metrics\n\nTests per Function: \\(\\mathrm{TpF}\\) = \\(\\dfrac{|\\tau|}{f}\\),when \\(f=0; \\mathrm{TpF} = 0\\)\nIn-function Percentage: $ = \\[\\mathrm{statementsInFunction}:\\]$\nMD to Code Ratio: \\(\\mathrm{CMR}\\) = $ :$\\(\\mathrm{codeCells}\\)\nTotal Code Lines: \\(\\mathrm{TCL}\\) = \\(\\mathrm{allCodeLines}\\)"
+  },
+  {
+    "objectID": "scilint.html#helpers",
+    "href": "scilint.html#helpers",
+    "title": "Data Science Notebook Linting",
+    "section": "Helpers",
+    "text": "Helpers\n\nsource\n\nget_function_defs\n\n get_function_defs (code, ignore_private_prefix=True)\n\n\n# todo test me\n# get_function_defs\n\n\nsource\n\n\ncount_func_calls\n\n count_func_calls (code, func_defs)\n\n\ntest_code = \"\"\"self.hierarchical_topic_reduction(3); \ntopic_reduction(3); \nlambda x: topic(x); \nhierarchical_topic_reduction[4]; \nhierarchical_topic_reduction(4); \nblabla()\n\"\"\"\ntest_func_defs = [\n    \"topic\",\n    \"topic_reduction\",\n    \"blablabla\",\n    \"hierarchical_topic_reduction\",\n]\n\n\nassert count_func_calls(test_code, test_func_defs) == Counter(\n    {\n        \"topic\": 1,\n        \"topic_reduction\": 1,\n        \"blablabla\": 0,\n        \"hierarchical_topic_reduction\": 2,\n    }\n)\n\n\nnb_cell_code = r\"\"\"\ndef something():\n    pass; pass # in x 2\n\n\n\n!ls -l\nif 1!= 2:\n    print(4)\n#| export\n\nimport pandas as pd # out\nfrom sciflow.utils import lib_path, odbc_connect, query # out\n\n#| export\n\ndef nb_to_sagemaker_pipeline(\n    nb_path: Path,\n    silent: bool = True,\n):\n    nb = read_nb(nb_path)  # in\n    lib_name = get_config().get(\"lib_name\")  # in\n    module_name = find_default_export(nb[\"cells\"])  # in\n    \nx = [1,2,3] # out\nnb_to_sagemaker_pipeline() # out\n\"\"\"\n\n\nsource\n\n\nreplace_ipython_magics\n\n replace_ipython_magics (code)\n\n\nthrows = False\ntry:\n    assert ast.parse(nb_cell_code)\nexcept SyntaxError:\n    throws = True\nassert throws\nassert type(ast.parse(replace_ipython_magics(nb_cell_code))) == ast.Module\n\n\nsource\n\n\nsafe_div\n\n safe_div (numer, denom)\n\n\nassert safe_div(1, 1) == 1\nassert safe_div(2, 1) == 2\nassert safe_div(1, 2) == 0.5\nassert safe_div(0, 1) == 0\nassert safe_div(1, 0) == 0\nassert safe_div(10, 1) == 10\n\n\nsource\n\n\nget_cell_code\n\n get_cell_code (nb)"
+  },
+  {
+    "objectID": "scilint.html#calls-per-function",
+    "href": "scilint.html#calls-per-function",
+    "title": "Data Science Notebook Linting",
+    "section": "1. Calls-per-Function",
+    "text": "1. Calls-per-Function\n\nsource\n\ncalls_per_func\n\n calls_per_func (nb)\n\n\nsource\n\n\nmean_cpf\n\n mean_cpf (nb)\n\n\nsource\n\n\nmedian_cpf\n\n median_cpf (nb)\n\n\nassert mean_cpf(nbdev_nb).round(2) == 2.23\nassert median_cpf(nbdev_nb) == 1\n\n\nassert mean_cpf(read_nb(nbdev_path)).round(2) == 2.23\nassert mean_cpf(read_nb(nbdev_hq_path)).round(2) == 2.5\nassert mean_cpf(read_nb(non_nbdev_path)).round(2) == 1.0\nassert mean_cpf(read_nb(non_nbdev_lq_path)).round(2) == 1.62\n\n\nassert median_cpf(read_nb(nbdev_path)) == 1.0\nassert median_cpf(read_nb(nbdev_hq_path)).round(2) == 1.5\nassert median_cpf(read_nb(non_nbdev_path)).round(2) == 1.0\nassert median_cpf(read_nb(non_nbdev_lq_path)).round(2) == 1.0"
+  },
+  {
+    "objectID": "scilint.html#asserts-to-function-ratio",
+    "href": "scilint.html#asserts-to-function-ratio",
+    "title": "Data Science Notebook Linting",
+    "section": "2. Asserts-to-Function Ratio",
+    "text": "2. Asserts-to-Function Ratio\n\nasserted_code = r\"\"\"\ndef something():\n    pass; pass # in x 2\n    \nassert True\n\n#| export\n\ndef nb_to_sagemaker_pipeline(\n    nb_path: Path,\n    silent: bool = True,\n):\n    nb = read_nb(nb_path)  # in\n    lib_name = get_config().get(\"lib_name\")  # in\n    module_name = find_default_export(nb[\"cells\"])  # in\n    \nx = [1,2,3] # out\nassert len(x) &gt; 2\nassert something() is None # something +1\n\ndef tr():\n    return True\n    \ndef get_seg(num):\n    return 2\n    \nassert(tr)\nassert(tr()) # tr +1\nassert(tr() == 4) # tr +1\nassert(4 ==tr()) # tr +1\nassert 0 != 0\nassert \"' '\".join(tr(1)) == \"00\" # tr +1\nassert len(get_seg(50)) == 50 # get_seg +1\nassert max([int(x) for x in get_seg(100)]) == 99 # get_seg +1\n\"\"\"\n\n\nimport nbformat as nbf\n\n\nasserted_nb = nbf.v4.new_notebook()\nasserted_nb[\"cells\"] = [nbf.v4.new_code_cell(asserted_code)]\n\n\nsource\n\nafr\n\n afr (nb)\n\n\nafr(nbdev_nb)\n\n1.3076923076923077\n\n\n\nafr(nbdev_hq_nb)\n\n1.6666666666666667\n\n\n\nafr(non_nbdev_nb)\n\n0.0\n\n\n\nafr(non_nbdev_lq_nb)\n\n0.0"
+  },
+  {
+    "objectID": "scilint.html#in-line-asserts-per-function",
+    "href": "scilint.html#in-line-asserts-per-function",
+    "title": "Data Science Notebook Linting",
+    "section": "3. In-line Asserts Per Function",
+    "text": "3. In-line Asserts Per Function\n\nsource\n\ncount_inline_asserts\n\n count_inline_asserts (code, func_defs)\n\n\nsource\n\n\niaf\n\n iaf (nb)\n\n\nfunc_defs = get_function_defs(asserted_code)\ninline_asserts_expected = Counter(\n    {\"something\": 1, \"tr\": 4, \"get_seg\": 2, \"nb_to_sagemaker_pipeline\": 0}\n)\ninline_asserts_actual = count_inline_asserts(asserted_code, func_defs)\n\n\nassert inline_asserts_actual == inline_asserts_expected\n\n\nassert 0.0 == pd.Series(iaf(nbdev_nb)).median()\nassert 0.0 == pd.Series(iaf(nbdev_hq_nb)).median()\nassert 0.0 == pd.Series(iaf(non_nbdev_nb)).median()\nassert 0.0 == pd.Series(iaf(non_nbdev_lq_nb)).median()\n\n\niaf(non_nbdev_nb)\n\nCounter({'scalar': 0, 'py_advanced': 0, 'pandas': 0})\n\n\n\niaf(non_nbdev_lq_nb)\n\nCounter({'get_traffic_text': 0,\n         'get_experiment_segment': 0,\n         'evaluate': 0,\n         'serve_num_topics': 0,\n         'get_num_topics': 0,\n         'get_topic_sizes': 0,\n         'get_topics': 0,\n         'plot_wordcloud': 0})\n\n\n\nassert inline_asserts_expected == iaf(asserted_nb)\n\n\nsource\n\n\nmean_iaf\n\n mean_iaf (nb)\n\n\nsource\n\n\nmedian_iaf\n\n median_iaf (nb)"
+  },
+  {
+    "objectID": "scilint.html#full-code-coverage",
+    "href": "scilint.html#full-code-coverage",
+    "title": "Data Science Notebook Linting",
+    "section": "Full Code Coverage?",
+    "text": "Full Code Coverage?\nHow does pytest-cov do it?"
+  },
+  {
+    "objectID": "scilint.html#in-function-percentage",
+    "href": "scilint.html#in-function-percentage",
+    "title": "Data Science Notebook Linting",
+    "section": "2. In-function Percentage",
+    "text": "2. In-function Percentage\n\nsource\n\ncalc_ifp\n\n calc_ifp (nb_cell_code)\n\n\nassert (calc_ifp(nb_cell_code)) == (5 / (5 + 5)) * 100\n\n\nsource\n\n\nifp\n\n ifp (nb)\n\n\nassert ifp(nbdev_nb) &gt;= 0\nassert ifp(nbdev_hq_nb) &gt;= 0\nassert ifp(non_nbdev_nb) &gt;= 0\nassert ifp(non_nbdev_lq_nb) &gt;= 0"
+  },
+  {
+    "objectID": "scilint.html#markdown-to-code-percent",
+    "href": "scilint.html#markdown-to-code-percent",
+    "title": "Data Science Notebook Linting",
+    "section": "3. Markdown to Code Percent",
+    "text": "3. Markdown to Code Percent\n\nsource\n\nmcp\n\n mcp (nb)\n\n\nassert mcp(nbdev_nb) &gt;= 0\nassert mcp(nbdev_hq_nb) &gt;= 0\nassert mcp(non_nbdev_nb) &gt;= 0\nassert mcp(non_nbdev_lq_nb) &gt;= 0"
+  },
+  {
+    "objectID": "scilint.html#total-code-length",
+    "href": "scilint.html#total-code-length",
+    "title": "Data Science Notebook Linting",
+    "section": "4. Total Code Length",
+    "text": "4. Total Code Length\n\nsource\n\ntcl\n\n tcl (nb)\n\n\nassert tcl(nbdev_nb) &gt;= 50\nassert tcl(nbdev_hq_nb) &gt;= 50\nassert tcl(non_nbdev_nb) &gt;= 50\nassert tcl(non_nbdev_lq_nb) &gt;= 50\n\n\nsource\n\n\nlint_nb\n\n lint_nb (nb_path, rounding_precision=3)\n\n\nsource\n\n\nformat_quality_warning\n\n format_quality_warning (metric, warning_data, warn_thresh, direction)\n\n\nsource\n\n\nlint_nbs\n\n lint_nbs (cpf_med_warn_thresh=1, cpf_mean_warn_thresh=1,\n           ifp_warn_thresh=20, afr_warn_thresh=1, iaf_med_warn_thresh=0,\n           iaf_mean_warn_thresh=0.5, mcp_warn_thresh=5,\n           tcl_warn_thresh=20000, rounding_precision=3,\n           csv_out_path='/tmp/lint.csv')\n\n\nlint_report = lint_nbs()\n\n\n*********************Begin Scilint Report*********************\n\"index\" has: in_function_pct &lt; 20\n\"non_nbdev_low_quality\" has: asserts_function_ratio &lt; 1\n\"non_nbdev\" has: asserts_function_ratio &lt; 1\n\"index\" has: asserts_function_ratio &lt; 1\n\"non_nbdev_low_quality\" has: inline_asserts_per_function_mean &lt; 0.5\n\"non_nbdev\" has: inline_asserts_per_function_mean &lt; 0.5\n\"non_nbdev\" has: markdown_code_pct &lt; 5\n*********************End Scilint Report***********************\n\n\n\nlint_report\n\n\n\n\n\n\n\n\ncalls_per_function_median\ncalls_per_function_mean\nin_function_pct\nasserts_function_ratio\ninline_asserts_per_function_median\ninline_asserts_per_function_mean\nmarkdown_code_pct\ntotal_code_len\n\n\n\n\nscilint\n2.0\n3.120\n51.445\n1.600\n0.0\n1.440\n17.143\n14014\n\n\nnbdev_high_quality\n1.5\n2.500\n44.118\n1.667\n0.0\n1.000\n30.769\n4978\n\n\nnbdev\n1.0\n2.231\n50.725\n1.308\n0.0\n0.846\n30.769\n4918\n\n\nnon_nbdev_low_quality\n1.0\n1.625\n45.000\n0.000\n0.0\n0.000\n15.789\n2955\n\n\nnon_nbdev\n1.0\n1.000\n35.714\n0.000\n0.0\n0.000\n0.000\n1233\n\n\nindex\nNaN\nNaN\n0.000\n0.000\nNaN\nNaN\n77.778\n8\n\n\n\n\n\n\n\n\nsource\n\n\nscilint_lint\n\n scilint_lint ()"
+  },
+  {
+    "objectID": "example_nbs/non_nbdev_low_quality.html",
+    "href": "example_nbs/non_nbdev_low_quality.html",
+    "title": "Preprocess Data",
+    "section": "",
+    "text": "message = \"The first step\"\nprint(f\"{message}\")\nresults = {\"message\": message}\n\nThe first step\n\n\n\nimport numpy as np\nimport pandas as pd\n\n\ntraffic_percent = 1\nworkers = 8\nmodel_level = \"dispatcher\"\nmin_date = \"2021-01-01\"\n\n\ndef get_traffic_text(percent):\n    return str(percent) if int(percent) &gt;= 10 else \"0\" + str(percent)\n\nnbdev tests are any cells which are not exporting code and do not have flags that say they should be ignored from testing.\n\ndef get_experiment_segment(traffic_percent):\n    return tuple(get_traffic_text(tp) for tp in range(traffic_percent))\n\n\nget_experiment_segment(traffic_percent)\ndummy_data = pd.Series(\n    np.random.choice(\n        [\n            \"Hello\",\n            \"Goodbye\",\n            \"Hi\",\n            \"Can you help?\",\n            \"I have an issue, can you help me?\",\n        ],\n        100,\n    ),\n    name=\"utterance\",\n)\n\n\nprint(f\"I captialised the message: {message.upper()}\")\ndata = dummy_data\ndocuments = data.tolist()\nresults = {\"documents\": documents}\n\nI captialised the message: THE FIRST STEP\n\n\n\nclass Topics:\n    def __init__(self, documents, workers):\n        pass\n\n    def get_num_topics(self):\n        return 6\n\n    def get_topic_sizes(self):\n        return [1, 2, 3, 4, 5, 6], [1, 2, 3, 4, 5, 6]\n\n    def get_topics(self, num_topics):\n        return (\n            [\"cat\", \"sat\", \"mat\", \"mouse\", \"house\", \"grouse\"],\n            np.asarray([1, 1, 1, 1, 1, 1]),\n            [1, 2, 3, 4, 5, 6],\n        )\n\n    def plot_wordcloud(self):\n        print(\"you may want to remove plotting code from testing to speed things up\")\n\n\nmodel = Topics(documents, workers=workers)\nresults = {\"model\": model}\n\n\n# import time\n\n# time.sleep(3)\n\n\nmodel.get_num_topics()\n\n6\n\n\n\ntopic_sizes, topic_nums = model.get_topic_sizes()\n\n\ntopic_words, word_scores, topic_nums = model.get_topics(model.get_num_topics())\n\n\n# time.sleep(120)\nmodel.plot_wordcloud()\n\nyou may want to remove plotting code from testing to speed things up\n\n\n\ndef evaluate(model):\n    topic_words, word_scores, topic_nums = model.get_topics(model.get_num_topics())\n\n    topic_contains_non_empty_words = all([len(tw) &gt; 0 for tw in topic_words])\n    word_scores_in_range = word_scores.min() &gt;= 0.0 and word_scores.max() &lt;= 1.0\n    as_many_items_as_topics = (\n        model.get_num_topics() == len(topic_words) == word_scores.shape[0]\n    )\n    word_summaries = (\n        topic_contains_non_empty_words\n        and word_scores_in_range\n        and as_many_items_as_topics\n    )\n    # You can add artifacts in a step that will be saved to block storage. Add the paths to the file on the local filesystem\n    # and the artifact will be uploaded to remote storage.\n    sample_df = pd.DataFrame(\n        {\"a\": model.get_topic_sizes()[0], \"b\": model.get_topic_sizes()[1]}\n    )\n    sample_df.to_csv(\"/tmp/dataframe_artifact.csv\", index=False)\n    artifacts = [\"/tmp/dataframe_artifact.csv\"]\n    # You can add step metrics too this time just add a list of 3-tuples where tuple order = (name, value, step)\n    metrics = [(\"mae\", 100, 0), (\"mae\", 67, 1), (\"mae\", 32, 2)]\n    results = {\n        \"word_summaries\": word_summaries,\n        \"artifacts\": artifacts,\n        \"metrics\": metrics,\n    }\n    return results\n\n\ndef serve_num_topics(model):\n    return model.get_num_topics()"
+  },
+  {
+    "objectID": "example_nbs/nbdev_high_quality.html",
+    "href": "example_nbs/nbdev_high_quality.html",
+    "title": "nbdev format notebook Example",
+    "section": "",
+    "text": "Intro\nThis notebook has tests and commentary is easier to read and potentially correlates with higher quality code.\n\nmessage = echo(\"hello\")\nassert message == \"hello\"\n\nAuto-reloading modules is very useful when using nbdev as changes to underlying modules are picked up without having to restart the kernel.\n\n\nParams\n\nsciflow uses the papermill format for paramaeterising notebooks. See here for how to specify papermill params: https://papermill.readthedocs.io/en/latest/usage-parameterize.html. These parameters will be available to use in your flows.\n\nnbdev tests are any cells which are not exporting code and do not have flags that say they should be ignored from testing.\n\nassert get_traffic_text(\"3\") == \"03\"\nassert get_traffic_text(\"13\") == \"13\"\nassert get_traffic_text(\"78\") == \"78\"\n\n\n\nPreprocess Data\n\nassert get_experiment_segment(1) == (\"00\",)\nassert get_experiment_segment(3) == (\"00\", \"01\", \"02\")\nassert \"' '\".join(get_experiment_segment(1)) == \"00\"\nassert f\"\"\"IN ('{\"','\".join(get_experiment_segment(3))}')\"\"\" == \"IN ('00','01','02')\"\nassert len(get_experiment_segment(50)) == 50\nassert max([int(x) for x in get_experiment_segment(100)]) == 99\n\n\nassert get_utterances().sort_values().iloc[0] == \"Can you help?\"\n\n\nresults = preprocess(message, traffic_percent)\ndocuments = results[\"documents\"]\nassert (\n    results[\"documents\"].sort_values(ascending=False).iloc[0]\n    == \"I have an issue, can you help me?\"\n)\n\nI captialised the message: HELLO\n\n\n\nassert len(documents) &gt; 0\nassert (\n    pd.Series([\"Some other text\", \"Which should not be in the utterances\"])\n    .isin(pd.Series(documents))\n    .sum()\n    == 0\n)  # no button response texts\n\n\n\nFit\n\nTests which are long running can be ignored from test execution. You can use the tst flags in settings.ini or create your own in the same file. See https://nbdev.fast.ai/test for more info. In this example we use #slow to indicate this should be skipped.\n\n\nimport time\n\ntime.sleep(3)\n\n\nmodel = fit(documents, workers=workers)[\"model\"]\n\n\n\nEvaluate\n\n\nNumber of Topics\n\nmodel.get_num_topics()\n\n6\n\n\n\n\nSize of Topics\n\ntopic_sizes, topic_nums = model.get_topic_sizes()\nassert all([s &gt; 0 for s in topic_sizes])\n\n\n\nGet Topic Words & Scores\n\ntopic_words, word_scores, topic_nums = model.get_topics(model.get_num_topics())\nassert len(topic_words) == model.get_num_topics()\n\n\n# time.sleep(120)\nmodel.plot_wordcloud()\n\nyou may want to remove plotting code from testing to speed things up\n\n\n\nresults = evaluate(model)\nassert results[\"word_summaries\"]\nassert results[\"metrics\"] == [(\"mae\", 100, 0), (\"mae\", 67, 1), (\"mae\", 32, 2)]\nassert results[\"artifacts\"] == [\"/tmp/dataframe_artifact.csv\"]\n\n\n\nServe\n\nassert serve_num_topics(model) &gt; 0"
+  },
+  {
+    "objectID": "example_nbs/non_nbdev.html",
+    "href": "example_nbs/non_nbdev.html",
+    "title": "scilint",
+    "section": "",
+    "text": "from pathlib import Path\nfrom typing import Any, Dict, List\n\nimport numpy as np\nimport pandas as pd\n\n\nint_param = 3\nfloat_param = 1.1\nstr_param = \"vanilla notebook\"\ninput_path = Path(\".\").resolve()\nmodel_path = Path(\".\").resolve().parent\ndict_param = {\"a\": {\"b\": {\"c\": \"abc\"}}, \"another_key\": [1, 2, 3]}\nlist_param = [i for i in range(10**4)]\nones = np.ones(10**7)\ntext = np.repeat(\"some string that takess space and more of it\", 10**7)\nseries_param = pd.Series(text)\ndf_param = pd.DataFrame({\"a\": ones, \"b\": ones, \"c\": ones, \"d\": text})\n\n\ndef scalar(int_param: int, float_param: float, str_param: str):\n    print(f\"int_param: {int_param}\")\n    print(f\"float_param: {float_param}\")\n    print(f\"str_param: {str_param}\")\n    results = {\"int_param\": int_param}\n    return results\n\n\nscalar(int_param, float_param, str_param)\n\n\ndef py_advanced(input_path: Path, list_param: List[int], dict_param: Dict[str, Any]):\n    print(f\"input_path: {input_path}\")\n    print(f\"input_path: {list_param[:10]}\")\n    print(f\"input_path: {dict_param}\")\n\n\npy_advanced(input_path, list_param, dict_param)\n\n\ndef pandas(series_param: pd.Series, df_param: pd.DataFrame):\n    print(f\"series: {series_param.shape}\")\n    print(f\"df: {df_param.shape}\")\n\n\npandas(series_param, df_param)"
+  },
+  {
+    "objectID": "example_nbs/nbdev.html",
+    "href": "example_nbs/nbdev.html",
+    "title": "nbdev format notebook Example",
+    "section": "",
+    "text": "message = something()[\"message\"]\n\nAuto-reloading modules is very useful when using nbdev as changes to underlying modules are picked up without having to restart the kernel.\n\nParams\n\nsciflow uses the papermill format for paramaeterising notebooks. See here for how to specify papermill params: https://papermill.readthedocs.io/en/latest/usage-parameterize.html. These parameters will be available to use in your flows.\n\nnbdev tests are any cells which are not exporting code and do not have flags that say they should be ignored from testing.\n\nassert get_traffic_text(\"3\") == \"03\"\nassert get_traffic_text(\"13\") == \"13\"\nassert get_traffic_text(\"78\") == \"78\"\n\n\n\nNon-exported helper\n\ndef some_test_util(flag):\n    return not flag\n\n\n\nPreprocess Data\n\nassert get_experiment_segment(1) == (\"00\",)\nassert get_experiment_segment(3) == (\"00\", \"01\", \"02\")\nassert \"' '\".join(get_experiment_segment(1)) == \"00\"\nassert f\"\"\"IN ('{\"','\".join(get_experiment_segment(3))}')\"\"\" == \"IN ('00','01','02')\"\nassert len(get_experiment_segment(50)) == 50\nassert max([int(x) for x in get_experiment_segment(100)]) == 99\n\n\ndocuments = preprocess(message, traffic_percent)[\"documents\"]\n\n\nassert len(documents) &gt; 0\nassert (\n    pd.Series([\"Some other text\", \"Which should not be in the utterances\"])\n    .isin(pd.Series(documents))\n    .sum()\n    == 0\n)  # no button response texts\n\n\n\nFit\n\nTests which are long running can be ignored from test execution. You can use the tst flags in settings.ini or create your own in the same file. See https://nbdev.fast.ai/test for more info. In this example we use #slow to indicate this should be skipped.\n\n\nimport time\n\ntime.sleep(3)\n\n\nmodel = fit(documents, workers=workers)[\"model\"]\n\n\n\nEvaluate\n\n\nNumber of Topics\n\nmodel.get_num_topics()\n\n\n\nSize of Topics\n\ntopic_sizes, topic_nums = model.get_topic_sizes()\nassert all([s &gt; 0 for s in topic_sizes])\n\n\n\nGet Topic Words & Scores\n\ntopic_words, word_scores, topic_nums = model.get_topics(model.get_num_topics())\nassert len(topic_words) == model.get_num_topics()\n\n\n# time.sleep(120)\nmodel.plot_wordcloud()\n\n\nresults = evaluate(model)\nassert results[\"word_summaries\"]\nassert results[\"metrics\"] == [(\"mae\", 100, 0), (\"mae\", 67, 1), (\"mae\", 32, 2)]\nassert results[\"artifacts\"] == [\"/tmp/dataframe_artifact.csv\"]\n\n\n\nServe\n\nassert serve_num_topics(model) &gt; 0"
+  }
+]
