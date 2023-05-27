@@ -44,6 +44,7 @@ build:
 	nbdev_test && \
 	scilint_lint && \
 	nbdev_clean && \
+	nbdev_readme && \
 	echo "Build completed"
 
 release: pypi conda_release
