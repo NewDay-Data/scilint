@@ -1,1 +1,0 @@
-Sitemap: https://newday-data.github.io/scilint/sitemap.xml
