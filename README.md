@@ -38,9 +38,6 @@ production”.
 2.  [`scilint_lint`](https://newday-data.github.io/scilint/scilint.html#scilint_lint):
     inspect the notebooks for potential quality correlates and report on
     the findings
-3.  [`scilint_build`](https://newday-data.github.io/scilint/scilint.html#scilint_build):
-    the build command for notebooks: ensuring they all run, pass their
-    tests and meet a consistent style/quality standard
 
 ## [`scilint_tidy`](https://newday-data.github.io/scilint/scilint.html#scilint_tidy)
 
