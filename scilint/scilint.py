@@ -244,12 +244,12 @@ def lint_nbs(
 ):
     nb_paths = [Path(p) for p in nbglob()]
     lt_metric_cols = [
-        "calls_per_function_median",
-        "calls_per_function_mean",
+        "cpf_median",
+        "cpf_mean",
         "in_function_pct",
         "asserts_function_ratio",
-        "inline_asserts_per_function_median",
-        "inline_asserts_per_function_mean",
+        "iaf_median",
+        "iaf_mean",
         "markdown_code_pct",
     ]
     gt_metric_cols = ["total_code_len"]
@@ -270,7 +270,7 @@ def lint_nbs(
         results.append(lint_nb(nb_path))
     lint_report = pd.DataFrame.from_records(
         data=results, index=nb_names, columns=lt_metric_cols + gt_metric_cols
-    ).sort_values(["calls_per_function_median", "markdown_code_pct"], ascending=False)
+    ).sort_values(["cpf_median", "markdown_code_pct"], ascending=False)
 
     # TODO persist to remote storage
     # needs to be tied to a flow execution rather than a build

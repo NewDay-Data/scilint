@@ -52,18 +52,10 @@ Exposes potential quality issues within your notebook using some
 pre-defined checks. Default threshold values for these checks are
 provided that will enable a build to be marked as passed or failed.
 
-*\[WIP\] configuration of metrics thresholds and ability to disable
-individual checks will be coming soon.*
-
-### What does this look like?
-
-Image of a report in CSV & report output..
-
-### Wait.. what is a test in a Notebook?
-
-We view every `assert` statement as being a test
-
 ### Potential Quality Indicators
+
+The below are potential quality indicators that you can use to set a
+minimum bar for quality and comprehensibility within your projects.
 
 - **Calls-Per-Function {Median, Mean}:** compares the amount of calls to
   the amount of functions. Looks for possible reletatioship between
@@ -87,11 +79,15 @@ We view every `assert` statement as being a test
 > notebooks. As this library is used and refined with more projects than
 > these intuitions can evaluated more rigorously.
 
+### What does a lint report look like?
+
+![Sample Report](nbs/images/sample_report.png)
+
 ### Fail Threshold
 
 > For now a very basic failure threshold is set by providing a number of
 > warnings that will be accepted without failing the build. The default
-> is 1 but this can be increased via the `fail-over` parameter. As the
+> is 1 but this can be increased via the `--fail-over` parameter. As the
 > library matures we will revisit adding more nuanced options.
 
 # Contributing
