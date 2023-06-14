@@ -44,8 +44,17 @@ build:
 	nbdev_test && \
 	scilint_lint && \
 	nbdev_clean && \
-	nbdev_readme && \
 	echo "Build completed"
+
+ci:
+	scilint_tidy && \
+	nbdev_export && \
+	nbdev_test && \
+	scilint_lint && \
+	nbdev_clean && \
+	nbdev_readme && \
+	nbdev_docs && \
+	echo "CI job completed"
 
 release: pypi conda_release
 	nbdev_bump_version
