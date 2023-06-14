@@ -10,6 +10,7 @@ __all__ = ['run_nbqa_cmd', 'tidy', 'scilint_tidy', 'get_function_defs', 'count_f
 import ast
 import os
 import re
+import sys
 from collections import Counter
 from pathlib import Path
 
@@ -239,7 +240,7 @@ def lint_nbs(
     mcp_warn_thresh=5,
     tcl_warn_thresh=20000,
     rounding_precision=3,
-    csv_out_path="/tmp/lint.csv",
+    csv_out_path="/tmp/scilint.csv",
 ):
     nb_paths = [Path(p) for p in nbglob()]
     lt_metric_cols = [
@@ -277,12 +278,14 @@ def lint_nbs(
 
     print("\n*********************Begin Scilint Report*********************")
     issues_raised = False
+    num_warnings = 0
     for lt_metric_col, lt_metrics_threshold in zip(
         lt_metric_cols, lt_metrics_thresholds
     ):
         metrics_series = lint_report[lt_metric_col]
         warning_data = metrics_series[metrics_series < lt_metrics_threshold]
-        if len(warning_data) > 0:
+        num_warnings += len(warning_data)
+        if num_warnings > 0:
             issues_raised = True
         format_quality_warning(
             lt_metric_col,
@@ -295,7 +298,8 @@ def lint_nbs(
     ):
         metrics_series = lint_report[gt_metric_col]
         warning_data = metrics_series[metrics_series > gt_metrics_threshold]
-        if len(warning_data) > 0:
+        num_warnings += len(warning_data)
+        if num_warnings > 0:
             issues_raised = True
         format_quality_warning(
             gt_metric_col,
@@ -309,14 +313,44 @@ def lint_nbs(
 
     lint_report.to_csv(csv_out_path)
 
-    return lint_report
-
-# %% ../nbs/scilint.ipynb 69
-@call_parse
-def scilint_lint():
-    lint_nbs()
+    return lint_report, num_warnings
 
 # %% ../nbs/scilint.ipynb 70
+@call_parse
+def scilint_lint(
+    cpf_med_warn_thresh: float = 1,
+    cpf_mean_warn_thresh: float = 1,
+    ifp_warn_thresh: float = 20,
+    afr_warn_thresh: float = 1,
+    iaf_med_warn_thresh: float = 0,
+    iaf_mean_warn_thresh: float = 0.5,
+    mcp_warn_thresh: float = 5,
+    tcl_warn_thresh: int = 20000,
+    rounding_precision: int = 3,
+    csv_out_path: str = "/tmp/scilint.csv",
+    fail_over: int = -1,
+):
+    lint_report, num_warnings = lint_nbs(
+        cpf_med_warn_thresh,
+        cpf_mean_warn_thresh,
+        ifp_warn_thresh,
+        afr_warn_thresh,
+        iaf_med_warn_thresh,
+        iaf_mean_warn_thresh,
+        mcp_warn_thresh,
+        tcl_warn_thresh,
+        rounding_precision,
+        csv_out_path,
+    )
+    if fail_over == -1:
+        print("Linting outcome ignored as fail_over set to -1")
+    elif num_warnings > fail_over:
+        print(
+            f"Linting failed: total warnings ({num_warnings}) exceeded threshold ({fail_over})"
+        )
+        sys.exit(num_warnings)
+
+# %% ../nbs/scilint.ipynb 71
 # |eval: false
 # |include: false
 @call_parse
