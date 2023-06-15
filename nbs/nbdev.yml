@@ -4,6 +4,6 @@ project:
 website:
   title: "scilint"
   site-url: "https://newday-data.github.io/scilint/"
-  description: "A quality assurance build tool for notebook based workflows"
+  description: "infuse quality into notebook based workflows with a new type of build tool."
   repo-branch: main
   repo-url: "https://github.com/newday-data/scilint/tree/{branch}/"

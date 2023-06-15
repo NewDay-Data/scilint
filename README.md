@@ -38,6 +38,13 @@ production”.
 2.  [`scilint_lint`](https://newday-data.github.io/scilint/scilint.html#scilint_lint):
     inspect the notebooks for potential quality correlates and report on
     the findings
+3.  [`scilint_build`](https://newday-data.github.io/scilint/scilint.html#scilint_build):
+    frequent usage build command to promote quality and consistency:
+    {tidy, convert notebooks, test, lint, clean metadata}
+4.  [`scilint_ci`](https://newday-data.github.io/scilint/scilint.html#scilint_ci):
+    job designed to be used for continuous integration. Adds readme and
+    docs generation to
+    [`scilint_build`](https://newday-data.github.io/scilint/scilint.html#scilint_build).
 
 ## [`scilint_tidy`](https://newday-data.github.io/scilint/scilint.html#scilint_tidy)
 
