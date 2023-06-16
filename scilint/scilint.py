@@ -10,6 +10,7 @@ __all__ = ['run_nbqa_cmd', 'tidy', 'scilint_tidy', 'get_func_defs', 'count_func_
 import ast
 import os
 import re
+import shutil
 import sys
 from collections import Counter
 from pathlib import Path
@@ -426,5 +427,10 @@ def scilint_ci(
         csv_out_path,
         fail_over,
     )
+    if not shutil.which("quarto"):
+        print(
+            "Quarto is not installed. A working quarto install is required for the CI build"
+        )
+        sys.exit(-1)
     nbdev_readme()
     nbdev_docs()
