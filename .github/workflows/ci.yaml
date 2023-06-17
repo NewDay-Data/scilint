@@ -6,12 +6,28 @@ jobs:
   ci:
     runs-on: ubuntu-latest
     steps:
-      - name: ci 
+      - uses: actions/checkout@v3
+      - uses: actions/setup-python@v4
+        with:
+          python-version: 3.9
+          cache: "pip"
+          cache-dependency-path: settings.ini
+      - name: ci
+      - shell: bash 
         run: |
           set -ux
+          python -m pip install --upgrade pip
+          pip install -U nbdev
+          echo "Doing editable install..."
+          test -f setup.py && pip install -e ".[dev]"
+          echo "Check we are starting with clean git checkout"
+          if [[ `git status --porcelain -uno` ]]; then
+            git diff
+            echo "git status is not clean"
+            false
+          fi
           wget -q $(curl https://latest.fast.ai/pre/quarto-dev/quarto-cli/linux-amd64.deb)
           sudo dpkg -i quarto*.deb
-          pip install -e .
           scilint_ci
           if [ -f "_docs/index.html" ]; then
             echo "docs built successfully."
