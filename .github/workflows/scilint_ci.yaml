@@ -1,4 +1,4 @@
-name: uses ci 
+name: scilint_ci 
 on:
   push:
     branches: [main]
@@ -8,6 +8,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: fastai/workflows/quarto-ghp@master
-      - name: uses ci 
+      - name: ci 
         run: |
-          scilint_lint
+          scilint_ci
