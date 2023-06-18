@@ -9,5 +9,5 @@ jobs:
     steps:
       - uses: fastai/workflows/quarto-ghp@master
       - name: uses ci 
-      run: |
-        scilint_lint
+        run: |
+          scilint_lint
