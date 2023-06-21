@@ -22,9 +22,26 @@ production”.
 
 > `scilint` is written on top of the excellent `nbdev` library. This
 > library is revolutionary as it truly optimises all the benefits of
-> notebooks and compensates for some of their weaker points. For more
-> information on `nbdev` see the [homepage](https://nbdev.fast.ai/) or
-> [github repo](https://github.com/fastai/nbdev)
+> notebooks and compensates for some of their weaker points. Converting
+> your libraries to `nbdev` is not required for this tool to work but we
+> argue that it would confer many benefits if you are part of a
+> Production Data Science team. For more information on `nbdev` see the
+> [homepage](https://nbdev.fast.ai/) or [github
+> repo](https://github.com/fastai/nbdev)
+
+# What is Notebook Quality?
+
+This is a good quesiton and this library does not pretend to have the
+answer. But we feel the problem space is worth exploring because the
+value of high quality deliveries means lower time-to-market, less time
+in re-work or rote porting of code and frees people up to think about
+and solve hard problems.
+
+That said, here is a very basic starting point where we would say that
+**the notebook on left is of lower quality than the notebook on the
+right**..
+
+![Low vs High?](nbs/images/scilint_before_after_prep.png)
 
 # Getting Started
 
@@ -59,10 +76,30 @@ Exposes potential quality issues within your notebook using some
 pre-defined checks. Default threshold values for these checks are
 provided that will enable a build to be marked as passed or failed.
 
+## [`scilint_build`](https://newday-data.github.io/scilint/scilint.html#scilint_build)
+
+Chains the following commands to ensure your project stays above the
+quality and consistency bar:
+[`scilint_tidy`](https://newday-data.github.io/scilint/scilint.html#scilint_tidy),
+[nbdev_export](https://nbdev.fast.ai/api/export.html),
+[nbdev_test](https://nbdev.fast.ai/api/test.html),
+[`scilint_lint`](https://newday-data.github.io/scilint/scilint.html#scilint_lint),
+[nbdev_clean](https://nbdev.fast.ai/api/clean.html)
+
+## [`scilint_ci`](https://newday-data.github.io/scilint/scilint.html#scilint_ci)
+
+Adds documentation generation to
+[`scilint_build`](https://newday-data.github.io/scilint/scilint.html#scilint_build).
+This requires a working quarto build.
+
 ### Potential Quality Indicators
 
 The below are potential quality indicators that you can use to set a
 minimum bar for quality and comprehensibility within your projects.
+These are not exhaustive or definite quality indicators - they are a
+starting point to open the conversation about what it means to have a
+high quality notebook in practice. The indicators will evolve over time
+with usage and feedback from user community.
 
 - **Calls-Per-Function {Median, Mean}:** compares the amount of calls to
   the amount of functions. Looks for possible reletatioship between
@@ -78,13 +115,16 @@ minimum bar for quality and comprehensibility within your projects.
   cells.
 - **TotalCodeLen**: the total line length of the notebook.
 
-> Note: The following are a starting point for trying to reason about
-> notebook quality from some properties of the code and markdown within
-> them. There is no definitive answer as to whether any of these are low
-> or high quality. However there are reasons to believe inituitively
-> that higher or lwoer values of the below will produce higher quality
-> notebooks. As this library is used and refined with more projects than
-> these intuitions can evaluated more rigorously.
+Note: The following are a starting point for trying to reason about
+notebook quality from some properties of the code and markdown within
+them. There is no definitive answer as to whether any of these are low
+or high quality. However there are reasons to believe inituitively that
+higher or lower values of the below will produce higher quality
+notebooks. There are many questions left ot answer, like the role of
+docstrings and comments, their effectiveness may warrant inclusion but
+that is an open quesiton at the moment. As this library is used and
+refined with more projects and more experimental metrics then these
+intuitions can evaluated more rigorously.
 
 ### What does a lint report look like?
 
@@ -112,3 +152,18 @@ match.
 If you made a change to the notebooks in one of the exported cells, you
 can export it to the library with nbdev_prepare. If you made a change to
 the library, you can export it back to the notebooks with nbdev_update.
+
+# Appendix
+
+`nbdev` contains many features that are useful for Data Science
+workflows; too many in fact to cover here. We will focus on the major
+features we consider to have significant for Production Data Science
+teams:
+
+1.  Explicit separation of exploration from what is **fundamental** for
+    the workflow to execute using the `export` directive.
+2.  Introducing a test runner for notebook-based repos.
+3.  In-flow documentation of a notebook that is focused on the reader
+    and powerfully expressive thanks to Quarto Markdown (aids building
+    towards published reproducible research)
+4.  Git friendly workflow via pre-commit hooks.
