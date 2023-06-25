@@ -3,8 +3,8 @@
 # %% auto 0
 __all__ = ['run_nbqa_cmd', 'tidy', 'scilint_tidy', 'get_func_defs', 'count_func_calls', 'replace_ipython_magics', 'safe_div',
            'get_cell_code', 'calls_per_func', 'mean_cpf', 'median_cpf', 'afr', 'count_inline_asserts', 'iaf',
-           'mean_iaf', 'median_iaf', 'calc_ifp', 'ifp', 'mcp', 'tcl', 'lint_nb', 'format_quality_warning', 'lint_nbs',
-           'scilint_lint', 'scilint_build', 'scilint_ci']
+           'mean_iaf', 'median_iaf', 'calc_ifp', 'ifp', 'mcp', 'tcl', 'lint_nb', 'format_quality_warning',
+           'get_excluded_paths', 'lint_nbs', 'calculate_warnings', 'scilint_lint', 'scilint_build', 'scilint_ci']
 
 # %% ../nbs/scilint.ipynb 2
 import ast
@@ -14,6 +14,7 @@ import shutil
 import sys
 from collections import Counter
 from pathlib import Path
+from typing import Iterable
 
 import nbformat
 import numpy as np
@@ -200,6 +201,7 @@ def tcl(nb):
 # %% ../nbs/scilint.ipynb 64
 def lint_nb(
     nb_path,
+    include_in_scoring,
     rounding_precision=3,
 ):
     nb = read_nb(nb_path)
@@ -224,14 +226,33 @@ def lint_nb(
         nb_iaf_mean,
         nb_mcp,
         nb_tcl,
+        include_in_scoring,
     )
 
 # %% ../nbs/scilint.ipynb 65
+# TODO generate and persist a new dataframe of warnings from this..
+
+
 def format_quality_warning(metric, warning_data, warn_thresh, direction):
     for warning_row in warning_data.reset_index().itertuples():
         print(f'"{warning_row.index}" has: {metric} {direction} {warn_thresh}')
 
 # %% ../nbs/scilint.ipynb 66
+def get_excluded_paths(paths: Iterable[Path], exclude_pattern: str):
+    excl_paths = []
+    for ex_pattern in exclude_pattern.split(","):
+        ex_path = Path(ex_pattern)
+        if ex_path.exists():
+            excl_paths.extend([p for p in paths if ex_pattern in str(p)])
+        elif not ex_path.exists():
+            raise ValueError(f"Path component: {ex_path} does not exist")
+        else:
+            raise ValueError(
+                f"Invalid exclusion pattern: {ex_path} pattern is comma separrated list of 'dir/' for directories and 'name.ipynb' for specific notebook"
+            )
+    return excl_paths
+
+# %% ../nbs/scilint.ipynb 68
 def lint_nbs(
     cpf_med_warn_thresh=1,
     cpf_mean_warn_thresh=1,
@@ -243,8 +264,14 @@ def lint_nbs(
     tcl_warn_thresh=20000,
     rounding_precision=3,
     csv_out_path="/tmp/scilint.csv",
+    exclusions=None,
 ):
     nb_paths = [Path(p) for p in nbglob()]
+
+    excluded_paths = None
+    if exclusions is not None:
+        excluded_paths = get_excluded_paths(nb_paths, exclude_pattern=exclusions)
+
     lt_metric_cols = [
         "cpf_median",
         "cpf_mean",
@@ -268,24 +295,52 @@ def lint_nbs(
     results = []
     nb_names = []
     for nb_path in nb_paths:
+        include_in_scoring = True
+        if exclusions is not None:
+            include_in_scoring = False if nb_path in excluded_paths else True
+
         nb_names.append(nb_path.stem)
-        results.append(lint_nb(nb_path))
+        results.append(lint_nb(nb_path, include_in_scoring, rounding_precision))
     lint_report = pd.DataFrame.from_records(
-        data=results, index=nb_names, columns=lt_metric_cols + gt_metric_cols
+        data=results,
+        index=nb_names,
+        columns=lt_metric_cols + gt_metric_cols + ["include_in_scoring"],
     ).sort_values(["cpf_median", "markdown_code_pct"], ascending=False)
 
-    # TODO persist to remote storage
-    # needs to be tied to a flow execution rather than a build
-    # what is the best way to do this?
+    # Calculate warnings only from notebooks included in scoring
+    scoring_report = lint_report[lint_report.include_in_scoring].copy()
 
+    num_warnings = calculate_warnings(
+        scoring_report,
+        lt_metric_cols,
+        lt_metrics_thresholds,
+        gt_metric_cols,
+        gt_metrics_thresholds,
+    )
+
+    lint_report.to_csv(csv_out_path)
+
+    return lint_report, num_warnings
+
+# %% ../nbs/scilint.ipynb 69
+def calculate_warnings(
+    scoring_report,
+    lt_metric_cols,
+    lt_metrics_thresholds,
+    gt_metric_cols,
+    gt_metrics_thresholds,
+):
+    # TODO tidy this up to usual config dict
     print("\n*********************Begin Scilint Report*********************")
     issues_raised = False
     num_warnings = 0
+
     for lt_metric_col, lt_metrics_threshold in zip(
         lt_metric_cols, lt_metrics_thresholds
     ):
-        metrics_series = lint_report[lt_metric_col]
+        metrics_series = scoring_report[lt_metric_col]
         warning_data = metrics_series[metrics_series < lt_metrics_threshold]
+
         num_warnings += len(warning_data)
         if num_warnings > 0:
             issues_raised = True
@@ -298,7 +353,7 @@ def lint_nbs(
     for gt_metric_col, gt_metrics_threshold in zip(
         gt_metric_cols, gt_metrics_thresholds
     ):
-        metrics_series = lint_report[gt_metric_col]
+        metrics_series = scoring_report[gt_metric_col]
         warning_data = metrics_series[metrics_series > gt_metrics_threshold]
         num_warnings += len(warning_data)
         if num_warnings > 0:
@@ -312,12 +367,9 @@ def lint_nbs(
     if not issues_raised:
         print("No issues found")
     print("*********************End Scilint Report***********************")
+    return num_warnings
 
-    lint_report.to_csv(csv_out_path)
-
-    return lint_report, num_warnings
-
-# %% ../nbs/scilint.ipynb 69
+# %% ../nbs/scilint.ipynb 75
 @call_parse
 def scilint_lint(
     cpf_med_warn_thresh: float = 1,
@@ -330,6 +382,7 @@ def scilint_lint(
     tcl_warn_thresh: int = 20000,
     rounding_precision: int = 3,
     csv_out_path: str = "/tmp/scilint.csv",
+    exclusions: str = None,
     fail_over: int = -1,
 ):
     lint_report, num_warnings = lint_nbs(
@@ -343,6 +396,7 @@ def scilint_lint(
         tcl_warn_thresh,
         rounding_precision,
         csv_out_path,
+        exclusions,
     )
     if fail_over == -1:
         print("Linting outcome ignored as fail_over set to -1")
@@ -352,7 +406,7 @@ def scilint_lint(
         )
         sys.exit(num_warnings)
 
-# %% ../nbs/scilint.ipynb 70
+# %% ../nbs/scilint.ipynb 76
 # |eval: false
 # |include: false
 # TODO: there seems to be a bug when using a call_parse func
@@ -372,6 +426,7 @@ def scilint_build(
     tcl_warn_thresh: int = 20000,
     rounding_precision: int = 3,
     csv_out_path: str = "/tmp/scilint.csv",
+    exclusions: str = None,
     fail_over: int = -1,
 ):
     tidy()
@@ -388,11 +443,12 @@ def scilint_build(
         tcl_warn_thresh,
         rounding_precision,
         csv_out_path,
+        exclusions,
         fail_over,
     )
     nbdev_clean()
 
-# %% ../nbs/scilint.ipynb 71
+# %% ../nbs/scilint.ipynb 77
 # |eval: false
 # |include: false
 # TODO: there seems to be a bug when using a call_parse func
@@ -412,6 +468,7 @@ def scilint_ci(
     tcl_warn_thresh: int = 20000,
     rounding_precision: int = 3,
     csv_out_path: str = "/tmp/scilint.csv",
+    exclusions: str = None,
     fail_over: int = -1,
 ):
     scilint_build(
@@ -425,6 +482,7 @@ def scilint_ci(
         tcl_warn_thresh,
         rounding_precision,
         csv_out_path,
+        exclusions,
         fail_over,
     )
     if not shutil.which("quarto"):
