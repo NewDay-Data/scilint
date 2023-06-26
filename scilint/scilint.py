@@ -21,10 +21,12 @@ import numpy as np
 import pandas as pd
 from execnb.nbio import read_nb
 from fastcore.script import call_parse
-from nbdev.clean import nbdev_clean
-from nbdev.doclinks import nbdev_export, nbglob
+from nbdev.config import add_init, get_config
+from nbdev.doclinks import _build_modidx, nbglob
+
+# Remove after fixing issue with call_parse chaining..
+from nbdev.export import nb_export
 from nbdev.quarto import nbdev_docs, nbdev_readme
-from nbdev.test import nbdev_test
 from nbqa.__main__ import _get_configs, _main
 from nbqa.cmdline import CLIArgs
 from nbqa.find_root import find_project_root
@@ -112,6 +114,8 @@ def median_cpf(nb):
 # %% ../nbs/scilint.ipynb 35
 def afr(nb):
     nb_cell_code = get_cell_code(nb)
+    if nb_cell_code == "":  # no code cells - metrics is not well defined
+        return np.nan
     func_defs = get_func_defs(nb_cell_code)
     num_funcs = len(func_defs)
 
@@ -122,7 +126,7 @@ def afr(nb):
 
     return safe_div(assert_count, num_funcs)
 
-# %% ../nbs/scilint.ipynb 41
+# %% ../nbs/scilint.ipynb 38
 def count_inline_asserts(code, func_defs):
     inline_func_asserts = Counter({k: 0 for k in func_defs})
 
@@ -139,21 +143,23 @@ def count_inline_asserts(code, func_defs):
                         inline_func_asserts[func_name] += 1
     return inline_func_asserts
 
-# %% ../nbs/scilint.ipynb 42
+# %% ../nbs/scilint.ipynb 39
 def iaf(nb):
     nb_cell_code = get_cell_code(nb)
+    if nb_cell_code == "":
+        return np.nan
     func_defs = get_func_defs(nb_cell_code)
     return count_inline_asserts(nb_cell_code, func_defs)
 
-# %% ../nbs/scilint.ipynb 49
+# %% ../nbs/scilint.ipynb 46
 def mean_iaf(nb):
     return pd.Series(iaf(nb)).mean()
 
-# %% ../nbs/scilint.ipynb 50
+# %% ../nbs/scilint.ipynb 47
 def median_iaf(nb):
     return pd.Series(iaf(nb)).median()
 
-# %% ../nbs/scilint.ipynb 54
+# %% ../nbs/scilint.ipynb 51
 def calc_ifp(nb_cell_code):
     stmts_in_func = 0
     stmts_outside_func = 0
@@ -171,7 +177,7 @@ def calc_ifp(nb_cell_code):
         else (stmts_in_func / (stmts_outside_func + stmts_in_func)) * 100
     )
 
-# %% ../nbs/scilint.ipynb 56
+# %% ../nbs/scilint.ipynb 53
 def ifp(nb):
     nb_cell_code = "\n".join(
         [
@@ -180,32 +186,36 @@ def ifp(nb):
             if c["cell_type"] == "code"
         ]
     )
+    if nb_cell_code == "":
+        return np.nan
     return calc_ifp(nb_cell_code)
 
-# %% ../nbs/scilint.ipynb 59
+# %% ../nbs/scilint.ipynb 56
 def mcp(nb):
     md_cells = [c for c in nb.cells if c["cell_type"] == "markdown"]
     code_cells = [c for c in nb.cells if c["cell_type"] == "code"]
     num_code_cells = len(code_cells)
+    if num_code_cells == 0:
+        return np.nan
     num_md_cells = len(md_cells)
     return (
-        0
+        100
         if num_code_cells == 0
         else (num_md_cells / (num_md_cells + num_code_cells)) * 100
     )
 
-# %% ../nbs/scilint.ipynb 62
+# %% ../nbs/scilint.ipynb 59
 def tcl(nb):
     return sum([len(c["source"]) for c in nb.cells if c["cell_type"] == "code"])
 
-# %% ../nbs/scilint.ipynb 64
+# %% ../nbs/scilint.ipynb 61
 def lint_nb(
     nb_path,
     include_in_scoring,
     rounding_precision=3,
 ):
     nb = read_nb(nb_path)
-    (np.nan, np.nan, np.nan, np.nan)
+
     nb_cpf_median = round(median_cpf(nb), rounding_precision)
     nb_cpf_mean = round(mean_cpf(nb), rounding_precision)
     nb_ifp = round(ifp(nb), rounding_precision)
@@ -214,9 +224,7 @@ def lint_nb(
     nb_iaf_mean = round(mean_iaf(nb), rounding_precision)
     nb_mcp = round(mcp(nb), rounding_precision)
     nb_tcl = round(tcl(nb), rounding_precision)
-    # print(f"NB: {nb_path.name} CallsPerFunction (Median): {nb_cpf_median} CallsPerFunction (Mean): {nb_cpf_mean} \
-    # In-FunctionPercent: {nb_ifp} AssertsPerFunction: {nb_cpf_median} InlineAssertsPerFunction (Median): {nb_iaf_median} \
-    # InlineAssertsPerFunction (Mean): {nb_iaf_mean} MarkdownToCodeRatio: {nb_mcp} TotalCodeLen: {nb_tcl}")
+
     return (
         nb_cpf_median,
         nb_cpf_mean,
@@ -229,7 +237,7 @@ def lint_nb(
         include_in_scoring,
     )
 
-# %% ../nbs/scilint.ipynb 65
+# %% ../nbs/scilint.ipynb 62
 # TODO generate and persist a new dataframe of warnings from this..
 
 
@@ -237,7 +245,7 @@ def format_quality_warning(metric, warning_data, warn_thresh, direction):
     for warning_row in warning_data.reset_index().itertuples():
         print(f'"{warning_row.index}" has: {metric} {direction} {warn_thresh}')
 
-# %% ../nbs/scilint.ipynb 66
+# %% ../nbs/scilint.ipynb 63
 def get_excluded_paths(paths: Iterable[Path], exclude_pattern: str):
     excl_paths = []
     for ex_pattern in exclude_pattern.split(","):
@@ -252,7 +260,7 @@ def get_excluded_paths(paths: Iterable[Path], exclude_pattern: str):
             )
     return excl_paths
 
-# %% ../nbs/scilint.ipynb 68
+# %% ../nbs/scilint.ipynb 65
 def lint_nbs(
     cpf_med_warn_thresh=1,
     cpf_mean_warn_thresh=1,
@@ -261,7 +269,7 @@ def lint_nbs(
     iaf_med_warn_thresh=0,
     iaf_mean_warn_thresh=0.5,
     mcp_warn_thresh=5,
-    tcl_warn_thresh=20000,
+    tcl_warn_thresh=30000,
     rounding_precision=3,
     csv_out_path="/tmp/scilint.csv",
     exclusions=None,
@@ -322,7 +330,7 @@ def lint_nbs(
 
     return lint_report, num_warnings
 
-# %% ../nbs/scilint.ipynb 69
+# %% ../nbs/scilint.ipynb 66
 def calculate_warnings(
     scoring_report,
     lt_metric_cols,
@@ -369,9 +377,8 @@ def calculate_warnings(
     print("*********************End Scilint Report***********************")
     return num_warnings
 
-# %% ../nbs/scilint.ipynb 75
-@call_parse
-def scilint_lint(
+# %% ../nbs/scilint.ipynb 72
+def _lint(
     cpf_med_warn_thresh: float = 1,
     cpf_mean_warn_thresh: float = 1,
     ifp_warn_thresh: float = 20,
@@ -379,11 +386,11 @@ def scilint_lint(
     iaf_med_warn_thresh: float = 0,
     iaf_mean_warn_thresh: float = 0.5,
     mcp_warn_thresh: float = 5,
-    tcl_warn_thresh: int = 20000,
+    tcl_warn_thresh: float = 30000,
     rounding_precision: int = 3,
     csv_out_path: str = "/tmp/scilint.csv",
     exclusions: str = None,
-    fail_over: int = -1,
+    fail_over: int = 1,
 ):
     lint_report, num_warnings = lint_nbs(
         cpf_med_warn_thresh,
@@ -405,17 +412,11 @@ def scilint_lint(
             f"Linting failed: total warnings ({num_warnings}) exceeded threshold ({fail_over})"
         )
         sys.exit(num_warnings)
+    else:
+        print("Linting succeeded")
 
-# %% ../nbs/scilint.ipynb 76
-# |eval: false
-# |include: false
-# TODO: there seems to be a bug when using a call_parse func
-# that calls other call_parse funcs or something similar.
-# Removing eval and include directives above breaks the code. Raise issue at nbdev repo.
-
-
-@call_parse
-def scilint_build(
+# %% ../nbs/scilint.ipynb 73
+def scilint_lint(
     cpf_med_warn_thresh: float = 1,
     cpf_mean_warn_thresh: float = 1,
     ifp_warn_thresh: float = 20,
@@ -423,16 +424,13 @@ def scilint_build(
     iaf_med_warn_thresh: float = 0,
     iaf_mean_warn_thresh: float = 0.5,
     mcp_warn_thresh: float = 5,
-    tcl_warn_thresh: int = 20000,
+    tcl_warn_thresh: float = 30000,
     rounding_precision: int = 3,
     csv_out_path: str = "/tmp/scilint.csv",
     exclusions: str = None,
-    fail_over: int = -1,
+    fail_over: int = 1,
 ):
-    tidy()
-    nbdev_export()
-    nbdev_test()
-    scilint_lint(
+    _lint(
         cpf_med_warn_thresh,
         cpf_mean_warn_thresh,
         ifp_warn_thresh,
@@ -446,18 +444,93 @@ def scilint_build(
         exclusions,
         fail_over,
     )
-    nbdev_clean()
+
+# %% ../nbs/scilint.ipynb 74
+def _nbdev_export():
+    if os.environ.get("IN_TEST", 0):
+        return
+    files = nbglob(path=None, as_path=True).sorted("name")
+
+    for f in files:
+        nb_export(f, procs=None)
+    add_init(get_config().lib_path)
+    _build_modidx()
+
+# %% ../nbs/scilint.ipynb 75
+def _nbdev_test(
+    path=None,
+    flags="",
+    ignore_fname=".notest",
+    n_workers: int = None,  # Number of workers
+    timing: bool = False,  # Time each notebook to see which are slow
+    do_print: bool = False,  # Print start and end of each notebook
+    pause: float = 0.01,  # Pause time (in seconds) between notebooks to avoid race conditions
+):
+    "Test in parallel notebooks matching `path`, passing along `flags`"
+    skip_flags = get_config().tst_flags.split()
+    force_flags = flags.split()
+    files = nbglob(path, as_path=True)
+    from nbdev.test import _keep_file, test_nb
+
+    files = [f.absolute() for f in sorted(files) if _keep_file(f, ignore_fname)]
+    if len(files) == 0:
+        return print("No files were eligible for testing")
+
+    from fastcore.basics import IN_NOTEBOOK, num_cpus
+    from fastcore.foundation import working_directory
+    from fastcore.parallel import parallel
+
+    if n_workers is None:
+        n_workers = 0 if len(files) == 1 else min(num_cpus(), 8)
+    if IN_NOTEBOOK:
+        kw = {"method": "spawn"} if os.name == "nt" else {"method": "forkserver"}
+    else:
+        kw = {}
+    wd_pth = get_config().nbs_path
+    with working_directory(wd_pth if (wd_pth and wd_pth.exists()) else os.getcwd()):
+        results = parallel(
+            test_nb,
+            files,
+            skip_flags=skip_flags,
+            force_flags=force_flags,
+            n_workers=n_workers,
+            basepath=get_config().config_path,
+            pause=pause,
+            do_print=do_print,
+            **kw,
+        )
+    passed, times = zip(*results)
+    if all(passed):
+        print("Success.")
+    else:
+        _fence = "=" * 50
+        failed = "\n\t".join(f.name for p, f in zip(passed, files) if not p)
+        sys.stderr.write(
+            f"\nnbdev Tests Failed On The Following Notebooks:\n{_fence}\n\t{failed}\n"
+        )
+        sys.exit(1)
+    if timing:
+        for i, t in sorted(enumerate(times), key=lambda o: o[1], reverse=True):
+            print(f"{files[i].name}: {int(t)} secs")
+
+# %% ../nbs/scilint.ipynb 76
+def _nbdev_clean():
+    "Clean all notebooks in `fname` to avoid merge conflicts"
+    # Git hooks will pass the notebooks in stdin
+    from fastcore.basics import partial
+    from fastcore.xtras import globtastic
+    from nbdev.clean import _nbdev_clean as _nbdev_lib_clean
+    from nbdev.clean import process_write
+
+    _clean = partial(_nbdev_lib_clean, clear_all=None)
+    _write = partial(process_write, warn_msg="Failed to clean notebook", proc_nb=_clean)
+
+    fname = get_config().nbs_path
+    for f in globtastic(fname, file_glob="*.ipynb", skip_folder_re="^[_.]"):
+        _write(f_in=f)
 
 # %% ../nbs/scilint.ipynb 77
-# |eval: false
-# |include: false
-# TODO: there seems to be a bug when using a call_parse func
-# that calls other call_parse funcs or something similar.
-# Removing eval and include directives above breaks the code. Raise issue at nbdev repo.
-
-
-@call_parse
-def scilint_ci(
+def _build(
     cpf_med_warn_thresh: float = 1,
     cpf_mean_warn_thresh: float = 1,
     ifp_warn_thresh: float = 20,
@@ -465,13 +538,86 @@ def scilint_ci(
     iaf_med_warn_thresh: float = 0,
     iaf_mean_warn_thresh: float = 0.5,
     mcp_warn_thresh: float = 5,
-    tcl_warn_thresh: int = 20000,
+    tcl_warn_thresh: float = 30000,
     rounding_precision: int = 3,
     csv_out_path: str = "/tmp/scilint.csv",
     exclusions: str = None,
-    fail_over: int = -1,
+    fail_over: int = 1,
 ):
-    scilint_build(
+    tidy()
+    _nbdev_export()
+    _nbdev_test()
+    _lint(
+        cpf_med_warn_thresh,
+        cpf_mean_warn_thresh,
+        ifp_warn_thresh,
+        afr_warn_thresh,
+        iaf_med_warn_thresh,
+        iaf_mean_warn_thresh,
+        mcp_warn_thresh,
+        tcl_warn_thresh,
+        rounding_precision,
+        csv_out_path,
+        exclusions,
+        fail_over,
+    )
+    _nbdev_clean()
+
+# %% ../nbs/scilint.ipynb 78
+import argparse
+
+
+def scilint_build():
+    parser = argparse.ArgumentParser()
+
+    parser.add_argument("--cpf_med_warn_thresh", type=float, nargs="?", default=1.0)
+    parser.add_argument("--cpf_mean_warn_thresh", type=float, nargs="?", default=1.0)
+    parser.add_argument("--ifp_warn_thresh", type=float, nargs="?", default=20.0)
+    parser.add_argument("--afr_warn_thresh", type=float, nargs="?", default=1.0)
+    parser.add_argument("--iaf_med_warn_thresh", type=float, nargs="?", default=0.0)
+    parser.add_argument("--iaf_mean_warn_thresh", type=float, nargs="?", default=0.5)
+    parser.add_argument("--mcp_warn_thresh", type=float, nargs="?", default=5.0)
+    parser.add_argument("--tcl_warn_thresh", type=float, nargs="?", default=30000.0)
+    parser.add_argument("--rounding_precision", type=int, nargs="?", default=3)
+    parser.add_argument(
+        "--csv_out_path", type=str, nargs="?", default="/tmp/scilint.csv"
+    )
+    parser.add_argument("--exclusions", type=str, nargs="?", default=None)
+    parser.add_argument("--fail_over", type=int, default=1, action="store")
+
+    args = parser.parse_args()
+
+    _build(
+        args.cpf_med_warn_thresh,
+        args.cpf_mean_warn_thresh,
+        args.ifp_warn_thresh,
+        args.afr_warn_thresh,
+        args.iaf_med_warn_thresh,
+        args.iaf_mean_warn_thresh,
+        args.mcp_warn_thresh,
+        args.tcl_warn_thresh,
+        args.rounding_precision,
+        args.csv_out_path,
+        args.exclusions,
+        args.fail_over,
+    )
+
+# %% ../nbs/scilint.ipynb 79
+def _ci(
+    cpf_med_warn_thresh: float = 1,
+    cpf_mean_warn_thresh: float = 1,
+    ifp_warn_thresh: float = 20,
+    afr_warn_thresh: float = 1,
+    iaf_med_warn_thresh: float = 0,
+    iaf_mean_warn_thresh: float = 0.5,
+    mcp_warn_thresh: float = 5,
+    tcl_warn_thresh: int = 30000,
+    rounding_precision: int = 3,
+    csv_out_path: str = "/tmp/scilint.csv",
+    exclusions: str = None,
+    fail_over: int = 1,
+):
+    _build(
         cpf_med_warn_thresh,
         cpf_mean_warn_thresh,
         ifp_warn_thresh,
@@ -492,3 +638,33 @@ def scilint_ci(
         sys.exit(-1)
     nbdev_readme()
     nbdev_docs()
+
+# %% ../nbs/scilint.ipynb 80
+def scilint_ci(
+    cpf_med_warn_thresh: float = 1,
+    cpf_mean_warn_thresh: float = 1,
+    ifp_warn_thresh: float = 20,
+    afr_warn_thresh: float = 1,
+    iaf_med_warn_thresh: float = 0,
+    iaf_mean_warn_thresh: float = 0.5,
+    mcp_warn_thresh: float = 5,
+    tcl_warn_thresh: int = 30000,
+    rounding_precision: int = 3,
+    csv_out_path: str = "/tmp/scilint.csv",
+    exclusions: str = None,
+    fail_over: int = 1,
+):
+    _ci(
+        cpf_med_warn_thresh,
+        cpf_mean_warn_thresh,
+        ifp_warn_thresh,
+        afr_warn_thresh,
+        iaf_med_warn_thresh,
+        iaf_mean_warn_thresh,
+        mcp_warn_thresh,
+        tcl_warn_thresh,
+        rounding_precision,
+        csv_out_path,
+        exclusions,
+        fail_over,
+    )
