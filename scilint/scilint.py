@@ -23,9 +23,7 @@ import pandas as pd
 from execnb.nbio import read_nb
 from fastcore.script import call_parse
 from nbdev.clean import nbdev_clean
-from nbdev.config import add_init, get_config
-from nbdev.doclinks import _build_modidx, nbdev_export, nbglob
-from nbdev.export import nb_export
+from nbdev.doclinks import nbdev_export, nbglob
 from nbdev.quarto import nbdev_docs, nbdev_readme
 from nbdev.test import nbdev_test
 from nbqa.__main__ import _get_configs, _main
@@ -385,116 +383,6 @@ def calculate_warnings(
     return num_warnings
 
 # %% ../nbs/scilint.ipynb 73
-def _nbdev_lib_export():
-    if os.environ.get("IN_TEST", 0):
-        return
-    files = nbglob(path=None, as_path=True).sorted("name")
-
-    for f in files:
-        nb_export(f, procs=None)
-    add_init(get_config().lib_path)
-    _build_modidx()
-
-# %% ../nbs/scilint.ipynb 74
-def _nbdev_lib_test(
-    path=None,
-    flags="",
-    ignore_fname=".notest",
-    n_workers: int = None,  # Number of workers
-    timing: bool = False,  # Time each notebook to see which are slow
-    do_print: bool = False,  # Print start and end of each notebook
-    pause: float = 0.01,  # Pause time (in seconds) between notebooks to avoid race conditions
-):
-    "Test in parallel notebooks matching `path`, passing along `flags`"
-    skip_flags = get_config().tst_flags.split()
-    force_flags = flags.split()
-    files = nbglob(path, as_path=True)
-    from nbdev.test import _keep_file, test_nb
-
-    files = [f.absolute() for f in sorted(files) if _keep_file(f, ignore_fname)]
-    if len(files) == 0:
-        return print("No files were eligible for testing")
-
-    from fastcore.basics import IN_NOTEBOOK, num_cpus
-    from fastcore.foundation import working_directory
-    from fastcore.parallel import parallel
-
-    if n_workers is None:
-        n_workers = 0 if len(files) == 1 else min(num_cpus(), 8)
-    if IN_NOTEBOOK:
-        kw = {"method": "spawn"} if os.name == "nt" else {"method": "forkserver"}
-    else:
-        kw = {}
-    wd_pth = get_config().nbs_path
-    with working_directory(wd_pth if (wd_pth and wd_pth.exists()) else os.getcwd()):
-        results = parallel(
-            test_nb,
-            files,
-            skip_flags=skip_flags,
-            force_flags=force_flags,
-            n_workers=n_workers,
-            basepath=get_config().config_path,
-            pause=pause,
-            do_print=do_print,
-            **kw,
-        )
-    passed, times = zip(*results)
-    if all(passed):
-        print("Success.")
-    else:
-        _fence = "=" * 50
-        failed = "\n\t".join(f.name for p, f in zip(passed, files) if not p)
-        sys.stderr.write(
-            f"\nnbdev Tests Failed On The Following Notebooks:\n{_fence}\n\t{failed}\n"
-        )
-        sys.exit(1)
-    if timing:
-        for i, t in sorted(enumerate(times), key=lambda o: o[1], reverse=True):
-            print(f"{files[i].name}: {int(t)} secs")
-
-# %% ../nbs/scilint.ipynb 75
-def _nbdev_lib_clean():
-    "Clean all notebooks in `fname` to avoid merge conflicts"
-    # Git hooks will pass the notebooks in stdin
-    from fastcore.basics import partial
-    from fastcore.xtras import globtastic
-    from nbdev.clean import _nbdev_clean, process_write
-
-    _clean = partial(_nbdev_clean, clear_all=None)
-    _write = partial(process_write, warn_msg="Failed to clean notebook", proc_nb=_clean)
-
-    fname = get_config().nbs_path
-    for f in globtastic(fname, file_glob="*.ipynb", skip_folder_re="^[_.]"):
-        _write(f_in=f)
-
-# %% ../nbs/scilint.ipynb 76
-def _nbdev_lib_readme(
-    path: str = None, chk_time: bool = False  # Path to notebooks
-):  # Only build if out of date
-    from nbdev.quarto import (
-        _readme_mtime_not_older,
-        _save_cached_readme,
-        _SidebarYmlRemoved,
-        _sprun,
-    )
-    from nbdev.serve import proc_nbs
-
-    cfg = get_config()
-    path = Path(path) if path else cfg.nbs_path
-    if chk_time and _readme_mtime_not_older(
-        cfg.config_path / "README.md", path / cfg.readme_nb
-    ):
-        return
-
-    with _SidebarYmlRemoved(path):  # to avoid rendering whole website
-        cache = proc_nbs(path)
-        _sprun(
-            f'cd "{cache}" && quarto render "{cache/cfg.readme_nb}" -o README.md -t gfm --no-execute'
-        )
-
-    _save_cached_readme(cache, cfg)
-
-# %% ../nbs/scilint.ipynb 79
 def _lint(
     cpf_med_warn_thresh: float = 1,
     cpf_mean_warn_thresh: float = 1,
@@ -532,7 +420,7 @@ def _lint(
     else:
         print("Linting succeeded")
 
-# %% ../nbs/scilint.ipynb 80
+# %% ../nbs/scilint.ipynb 74
 def _build(
     cpf_med_warn_thresh: float = 1,
     cpf_mean_warn_thresh: float = 1,
@@ -566,7 +454,7 @@ def _build(
     )
     nbdev_clean.__wrapped__()
 
-# %% ../nbs/scilint.ipynb 82
+# %% ../nbs/scilint.ipynb 76
 @call_parse
 def scilint_lint(
     cpf_med_warn_thresh: float = 1,
@@ -597,7 +485,7 @@ def scilint_lint(
         fail_over,
     )
 
-# %% ../nbs/scilint.ipynb 83
+# %% ../nbs/scilint.ipynb 77
 @call_parse
 def scilint_build(
     cpf_med_warn_thresh: float = 1,
@@ -628,7 +516,7 @@ def scilint_build(
         fail_over,
     )
 
-# %% ../nbs/scilint.ipynb 84
+# %% ../nbs/scilint.ipynb 78
 @call_parse
 def scilint_ci(
     cpf_med_warn_thresh: float = 1,
