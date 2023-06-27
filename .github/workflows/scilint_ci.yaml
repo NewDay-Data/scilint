@@ -10,4 +10,4 @@ jobs:
       - uses: fastai/workflows/quarto-ghp@master
       - name: ci 
         run: |
-          scilint_ci --exclusions "nbs/example_nbs/,index.ipynb"
+          scilint_ci --exclusions "nbs/example_nbs/"
