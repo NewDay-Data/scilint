@@ -12,20 +12,22 @@ import os
 import re
 import shutil
 import sys
+import warnings
 from collections import Counter
 from pathlib import Path
 from typing import Iterable
-import warnings
 
 import nbformat
 import numpy as np
 import pandas as pd
 from execnb.nbio import read_nb
 from fastcore.script import call_parse
+from nbdev.clean import nbdev_clean
 from nbdev.config import add_init, get_config
-from nbdev.doclinks import _build_modidx, nbglob
+from nbdev.doclinks import _build_modidx, nbdev_export, nbglob
 from nbdev.export import nb_export
 from nbdev.quarto import nbdev_docs, nbdev_readme
+from nbdev.test import nbdev_test
 from nbqa.__main__ import _get_configs, _main
 from nbqa.cmdline import CLIArgs
 from nbqa.find_root import find_project_root
@@ -456,8 +458,7 @@ def _nbdev_lib_clean():
     # Git hooks will pass the notebooks in stdin
     from fastcore.basics import partial
     from fastcore.xtras import globtastic
-    from nbdev.clean import _nbdev_clean
-    from nbdev.clean import process_write
+    from nbdev.clean import _nbdev_clean, process_write
 
     _clean = partial(_nbdev_clean, clear_all=None)
     _write = partial(process_write, warn_msg="Failed to clean notebook", proc_nb=_clean)
@@ -467,6 +468,33 @@ def _nbdev_lib_clean():
         _write(f_in=f)
 
 # %% ../nbs/scilint.ipynb 76
+def _nbdev_lib_readme(
+    path: str = None, chk_time: bool = False  # Path to notebooks
+):  # Only build if out of date
+    from nbdev.quarto import (
+        _readme_mtime_not_older,
+        _save_cached_readme,
+        _SidebarYmlRemoved,
+        _sprun,
+    )
+    from nbdev.serve import proc_nbs
+
+    cfg = get_config()
+    path = Path(path) if path else cfg.nbs_path
+    if chk_time and _readme_mtime_not_older(
+        cfg.config_path / "README.md", path / cfg.readme_nb
+    ):
+        return
+
+    with _SidebarYmlRemoved(path):  # to avoid rendering whole website
+        cache = proc_nbs(path)
+        _sprun(
+            f'cd "{cache}" && quarto render "{cache/cfg.readme_nb}" -o README.md -t gfm --no-execute'
+        )
+
+    _save_cached_readme(cache, cfg)
+
+# %% ../nbs/scilint.ipynb 79
 def _lint(
     cpf_med_warn_thresh: float = 1,
     cpf_mean_warn_thresh: float = 1,
@@ -504,7 +532,7 @@ def _lint(
     else:
         print("Linting succeeded")
 
-# %% ../nbs/scilint.ipynb 77
+# %% ../nbs/scilint.ipynb 80
 def _build(
     cpf_med_warn_thresh: float = 1,
     cpf_mean_warn_thresh: float = 1,
@@ -520,9 +548,8 @@ def _build(
     fail_over: int = 1,
 ):
     tidy()
-    # TODO replace these with nbdev library versions when call_parse issue is resolved
-    _nbdev_lib_export()
-    _nbdev_lib_test()
+    nbdev_export.__wrapped__()
+    nbdev_test.__wrapped__()
     _lint(
         cpf_med_warn_thresh,
         cpf_mean_warn_thresh,
@@ -537,10 +564,9 @@ def _build(
         exclusions,
         fail_over,
     )
-    # TODO replace these with nbdev library versions when call_parse issue is resolved
-    _nbdev_lib_clean()
+    nbdev_clean.__wrapped__()
 
-# %% ../nbs/scilint.ipynb 79
+# %% ../nbs/scilint.ipynb 82
 @call_parse
 def scilint_lint(
     cpf_med_warn_thresh: float = 1,
@@ -571,7 +597,7 @@ def scilint_lint(
         fail_over,
     )
 
-# %% ../nbs/scilint.ipynb 80
+# %% ../nbs/scilint.ipynb 83
 @call_parse
 def scilint_build(
     cpf_med_warn_thresh: float = 1,
@@ -602,7 +628,7 @@ def scilint_build(
         fail_over,
     )
 
-# %% ../nbs/scilint.ipynb 81
+# %% ../nbs/scilint.ipynb 84
 @call_parse
 def scilint_ci(
     cpf_med_warn_thresh: float = 1,
@@ -637,5 +663,5 @@ def scilint_ci(
             "Quarto is not installed. A working quarto install is required for the CI build"
         )
         sys.exit(-1)
-    nbdev_readme()
-    nbdev_docs()
+    nbdev_readme.__wrapped__()
+    nbdev_docs.__wrapped__()
