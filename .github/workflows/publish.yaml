@@ -12,10 +12,10 @@ jobs:
           PYPI_PWD: ${{ secrets.PYPI_PWD }}
         run: |
           scilint_ci --exclusions "nbs/example_nbs/"
+          pip install twine
           echo "[pypi]" >> ~/.pypirc
           echo "repository = https://upload.pypi.org/legacy/" >> ~/.pypirc
           echo "username = $PYPI_USER" >> ~/.pypirc
           cat ~/.pypirc
           echo "password = $PYPI_PWD" >> ~/.pypirc
           nbdev_pypi
-
