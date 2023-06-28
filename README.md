@@ -29,7 +29,7 @@ production”.
 > [homepage](https://nbdev.fast.ai/) or [github
 > repo](https://github.com/fastai/nbdev)
 
-# What is Notebook Quality?
+# ✅ What is Notebook Quality?
 
 This is a good quesiton and this library does not pretend to have the
 answer. But we feel the problem space is worth exploring because the
@@ -43,101 +43,103 @@ right**..
 
 ![Low vs High?](nbs/images/scilint_before_after_prep.png)
 
-# Getting Started
+# 🚀 Getting Started
 
 `pip install scilint`
 
-`scilint` has the following main features/commands:
+## **[`scilint_lint`](https://newday-data.github.io/scilint/scilint.html#scilint_lint)**
 
-1.  [`scilint_tidy`](https://newday-data.github.io/scilint/scilint.html#scilint_tidy):
-    run an in-place opinionated flavour of
-    [nbQA](https://github.com/nbQA-dev/nbQA) to tidy up your notebooks
-2.  [`scilint_lint`](https://newday-data.github.io/scilint/scilint.html#scilint_lint):
-    inspect the notebooks for potential quality correlates and report on
-    the findings
-3.  [`scilint_build`](https://newday-data.github.io/scilint/scilint.html#scilint_build):
-    frequent usage build command to promote quality and consistency:
-    {tidy, convert notebooks, test, lint, clean metadata}
-4.  [`scilint_ci`](https://newday-data.github.io/scilint/scilint.html#scilint_ci):
-    job designed to be used for continuous integration. Adds readme and
-    docs generation to
-    [`scilint_build`](https://newday-data.github.io/scilint/scilint.html#scilint_build).
+Exposes potential quality issues within your notebook using some
+pre-defined checks. Default threshold values for these checks are
+provided that will enable a build to be marked as passed or failed.
 
-## [`scilint_tidy`](https://newday-data.github.io/scilint/scilint.html#scilint_tidy)
+## **[`scilint_tidy`](https://newday-data.github.io/scilint/scilint.html#scilint_tidy)**
 
 To get a consistent style across your notebooks you can run
 [`scilint_tidy`](https://newday-data.github.io/scilint/scilint.html#scilint_tidy);
 this currently runs `autoflake`, `black` and `isort` in-place across all
 of your notebooks.
 
-## [`scilint_lint`](https://newday-data.github.io/scilint/scilint.html#scilint_lint)
+## **[`scilint_build`](https://newday-data.github.io/scilint/scilint.html#scilint_build)**
 
-Exposes potential quality issues within your notebook using some
-pre-defined checks. Default threshold values for these checks are
-provided that will enable a build to be marked as passed or failed.
+Has two versions which are executed automatically on detection of
+whether your project uses `nbdev` or not.
 
-## [`scilint_build`](https://newday-data.github.io/scilint/scilint.html#scilint_build)
+1.  Non-nbdev projects chain these commands:
+    [`scilint_tidy`](https://newday-data.github.io/scilint/scilint.html#scilint_tidy),
+    [`scilint_lint`](https://newday-data.github.io/scilint/scilint.html#scilint_lint)
+2.  `nbdev` projects chain the following commands:
+    [`scilint_tidy`](https://newday-data.github.io/scilint/scilint.html#scilint_tidy),
+    [nbdev_export](https://nbdev.fast.ai/api/export.html),
+    [nbdev_test](https://nbdev.fast.ai/api/test.html),
+    [`scilint_lint`](https://newday-data.github.io/scilint/scilint.html#scilint_lint),
+    [nbdev_clean](https://nbdev.fast.ai/api/clean.html)
 
-Chains the following commands to ensure your project stays above the
-quality and consistency bar:
-[`scilint_tidy`](https://newday-data.github.io/scilint/scilint.html#scilint_tidy),
-[nbdev_export](https://nbdev.fast.ai/api/export.html),
-[nbdev_test](https://nbdev.fast.ai/api/test.html),
-[`scilint_lint`](https://newday-data.github.io/scilint/scilint.html#scilint_lint),
-[nbdev_clean](https://nbdev.fast.ai/api/clean.html)
-
-## [`scilint_ci`](https://newday-data.github.io/scilint/scilint.html#scilint_ci)
+## **[`scilint_ci`](https://newday-data.github.io/scilint/scilint.html#scilint_ci)** \[`nbdev` only\]
 
 Adds documentation generation to
 [`scilint_build`](https://newday-data.github.io/scilint/scilint.html#scilint_build).
-This requires a working quarto build.
+This requires an `nbdev` project and a working quarto build.
 
-### Potential Quality Indicators
+## Potential Quality Indicators
 
 The below are potential quality indicators that you can use to set a
 minimum bar for quality and comprehensibility within your projects.
 These are not exhaustive or definite quality indicators - they are a
 starting point to open the conversation about what it means to have a
-high quality notebook in practice. The indicators will evolve over time
-with usage and feedback from user community.
+high quality notebook in practice.
 
-- **Calls-Per-Function {Median, Mean}:** compares the amount of calls to
-  the amount of functions. Looks for possible reletatioship between
-  function definitions and usage.
-- **In-Function-Percent:**: the percentage of code that is within a
-  function rather than outside function scope.
-- **Asserts-Per-Function:** looks at how many tests (where assert =
-  test) there are compared to the total function count.
-- **InlineAssertsPerFunction {Median, Mean}:** examines how many times a
-  function is called within an assert statement - this aims to see
-  testing of functions not just usage.
-- **MarkdownToCodeRatio:** what is the ratio of markdown cells to code
-  cells.
-- **TotalCodeLen**: the total line length of the notebook.
+1.  **Calls-Per-Function {Median, Mean}:** compares the amount of calls
+    to the amount of functions. Looks for possible reletatioship between
+    function definitions and usage.
+2.  **In-Function-Percent:**: the percentage of code that is within a
+    function rather than outside function scope.
+3.  **Asserts-Per-Function:** looks at how many tests (where assert =
+    test) there are compared to the total function count.
+4.  **InlineAssertsPerFunction {Median, Mean}:** examines how many times
+    a function is called within an assert statement - this aims to see
+    testing of functions not just usage.
+5.  **MarkdownToCodeRatio:** what is the ratio of markdown cells to code
+    cells.
+6.  **TotalCodeLen**: the total line length of the notebook.
+7.  **SyntaxErrors**: if the code within the notebook has invalid Python
+    syntax.
 
-Note: The following are a starting point for trying to reason about
-notebook quality from some properties of the code and markdown within
-them. There is no definitive answer as to whether any of these are low
-or high quality. However there are reasons to believe inituitively that
-higher or lower values of the below will produce higher quality
-notebooks. There are many questions left ot answer, like the role of
-docstrings and comments, their effectiveness may warrant inclusion but
-that is an open quesiton at the moment. As this library is used and
-refined with more projects and more experimental metrics then these
-intuitions can evaluated more rigorously.
+> Note: the amove metrics are a starting point for trying to reason
+> about notebook quality from some properties of the code and markdown
+> within them. There is no definitive answer as to whether any of these
+> are low or high quality. However there are reasons to believe
+> inituitively that higher or lower values of the below will produce
+> higher quality notebooks. There are many questions left ot answer,
+> like the role of docstrings and comments, their effectiveness may
+> warrant inclusion but that is an open quesiton at the moment. As this
+> library is used and refined with more projects and more experimental
+> metrics then these intuitions can evaluated more rigorously.
 
 ### What does a lint report look like?
 
 ![Sample Report](nbs/images/sample_report.png)
 
-### Fail Threshold
+# ⚙️ Configuring `scilint`
+
+Run `scilint -h` to see more detailed options including the ability to
+set warning thresholds and customise various options of the linter.
+
+### Fail Threshold (`--fail_over`)
 
 > For now a very basic failure threshold is set by providing a number of
 > warnings that will be accepted without failing the build. The default
-> is 1 but this can be increased via the `--fail-over` parameter. As the
+> is 1 but this can be increased via the `--fail_over` parameter. As the
 > library matures we will revisit adding more nuanced options.
 
-# Contributing
+## Exclusion (`--exclusions`)
+
+> You can exclude individual notebooks or directories using the
+> `--exclusions` parameter. This is a comma separated list of paths
+> where you can provide directories like “dir/” or specific notebooks
+> like “somenotebook.ipynb”
+
+# 👍 Contributing
 
 After you clone this repository, please run nbdev_install_hooks in your
 terminal. This sets up git hooks, which clean up the notebooks to remove
@@ -153,7 +155,12 @@ If you made a change to the notebooks in one of the exported cells, you
 can export it to the library with nbdev_prepare. If you made a change to
 the library, you can export it back to the notebooks with nbdev_update.
 
-# Appendix
+# 🤓 Start using `nbdev`!
+
+In case you hadn’t guessed yet we are big `nbdev` fans. `scilint` has a
+better developer experience on an `nbdev` project and is more fully
+featured but mostly because it will really help you when trying to move
+from exploratory development to production processes.
 
 `nbdev` contains many features that are useful for Data Science
 workflows; too many in fact to cover here. We will focus on the major

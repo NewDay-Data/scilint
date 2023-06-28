@@ -478,10 +478,11 @@ def _build(
 ):
     print("Tidying notebooks..")
     tidy()
-    nbdev_export.__wrapped__()
-    print("Converted notebooks")
-    print("Testing notebooks..")
-    nbdev_test.__wrapped__()
+    if is_nbdev_project():
+        nbdev_export.__wrapped__()
+        print("Converted notebooks")
+        print("Testing notebooks..")
+        nbdev_test.__wrapped__()
     print("Running notebook linter..")
     _lint(
         cpf_med_warn_thresh,
@@ -498,8 +499,9 @@ def _build(
         fail_over,
         print_syntax_errors,
     )
-    print("Cleaning notebooks..")
-    nbdev_clean.__wrapped__()
+    if is_nbdev_project():
+        print("Cleaning notebooks..")
+        nbdev_clean.__wrapped__()
 
 # %% ../nbs/scilint.ipynb 80
 @call_parse
@@ -549,10 +551,6 @@ def scilint_build(
     exclusions: str = None,
     fail_over: int = 1,
 ):
-    if not is_nbdev_project():
-        print("scilint_build feature is only available for nbdev projects")
-        return
-
     _build(
         cpf_med_warn_thresh,
         cpf_mean_warn_thresh,
