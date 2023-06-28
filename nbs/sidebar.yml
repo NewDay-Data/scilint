@@ -9,3 +9,4 @@ website:
           - example_nbs/nbdev_high_quality.ipynb
           - example_nbs/non_nbdev.ipynb
           - example_nbs/non_nbdev_low_quality.ipynb
+          - example_nbs/syntax_error.ipynb

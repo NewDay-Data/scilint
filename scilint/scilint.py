@@ -380,7 +380,7 @@ def calculate_warnings(
     gt_metrics_thresholds,
 ):
     syntax_error_nbs = scoring_report[scoring_report.has_syntax_error].index.to_list()
-    # TODO tidy this up to usual config dict
+    # TODO tidy this up to a config dict - only print report if issues found
     print("\n*********************Begin Scilint Report*********************")
     num_warnings = 0
 
@@ -417,7 +417,6 @@ def calculate_warnings(
 
     if num_warnings == 0:
         print("No issues found")
-    print("*********************End Scilint Report***********************")
     return num_warnings
 
 # %% ../nbs/scilint.ipynb 78
