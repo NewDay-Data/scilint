@@ -1,18 +1,19 @@
-name: publish 
+name: publish
 on:
-  workflow_dispatch:
+  workflow_dispatch: null
 jobs:
   publish:
     runs-on: ubuntu-latest
     steps:
       - uses: fastai/workflows/nbdev-ci@master
       - name: release
-	env: 
+        env:
           PYPY_USER: ${{ secrets.PYPI_USER }}
-	  PYPI_PWD: ${{ secrets.PYPI_PWD }}
+          PYPI_PWD: ${{ secrets.PYPI_PWD }}
         run: |
           scilint_ci --exclusions "nbs/example_nbs/"
-		  echo "[pypi]" >> ~/.pypirc
-		  echo "username = $pypi_user" >> ~/.pypirc
-		  echo "password = $pypi_pwd" >> ~/.pypirc
-		  nbdev_pypi
+          echo "[pypi]" >> ~/.pypirc
+          echo "username = $pypi_user" >> ~/.pypirc
+          echo "password = $pypi_pwd" >> ~/.pypirc
+          nbdev_pypi
+
