@@ -132,7 +132,7 @@ def median_cpf(nb):
 # %% ../nbs/scilint.ipynb 39
 def afr(nb):
     nb_cell_code = get_cell_code(nb)
-    if nb_cell_code == "":  # no code cells - metrics is not well defined
+    if nb_cell_code == "":  # no code cells - metric is not well defined
         return np.nan
     func_defs = get_func_defs(nb_cell_code)
     num_funcs = len(func_defs)
@@ -169,17 +169,17 @@ def iaf(nb):
     func_defs = get_func_defs(nb_cell_code)
     return count_inline_asserts(nb_cell_code, func_defs)
 
-# %% ../nbs/scilint.ipynb 51
+# %% ../nbs/scilint.ipynb 50
 def mean_iaf(nb):
     return pd.Series(iaf(nb)).mean()
 
-# %% ../nbs/scilint.ipynb 52
+# %% ../nbs/scilint.ipynb 51
 def median_iaf(nb):
     with warnings.catch_warnings():
         warnings.filterwarnings(action="ignore", message="Mean of empty slice")
         return pd.Series(iaf(nb)).median()
 
-# %% ../nbs/scilint.ipynb 56
+# %% ../nbs/scilint.ipynb 55
 def calc_ifp(nb_cell_code):
     stmts_in_func = 0
     stmts_outside_func = 0
@@ -197,7 +197,7 @@ def calc_ifp(nb_cell_code):
         else (stmts_in_func / (stmts_outside_func + stmts_in_func)) * 100
     )
 
-# %% ../nbs/scilint.ipynb 58
+# %% ../nbs/scilint.ipynb 57
 def ifp(nb):
     nb_cell_code = "\n".join(
         [
@@ -210,7 +210,7 @@ def ifp(nb):
         return np.nan
     return calc_ifp(nb_cell_code)
 
-# %% ../nbs/scilint.ipynb 61
+# %% ../nbs/scilint.ipynb 60
 def mcp(nb):
     md_cells = [c for c in nb.cells if c["cell_type"] == "markdown"]
     code_cells = [c for c in nb.cells if c["cell_type"] == "code"]
@@ -224,11 +224,11 @@ def mcp(nb):
         else (num_md_cells / (num_md_cells + num_code_cells)) * 100
     )
 
-# %% ../nbs/scilint.ipynb 64
+# %% ../nbs/scilint.ipynb 63
 def tcl(nb):
     return sum([len(c["source"]) for c in nb.cells if c["cell_type"] == "code"])
 
-# %% ../nbs/scilint.ipynb 66
+# %% ../nbs/scilint.ipynb 65
 def lint_nb(
     nb_path, include_in_scoring, rounding_precision=3, print_syntax_errors=False
 ):
@@ -271,7 +271,7 @@ def lint_nb(
         has_syntax_error,
     )
 
-# %% ../nbs/scilint.ipynb 67
+# %% ../nbs/scilint.ipynb 66
 # TODO generate and persist a new dataframe of warnings from this..
 
 
@@ -279,7 +279,7 @@ def format_quality_warning(metric, warning_data, warn_thresh, direction):
     for warning_row in warning_data.reset_index().itertuples():
         print(f'"{warning_row.index}" has: {metric} {direction} {warn_thresh}')
 
-# %% ../nbs/scilint.ipynb 68
+# %% ../nbs/scilint.ipynb 67
 def get_excluded_paths(paths: Iterable[Path], exclude_pattern: str):
     excl_paths = []
     for ex_pattern in exclude_pattern.split(","):
@@ -294,7 +294,7 @@ def get_excluded_paths(paths: Iterable[Path], exclude_pattern: str):
             )
     return excl_paths
 
-# %% ../nbs/scilint.ipynb 70
+# %% ../nbs/scilint.ipynb 69
 def lint_nbs(
     cpf_med_warn_thresh=1,
     cpf_mean_warn_thresh=1,
@@ -371,7 +371,7 @@ def lint_nbs(
 
     return lint_report, num_warnings
 
-# %% ../nbs/scilint.ipynb 71
+# %% ../nbs/scilint.ipynb 70
 def calculate_warnings(
     scoring_report,
     lt_metric_cols,
@@ -420,7 +420,7 @@ def calculate_warnings(
     print("*********************End Scilint Report***********************")
     return num_warnings
 
-# %% ../nbs/scilint.ipynb 78
+# %% ../nbs/scilint.ipynb 77
 def _lint(
     cpf_med_warn_thresh: float = 1,
     cpf_mean_warn_thresh: float = 1,
@@ -460,7 +460,7 @@ def _lint(
     else:
         print("Linting succeeded")
 
-# %% ../nbs/scilint.ipynb 79
+# %% ../nbs/scilint.ipynb 78
 def _build(
     cpf_med_warn_thresh: float = 1,
     cpf_mean_warn_thresh: float = 1,
@@ -478,8 +478,8 @@ def _build(
 ):
     print("Tidying notebooks..")
     tidy()
-    print("Converting notebooks..")
     nbdev_export.__wrapped__()
+    print("Converted notebooks")
     print("Testing notebooks..")
     nbdev_test.__wrapped__()
     print("Running notebook linter..")
@@ -501,7 +501,7 @@ def _build(
     print("Cleaning notebooks..")
     nbdev_clean.__wrapped__()
 
-# %% ../nbs/scilint.ipynb 81
+# %% ../nbs/scilint.ipynb 80
 @call_parse
 def scilint_lint(
     cpf_med_warn_thresh: float = 1,
@@ -533,7 +533,7 @@ def scilint_lint(
         fail_over,
     )
 
-# %% ../nbs/scilint.ipynb 82
+# %% ../nbs/scilint.ipynb 81
 @call_parse
 def scilint_build(
     cpf_med_warn_thresh: float = 1,
@@ -568,7 +568,7 @@ def scilint_build(
         fail_over,
     )
 
-# %% ../nbs/scilint.ipynb 83
+# %% ../nbs/scilint.ipynb 82
 @call_parse
 def scilint_ci(
     cpf_med_warn_thresh: float = 1,
