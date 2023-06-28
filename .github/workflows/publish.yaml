@@ -7,9 +7,9 @@ jobs:
     steps:
       - uses: fastai/workflows/nbdev-ci@master
       - name: release
-	  - env: # Or as an environment variable
-		pypi_user: ${{ secrets.PYPI_USER }}
-		pypi_pwd: ${{ secrets.PYPI_PWD }}
+	env: 
+          PYPY_USER: ${{ secrets.PYPI_USER }}
+	  PYPI_PWD: ${{ secrets.PYPI_PWD }}
         run: |
           scilint_ci --exclusions "nbs/example_nbs/"
 		  echo "[pypi]" >> ~/.pypirc
