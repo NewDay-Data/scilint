@@ -476,7 +476,6 @@ def _build(
     fail_over: int = 1,
     print_syntax_errors: bool = False,
 ):
-    print("scilint_build commencing..")
     print("Tidying notebooks..")
     tidy()
     print("Converting notebooks..")
@@ -501,7 +500,6 @@ def _build(
     )
     print("Cleaning notebooks..")
     nbdev_clean.__wrapped__()
-    print("scilint_build completed")
 
 # %% ../nbs/scilint.ipynb 81
 @call_parse
