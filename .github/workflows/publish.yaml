@@ -16,6 +16,5 @@ jobs:
           echo "[pypi]" >> ~/.pypirc
           echo "repository = https://upload.pypi.org/legacy/" >> ~/.pypirc
           echo "username = $PYPI_USER" >> ~/.pypirc
-          cat ~/.pypirc
           echo "password = $PYPI_PWD" >> ~/.pypirc
           nbdev_pypi
