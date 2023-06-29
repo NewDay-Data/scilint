@@ -18,26 +18,39 @@ statistically relate some of the quality relevant attributes to key
 delivery metrics like “change failure rate” or “lead time to
 production”.
 
-# Standing on the shoulders of giants - *an nbdev library*
+# 🤔 Why do I need quality notebooks?
 
-> `scilint` is written on top of the excellent `nbdev` library. This
-> library is revolutionary as it truly optimises all the benefits of
-> notebooks and compensates for some of their weaker points. Converting
-> your libraries to `nbdev` is not required for this tool to work but we
-> argue that it would confer many benefits if you are part of a
-> Production Data Science team. For more information on `nbdev` see the
-> [homepage](https://nbdev.fast.ai/) or [github
-> repo](https://github.com/fastai/nbdev)
+*If you prefer to move out of notebook-based workflows, post-exploration
+to an IDE+Python mix I encourage you to have another ponder on the
+benefits of staying in a notebook-based workflow. Notebooks have a
+strong visual emphasis and proximity to data. They are also the primary
+axis of change within Data Science - new ideas are gained from diving
+into data. So instead of packing up your code, re-writing it for
+elsewhere and all the waste that entails bring quality to your
+exploration workflow and spend more time building stuff that matters.*
+
+If you’re still not convinced watch this
+[video](https://www.youtube.com/watch?v=9Q6sLbz37gk) where **Jeremy
+Howard** does a far better job of explaining why notebooks are for
+serious development too!
 
 # ✅ What is Notebook Quality?
 
-This is a good quesiton and this library does not pretend to have the
+This is a good question and this library does not pretend to have the
 answer. But we feel the problem space is worth exploring because the
 value of high quality deliveries means lower time-to-market, less time
 in re-work or rote porting of code and frees people up to think about
-and solve hard problems.
+and solve hard problems. That said, there are some practices that we
+have observed producing “better” notebooks workflows from experience in
+production Data Science teams. These are:
 
-That said, here is a very basic starting point where we would say that
+- Extracting code to functions
+- Testing logic as well as data behaviour
+- Putting sufficient emphasis on legibility and ease of comprehension
+  through adequate use of markdown
+
+These are the starting premises that permit the notebook quality
+conversation to start. To bring this to life a little, we would say that
 **the notebook on left is of lower quality than the notebook on the
 right**..
 
@@ -45,25 +58,51 @@ right**..
 
 # 🚀 Getting Started
 
+> Please note `sclint` is only tested on linux and macos currently.
+
+## Install
+
 `pip install scilint`
 
-## **[`scilint_lint`](https://newday-data.github.io/scilint/scilint.html#scilint_lint)**
+## Commands
+
+### **[`scilint_lint`](https://newday-data.github.io/scilint/scilint.html#scilint_lint)**
 
 Exposes potential quality issues within your notebook using some
 pre-defined checks. Default threshold values for these checks are
 provided that will enable a build to be marked as passed or failed.
 
-## **[`scilint_tidy`](https://newday-data.github.io/scilint/scilint.html#scilint_tidy)**
+#### `--fail_over`
+
+> For now a very basic failure threshold is set by providing a number of
+> warnings that will be accepted without failing the build. The default
+> is 1 but this can be increased via the `--fail_over` parameter. As the
+> library matures we will revisit adding more nuanced options.
+
+#### `--exclusions`
+
+> You can exclude individual notebooks or directories using the
+> `--exclusions` parameter. This is a comma separated list of paths
+> where you can provide directories like “dir/” or specific notebooks
+> like “somenotebook.ipynb”
+
+![scilint_lint](nbs/images/scilint_lint.png)
+
+### **[`scilint_tidy`](https://newday-data.github.io/scilint/scilint.html#scilint_tidy)**
 
 To get a consistent style across your notebooks you can run
 [`scilint_tidy`](https://newday-data.github.io/scilint/scilint.html#scilint_tidy);
 this currently runs `autoflake`, `black` and `isort` in-place across all
-of your notebooks.
+of your notebooks. This function wraps an opinionated flavour of the
+excellent [nbQA](https://github.com/nbQA-dev/nbQA) library.
 
-## **[`scilint_build`](https://newday-data.github.io/scilint/scilint.html#scilint_build)**
+![scilint_tidy](nbs/images/scilint_tidy.png)
 
-Has two versions which are executed automatically on detection of
-whether your project uses `nbdev` or not.
+### **[`scilint_build`](https://newday-data.github.io/scilint/scilint.html#scilint_build)**
+
+Chains existing functions together to form a build script for notebook
+based projects. Has two versions which are executed automatically on
+detection of whether your project uses `nbdev` or not.
 
 1.  Non-nbdev projects chain these commands:
     [`scilint_tidy`](https://newday-data.github.io/scilint/scilint.html#scilint_tidy),
@@ -75,11 +114,17 @@ whether your project uses `nbdev` or not.
     [`scilint_lint`](https://newday-data.github.io/scilint/scilint.html#scilint_lint),
     [nbdev_clean](https://nbdev.fast.ai/api/clean.html)
 
+![scilint_build](nbs/images/scilint_build.png)
+
 ## **[`scilint_ci`](https://newday-data.github.io/scilint/scilint.html#scilint_ci)** \[`nbdev` only\]
 
 Adds documentation generation to
 [`scilint_build`](https://newday-data.github.io/scilint/scilint.html#scilint_build).
-This requires an `nbdev` project and a working quarto build.
+This requires an `nbdev` project and a working quarto build. Quarto is a
+core part of the nbdev system, if you are having trouble installing it,
+check out the `nbdev` Github [page](https://github.com/fastai/nbdev).
+For more details on the Quarto project, check out their home
+[page](https://quarto.org/).
 
 ## Potential Quality Indicators
 
@@ -120,24 +165,43 @@ high quality notebook in practice.
 
 ![Sample Report](nbs/images/sample_report.png)
 
-# ⚙️ Configuring `scilint`
+# Changing Behaviour - Recommended Usage
 
-Run `scilint -h` to see more detailed options including the ability to
-set warning thresholds and customise various options of the linter.
+Infusing quality into workflows is aided by having timely, short-cycle
+feedback of issues. Addtionally whatever quality bar you choose as a
+team, it should be non-negotiable that way you can spend time thinking
+about what matters like the problem you are trying to solve not
+nit-picking on small details repeatedly.
 
-### Fail Threshold (`--fail_over`)
+We recommend using `scilint` in the following way to maximise benefit:
 
-> For now a very basic failure threshold is set by providing a number of
-> warnings that will be accepted without failing the build. The default
-> is 1 but this can be increased via the `--fail_over` parameter. As the
-> library matures we will revisit adding more nuanced options.
+- Open a terminal environment alongside your notebook environment: run
+  [`scilint_build`](https://newday-data.github.io/scilint/scilint.html#scilint_build)
+  to chekc your project is in good shape
+- Add pre-commit hooks to run
+  [`scilint_build`](https://newday-data.github.io/scilint/scilint.html#scilint_build)
+  or
+  [`scilint_ci`](https://newday-data.github.io/scilint/scilint.html#scilint_ci)
+  (`nbdev` only) before your changes are commited. Don’t forget to
+  commit your work often!
+- Add a CI build job that runs
+  [`scilint_build`](https://newday-data.github.io/scilint/scilint.html#scilint_build)
+  or
+  [`scilint_ci`](https://newday-data.github.io/scilint/scilint.html#scilint_ci).
+  A Github action workflow is included in this repo that does just that.
 
-## Exclusion (`--exclusions`)
+![Pre-commit hook](nbs/images/scilint_pre_commit.png)
 
-> You can exclude individual notebooks or directories using the
-> `--exclusions` parameter. This is a comma separated list of paths
-> where you can provide directories like “dir/” or specific notebooks
-> like “somenotebook.ipynb”
+# Standing on the shoulders of giants - *an nbdev library*
+
+> `scilint` is written on top of the excellent `nbdev` library. This
+> library is revolutionary as it truly optimises all the benefits of
+> notebooks and compensates for some of their weaker points. Converting
+> your libraries to `nbdev` is not required for this tool to work but we
+> argue that it would confer many benefits if you are part of a
+> Production Data Science team. For more information on `nbdev` see the
+> [homepage](https://nbdev.fast.ai/) or [github
+> repo](https://github.com/fastai/nbdev)
 
 # 👍 Contributing
 
