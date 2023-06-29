@@ -175,20 +175,21 @@ nit-picking on small details repeatedly.
 
 We recommend using `scilint` in the following way to maximise benefit:
 
-- Open a terminal environment alongside your notebook environment: run
-  [`scilint_build`](https://newday-data.github.io/scilint/scilint.html#scilint_build)
-  to chekc your project is in good shape
-- Add pre-commit hooks to run
-  [`scilint_build`](https://newday-data.github.io/scilint/scilint.html#scilint_build)
-  or
-  [`scilint_ci`](https://newday-data.github.io/scilint/scilint.html#scilint_ci)
-  (`nbdev` only) before your changes are commited. Don’t forget to
-  commit your work often!
-- Add a CI build job that runs
-  [`scilint_build`](https://newday-data.github.io/scilint/scilint.html#scilint_build)
-  or
-  [`scilint_ci`](https://newday-data.github.io/scilint/scilint.html#scilint_ci).
-  A Github action workflow is included in this repo that does just that.
+1.  Open a terminal environment alongside your notebook environment: run
+    [`scilint_build`](https://newday-data.github.io/scilint/scilint.html#scilint_build)
+    to chekc your project is in good shape
+2.  Add pre-commit hooks to run
+    [`scilint_build`](https://newday-data.github.io/scilint/scilint.html#scilint_build)
+    or
+    [`scilint_ci`](https://newday-data.github.io/scilint/scilint.html#scilint_ci)
+    (`nbdev` only) before your changes are commited. Don’t forget to
+    commit your work often!
+3.  Add a CI build job that runs
+    [`scilint_build`](https://newday-data.github.io/scilint/scilint.html#scilint_build)
+    or
+    [`scilint_ci`](https://newday-data.github.io/scilint/scilint.html#scilint_ci).
+    A Github action workflow is included in this repo that does just
+    that.
 
 ![Pre-commit hook](nbs/images/scilint_pre_commit.png)
 
