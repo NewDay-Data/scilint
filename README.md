@@ -55,7 +55,7 @@ conversation to start. To bring this to life a little, we would say that
 right**..
 
 <p align="center">
-<img src="nbs/images/scilint_before_after_prep.png" alt="Low vs High" width="738">
+<img src="nbs/images/scilint_before_after_prep.png" alt="Low vs High" width="738" border="3px solid black">
 </p>
 
 # 🚀 Getting Started
@@ -95,7 +95,7 @@ provided that will enable a build to be marked as passed or failed.
 
 </details>
 <p align="center">
-<img src="nbs/images/scilint_lint.png" alt="scilint_lint" width="738">
+<img src="nbs/images/scilint_lint.png" alt="scilint_lint" width="738" border="3px solid black">
 </p>
 
 ### **[`scilint_tidy`](https://newday-data.github.io/scilint/scilint.html#scilint_tidy)**
@@ -148,44 +148,42 @@ These are not exhaustive or definite quality indicators - they are a
 starting point to open the conversation about what it means to have a
 high quality notebook in practice.
 
-1.  **Calls-Per-Function (CPF) {Median, Mean}:** compares the amount of
-    calls to the amount of functions. Looks for possible relationship
-    between function definitions and usage.
-2.  **In-Function-Percent (IFP):**: the percentage of code that is
-    within a function rather than outside function scope.
+1.  **Calls-Per-Function (CPF):** compares the amount of calls to the
+    amount of functions. Looks for possible relationship between
+    function definitions and usage.
+2.  **In-Function-Percent (IFP):** the percentage of code that is within
+    a function rather than outside function scope.
 3.  **Asserts-Per-Function (APF):** looks at how many tests (where
     assert = test) there are compared to the total function count.
-4.  **InlineAssertsPerFunction (IAF) {Median, Mean}:** examines how many
-    times a function is called within an assert statement - this aims to
-    see testing of functions not just usage.
+4.  **InlineAssertsPerFunction (IAF):** examines how many times a
+    function is called within an assert statement - this aims to see
+    testing of functions not just usage.
 5.  **MarkdownToCodeRatio (MCP):** what is the ratio of markdown cells
     to code cells.
 6.  **TotalCodeLen (TCL)**: the total line length of the notebook.
 7.  **SyntaxErrors**: if the code within the notebook has invalid Python
     syntax.
 
-> *Note: there is no definitive answer as to whether any of these are
-> low or high quality. However there are reasons to believe inituitively
-> that higher or lower values of the below will produce higher quality
-> notebooks. There are many questions left ot answer, like the role of
-> docstrings and comments, their effectiveness may warrant inclusion but
-> that is an open question at the moment. As this library is used and
-> refined with more projects and more experimental metrics then these
-> intuitions can evaluated more rigorously.*
+> *as already stated there is no definitive answer as to whether any of
+> these are low or high quality. However there are reasons to believe
+> inituitively that higher or lower values of the above will produce
+> higher quality notebooks. There are many questions left to answer,
+> like the role of docstrings, comments and type annotations; their
+> effectiveness may warrant inclusion but that is an open question at
+> the moment. As this library is used and refined with more projects and
+> more experimental metrics then these intuitions can evaluated more
+> rigorously.*
 
-# Adding New Indicators
+# ➕ Adding New Indicators \[coming soon\]\*
 
-*\[coming soon\]* - requires:
-
-- some code refactoring for practical handling of multiple indicators
-  (short-term issue)
-- an assessment framework for determining effectiveness of indicator
-  (slightly more challenging)
+*requires: * *some code refactoring for practical handling of multiple
+indicators (short-term issue)* \* *an assessment framework for
+determining effectiveness of indicator (slightly more challenging)*
 
 ### What does a lint report look like?
 
 <p align="center">
-<img src="nbs/images/sample_report.png" alt="Sample Report" width="738">
+<img src="nbs/images/sample_report.png" alt="Sample Report" width="738" border="3px solid white">
 </p>
 
 # 🔁 Changing Behaviour - Recommended Usage
@@ -214,15 +212,19 @@ We recommend using `scilint` in the following way to maximise benefit:
     A Github action workflow is included in this repo that does just
     that.
 
-![Pre-commit hook](nbs/images/scilint_pre_commit.png)
+<p align="center">
+<img src="nbs/images/scilint_pre_commit.png" alt="Pre-commit hook" width="738" border="3px solid black">
+</p>
 
 # 🙌 Standing on the shoulders of giants - *an nbdev library*
 
 > `scilint` is written on top of the excellent `nbdev` library. This
 > library is revolutionary as it truly optimises all the benefits of
-> notebooks and compensates for most of their weaker points.
+> notebooks and compensates for most of their weaker points. For more
+> information on `nbdev` see the [homepage](https://nbdev.fast.ai/) or
+> [github repo](https://github.com/fastai/nbdev)
 
-## 🤓 Start using `nbdev`!
+## 🤓 Make the switch to `nbdev`!
 
 In case you hadn’t guessed yet we are big `nbdev` fans. `scilint` has a
 better developer experience on an `nbdev` project and is more fully
@@ -237,7 +239,7 @@ will focus on the major features we consider to have the most impact:
 
 1.  Explicit **separation of exploration from what is *fundamental* for
     the workflow to execute** using the `export` directive.
-2.  Introducing a **test runner for notebooks**.
+2.  Introducing a fit-for-purpose **test runner for notebooks**.
 3.  **In-flow documentation** of a notebook that is focused on the
     reader and powerfully expressive thanks to Quarto Markdown (aids
     building towards published reproducible research)
@@ -245,10 +247,6 @@ will focus on the major features we consider to have the most impact:
 5.  Being able to build a **modular notebook workflow as it is easy to
     export and import functions from notebooks** in your project - this
     puts shared reusable functions within reach of the team easily.
-
-For more information on `nbdev` see the
-[homepage](https://nbdev.fast.ai/) or [github
-repo](https://github.com/fastai/nbdev)
 
 # 👍 Contributing
 
