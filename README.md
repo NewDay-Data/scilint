@@ -140,7 +140,7 @@ check out the `nbdev` Github [page](https://github.com/fastai/nbdev).
 For more details on the Quarto project, check out their home
 [page](https://quarto.org/).
 
-## 📈 Potential Quality Indicators
+# 📈 Potential Quality Indicators
 
 The below are potential quality indicators that you can use to set a
 minimum bar for quality and comprehensibility within your projects.
@@ -174,7 +174,7 @@ high quality notebook in practice.
 > more experimental metrics then these intuitions can evaluated more
 > rigorously.*
 
-### What does a lint report look like?
+## What does a lint report look like?
 
 The lint warnings are printed to the console and a more thorough report
 is generated and saved as a CSV file which looks like this:
@@ -185,9 +185,12 @@ is generated and saved as a CSV file which looks like this:
 
 # ➕ Adding New Indicators \[coming soon\]\*
 
-*requires: * *some code refactoring for practical handling of multiple
-indicators (short-term issue)* \* *an assessment framework for
-determining effectiveness of indicator (slightly more challenging)*
+\*requires:
+
+- *some code refactoring for practical handling of multiple indicators
+  (short-term issue)*
+- *an assessment framework for determining effectiveness of indicator
+  (slightly more challenging)*
 
 # 🔁 Changing Behaviour - Recommended Usage
 
