@@ -174,17 +174,20 @@ high quality notebook in practice.
 > more experimental metrics then these intuitions can evaluated more
 > rigorously.*
 
+### What does a lint report look like?
+
+The lint warnings are printed to the console and a more thorough report
+is generated and saved as a CSV file which looks like this:
+
+<p align="center">
+<img src="nbs/images/sample_report.png" alt="Sample Report" width="738" border="3px solid white">
+</p>
+
 # ➕ Adding New Indicators \[coming soon\]\*
 
 *requires: * *some code refactoring for practical handling of multiple
 indicators (short-term issue)* \* *an assessment framework for
 determining effectiveness of indicator (slightly more challenging)*
-
-### What does a lint report look like?
-
-<p align="center">
-<img src="nbs/images/sample_report.png" alt="Sample Report" width="738" border="3px solid white">
-</p>
 
 # 🔁 Changing Behaviour - Recommended Usage
 
