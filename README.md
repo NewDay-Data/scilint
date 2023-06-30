@@ -54,7 +54,9 @@ conversation to start. To bring this to life a little, we would say that
 **the notebook on the left is of lower quality than the notebook on the
 right**..
 
-![Low vs High?](nbs/images/scilint_before_after_prep.png)
+<p align="center">
+<img src="nbs/images/scilint_before_after_prep.png" alt="Low vs High" width="738">
+</p>
 
 # 🚀 Getting Started
 
@@ -72,6 +74,11 @@ Exposes potential quality issues within your notebook using some
 pre-defined checks. Default threshold values for these checks are
 provided that will enable a build to be marked as passed or failed.
 
+<details>
+<summary>
+<b>Show parameters</b>
+</summary>
+
 #### `--fail_over`
 
 > For now a very basic failure threshold is set by providing a number of
@@ -86,7 +93,10 @@ provided that will enable a build to be marked as passed or failed.
 > where you can provide directories like “dir/” or specific notebooks
 > like “somenotebook.ipynb”
 
-![scilint_lint](nbs/images/scilint_lint.png)
+</details>
+<p align="center">
+<img src="nbs/images/scilint_lint.png" alt="scilint_lint" width="738">
+</p>
 
 ### **[`scilint_tidy`](https://newday-data.github.io/scilint/scilint.html#scilint_tidy)**
 
@@ -96,7 +106,9 @@ this currently runs `autoflake`, `black` and `isort` in-place across all
 of your notebooks. This function wraps an opinionated flavour of the
 excellent [nbQA](https://github.com/nbQA-dev/nbQA) library.
 
-![scilint_tidy](nbs/images/scilint_tidy.png)
+<p align="center">
+<img src="nbs/images/scilint_tidy.png" alt="scilint_lint" width="738">
+</p>
 
 ### **[`scilint_build`](https://newday-data.github.io/scilint/scilint.html#scilint_build)**
 
@@ -114,7 +126,9 @@ detection of whether your project uses `nbdev` or not.
     [`scilint_lint`](https://newday-data.github.io/scilint/scilint.html#scilint_lint),
     [nbdev_clean](https://nbdev.fast.ai/api/clean.html)
 
-![scilint_build](nbs/images/scilint_build.png)
+<p align="center">
+<img src="nbs/images/scilint_build.png" alt="scilint_lint" width="738">
+</p>
 
 ## **[`scilint_ci`](https://newday-data.github.io/scilint/scilint.html#scilint_ci)** \[`nbdev` only\]
 
@@ -159,9 +173,20 @@ high quality notebook in practice.
 > refined with more projects and more experimental metrics then these
 > intuitions can evaluated more rigorously.*
 
+# Adding New Indicators
+
+*\[coming soon\]* - requires:
+
+- some code refactoring for practical handling of multiple indicators
+  (short-term issue)
+- an assessment framework for determining effectiveness of indicator
+  (slightly more challenging)
+
 ### What does a lint report look like?
 
-![Sample Report](nbs/images/sample_report.png)
+<p align="center">
+<img src="nbs/images/sample_report.png" alt="Sample Report" width="738">
+</p>
 
 # 🔁 Changing Behaviour - Recommended Usage
 
