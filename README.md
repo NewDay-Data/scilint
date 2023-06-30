@@ -13,9 +13,9 @@ relevant aspects of the notebook and providing what we believe are
 sensible defaults that potentially correlate with higher quality
 workflows. We also let users define the quality line as they see fit
 through configuration of existing thresholds and ability to add new
-metrics. As use of the library grows we anticipate being able to
-statistically relate some of the quality relevant attributes to key
-delivery metrics like “change failure rate” or “lead time to
+metrics (coming soon). As use of the library grows we anticipate being
+able to statistically relate some of the quality relevant attributes to
+key delivery metrics like “change failure rate” or “lead time to
 production”.
 
 # 🤔 Why do I need quality notebooks?
@@ -51,14 +51,14 @@ production Data Science teams. These are:
 
 These are the starting premises that permit the notebook quality
 conversation to start. To bring this to life a little, we would say that
-**the notebook on left is of lower quality than the notebook on the
+**the notebook on the left is of lower quality than the notebook on the
 right**..
 
 ![Low vs High?](nbs/images/scilint_before_after_prep.png)
 
 # 🚀 Getting Started
 
-> Please note `sclint` is only tested on linux and macos currently.
+> Please note `scilint` is only tested on linux and macos currently.
 
 ## Install
 
@@ -126,7 +126,7 @@ check out the `nbdev` Github [page](https://github.com/fastai/nbdev).
 For more details on the Quarto project, check out their home
 [page](https://quarto.org/).
 
-## Potential Quality Indicators
+## 📈 Potential Quality Indicators
 
 The below are potential quality indicators that you can use to set a
 minimum bar for quality and comprehensibility within your projects.
@@ -134,50 +134,48 @@ These are not exhaustive or definite quality indicators - they are a
 starting point to open the conversation about what it means to have a
 high quality notebook in practice.
 
-1.  **Calls-Per-Function {Median, Mean}:** compares the amount of calls
-    to the amount of functions. Looks for possible reletatioship between
-    function definitions and usage.
-2.  **In-Function-Percent:**: the percentage of code that is within a
-    function rather than outside function scope.
-3.  **Asserts-Per-Function:** looks at how many tests (where assert =
-    test) there are compared to the total function count.
-4.  **InlineAssertsPerFunction {Median, Mean}:** examines how many times
-    a function is called within an assert statement - this aims to see
-    testing of functions not just usage.
-5.  **MarkdownToCodeRatio:** what is the ratio of markdown cells to code
-    cells.
-6.  **TotalCodeLen**: the total line length of the notebook.
+1.  **Calls-Per-Function (CPF) {Median, Mean}:** compares the amount of
+    calls to the amount of functions. Looks for possible relationship
+    between function definitions and usage.
+2.  **In-Function-Percent (IFP):**: the percentage of code that is
+    within a function rather than outside function scope.
+3.  **Asserts-Per-Function (APF):** looks at how many tests (where
+    assert = test) there are compared to the total function count.
+4.  **InlineAssertsPerFunction (IAF) {Median, Mean}:** examines how many
+    times a function is called within an assert statement - this aims to
+    see testing of functions not just usage.
+5.  **MarkdownToCodeRatio (MCP):** what is the ratio of markdown cells
+    to code cells.
+6.  **TotalCodeLen (TCL)**: the total line length of the notebook.
 7.  **SyntaxErrors**: if the code within the notebook has invalid Python
     syntax.
 
-> Note: the amove metrics are a starting point for trying to reason
-> about notebook quality from some properties of the code and markdown
-> within them. There is no definitive answer as to whether any of these
-> are low or high quality. However there are reasons to believe
-> inituitively that higher or lower values of the below will produce
-> higher quality notebooks. There are many questions left ot answer,
-> like the role of docstrings and comments, their effectiveness may
-> warrant inclusion but that is an open quesiton at the moment. As this
-> library is used and refined with more projects and more experimental
-> metrics then these intuitions can evaluated more rigorously.
+> *Note: there is no definitive answer as to whether any of these are
+> low or high quality. However there are reasons to believe inituitively
+> that higher or lower values of the below will produce higher quality
+> notebooks. There are many questions left ot answer, like the role of
+> docstrings and comments, their effectiveness may warrant inclusion but
+> that is an open question at the moment. As this library is used and
+> refined with more projects and more experimental metrics then these
+> intuitions can evaluated more rigorously.*
 
 ### What does a lint report look like?
 
 ![Sample Report](nbs/images/sample_report.png)
 
-# Changing Behaviour - Recommended Usage
+# 🔁 Changing Behaviour - Recommended Usage
 
 Infusing quality into workflows is aided by having timely, short-cycle
 feedback of issues. Addtionally whatever quality bar you choose as a
 team, it should be non-negotiable that way you can spend time thinking
 about what matters like the problem you are trying to solve not
-nit-picking on small details repeatedly.
+nitpicking on small details repeatedly.
 
 We recommend using `scilint` in the following way to maximise benefit:
 
 1.  Open a terminal environment alongside your notebook environment: run
     [`scilint_build`](https://newday-data.github.io/scilint/scilint.html#scilint_build)
-    to chekc your project is in good shape
+    often to check your project is in good shape
 2.  Add pre-commit hooks to run
     [`scilint_build`](https://newday-data.github.io/scilint/scilint.html#scilint_build)
     or
@@ -193,16 +191,39 @@ We recommend using `scilint` in the following way to maximise benefit:
 
 ![Pre-commit hook](nbs/images/scilint_pre_commit.png)
 
-# Standing on the shoulders of giants - *an nbdev library*
+# 🙌 Standing on the shoulders of giants - *an nbdev library*
 
 > `scilint` is written on top of the excellent `nbdev` library. This
 > library is revolutionary as it truly optimises all the benefits of
-> notebooks and compensates for some of their weaker points. Converting
-> your libraries to `nbdev` is not required for this tool to work but we
-> argue that it would confer many benefits if you are part of a
-> Production Data Science team. For more information on `nbdev` see the
-> [homepage](https://nbdev.fast.ai/) or [github
-> repo](https://github.com/fastai/nbdev)
+> notebooks and compensates for most of their weaker points.
+
+## 🤓 Start using `nbdev`!
+
+In case you hadn’t guessed yet we are big `nbdev` fans. `scilint` has a
+better developer experience on an `nbdev` project and is more fully
+featured but mostly because it will really help you when trying to move
+from exploratory development to production processes.
+
+Converting your libraries to `nbdev` is not required for this tool to
+work but we argue that it would confer many benefits if you are part of
+a Production Data Science team. `nbdev` contains many features that are
+useful for Data Science workflows; too many in fact to cover here. We
+will focus on the major features we consider to have the most impact:
+
+1.  Explicit **separation of exploration from what is *fundamental* for
+    the workflow to execute** using the `export` directive.
+2.  Introducing a **test runner for notebooks**.
+3.  **In-flow documentation** of a notebook that is focused on the
+    reader and powerfully expressive thanks to Quarto Markdown (aids
+    building towards published reproducible research)
+4.  **Git friendly workflow** via pre-commit hooks.
+5.  Being able to build a **modular notebook workflow as it is easy to
+    export and import functions from notebooks** in your project - this
+    puts shared reusable functions within reach of the team easily.
+
+For more information on `nbdev` see the
+[homepage](https://nbdev.fast.ai/) or [github
+repo](https://github.com/fastai/nbdev)
 
 # 👍 Contributing
 
@@ -219,23 +240,3 @@ match.
 If you made a change to the notebooks in one of the exported cells, you
 can export it to the library with nbdev_prepare. If you made a change to
 the library, you can export it back to the notebooks with nbdev_update.
-
-# 🤓 Start using `nbdev`!
-
-In case you hadn’t guessed yet we are big `nbdev` fans. `scilint` has a
-better developer experience on an `nbdev` project and is more fully
-featured but mostly because it will really help you when trying to move
-from exploratory development to production processes.
-
-`nbdev` contains many features that are useful for Data Science
-workflows; too many in fact to cover here. We will focus on the major
-features we consider to have significant for Production Data Science
-teams:
-
-1.  Explicit separation of exploration from what is **fundamental** for
-    the workflow to execute using the `export` directive.
-2.  Introducing a test runner for notebook-based repos.
-3.  In-flow documentation of a notebook that is focused on the reader
-    and powerfully expressive thanks to Quarto Markdown (aids building
-    towards published reproducible research)
-4.  Git friendly workflow via pre-commit hooks.
