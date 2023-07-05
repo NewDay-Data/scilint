@@ -1,0 +1,19 @@
+---
+  exclusions: ~
+  fail-over: 1
+  csv-out-path: "/tmp/scilint.csv"
+  precision: 3
+  print_syntax_errors: true
+  warnings:
+    lt:
+      calls_per_func_median: 1
+      calls_per_func_mean: 1
+      in_func_perc: 20
+      asserts_func_ratio: 1
+      inline_asserts_per_func_median: 0
+      inline_asserts_per_func_mean: 0.5
+      markdown_code_percent: 5
+    gt:
+      total_code_len: 30000
+    equals:
+      has_syntax_error: true
