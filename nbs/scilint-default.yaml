@@ -15,5 +15,6 @@
       markdown_code_pct: 5
     gt:
       total_code_len: 30000
+      loc_per_md_section: 1000
     equals:
       has_syntax_error: true
