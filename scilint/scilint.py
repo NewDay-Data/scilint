@@ -330,6 +330,8 @@ def lint_nbs(conf: Dict[str, Any], indicators: Dict[str, Callable]):
 
     if num_warnings > 0:
         display_warning_report(all_warns)
+    else:
+        print("No issues found during linting")
 
     return lint_report, all_warns, num_warnings
 
