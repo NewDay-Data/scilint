@@ -3,8 +3,9 @@
 # %% auto 0
 __all__ = ['indicator_funcs', 'run_nbqa_cmd', 'tidy', 'is_nbdev_project', 'get_func_defs', 'count_func_calls',
            'replace_ipython_magics', 'safe_div', 'get_cell_code', 'calls_per_func', 'mean_cpf', 'median_cpf', 'afr',
-           'count_inline_asserts', 'iaf', 'mean_iaf', 'median_iaf', 'calc_ifp', 'ifp', 'mcp', 'tcl', 'lint_nb',
-           'get_excluded_paths', 'lint_nbs', 'scilint_tidy', 'scilint_lint', 'scilint_build', 'scilint_ci']
+           'count_inline_asserts', 'iaf', 'mean_iaf', 'median_iaf', 'calc_ifp', 'ifp', 'mcp', 'tcl',
+           'loc_per_md_section', 'lint_nb', 'get_excluded_paths', 'lint_nbs', 'scilint_tidy', 'scilint_lint',
+           'scilint_build', 'scilint_ci']
 
 # %% ../nbs/scilint.ipynb 2
 import ast
@@ -230,7 +231,23 @@ def mcp(nb):
 def tcl(nb):
     return sum([len(c["source"]) for c in nb.cells if c["cell_type"] == "code"])
 
-# %% ../nbs/scilint.ipynb 65
+# %% ../nbs/scilint.ipynb 63
+def loc_per_md_section(nb):
+    num_md_sections = len(
+        [
+            c["source"]
+            for c in nb.cells
+            if c["cell_type"] == "markdown" and c["source"].strip().startswith("#")
+        ]
+    )
+    total_code_len = tcl(nb)
+    if total_code_len == 0 or num_md_sections == 0:
+        result = np.nan
+    else:
+        result = tcl(nb) / num_md_sections
+    return result
+
+# %% ../nbs/scilint.ipynb 66
 indicator_funcs = {
     "calls_per_func_mean": mean_cpf,
     "calls_per_func_median": median_cpf,
@@ -239,10 +256,11 @@ indicator_funcs = {
     "inline_asserts_per_func_median": median_iaf,
     "in_func_pct": ifp,
     "markdown_code_pct": mcp,
+    "loc_per_md_section": loc_per_md_section,
     "total_code_len": tcl,
 }
 
-# %% ../nbs/scilint.ipynb 68
+# %% ../nbs/scilint.ipynb 69
 def lint_nb(
     nb_path: Path,
     conf: Dict[str, Any],
@@ -265,7 +283,7 @@ def lint_nb(
 
     return tuple(indic_vals)
 
-# %% ../nbs/scilint.ipynb 69
+# %% ../nbs/scilint.ipynb 70
 def get_excluded_paths(paths: Iterable[Path], exclude_pattern: str) -> Iterable[Path]:
     excl_paths = []
     for ex_pattern in exclude_pattern.split(","):
@@ -280,7 +298,7 @@ def get_excluded_paths(paths: Iterable[Path], exclude_pattern: str) -> Iterable[
             )
     return excl_paths
 
-# %% ../nbs/scilint.ipynb 72
+# %% ../nbs/scilint.ipynb 73
 def lint_nbs(conf: Dict[str, Any], indicators: Dict[str, Callable]):
     nb_paths = [Path(p) for p in nbglob(Path("."))]
 
@@ -312,7 +330,7 @@ def lint_nbs(conf: Dict[str, Any], indicators: Dict[str, Callable]):
 
     return lint_report, warnings_by_nb, num_warnings
 
-# %% ../nbs/scilint.ipynb 75
+# %% ../nbs/scilint.ipynb 76
 def _persist_results(
     lint_report: pd.DataFrame, warnings_by_nb: Dict[str, Any], conf: Dict[str, Any]
 ):
@@ -326,7 +344,7 @@ def _persist_results(
         json.dump(warnings_by_nb, outfile)
     lint_report.to_csv(Path(out_dir, "scilint_report.csv"))
 
-# %% ../nbs/scilint.ipynb 78
+# %% ../nbs/scilint.ipynb 79
 def _calculate_warnings(
     scoring_report: pd.DataFrame, conf: Dict[str, Any], include_missing: bool = False
 ) -> Tuple[Dict[str, Any], int]:
@@ -359,7 +377,7 @@ def _calculate_warnings(
     num_warnings = sum([len(v) for v in warnings_by_nb.values()])
     return warnings_by_nb, num_warnings
 
-# %% ../nbs/scilint.ipynb 80
+# %% ../nbs/scilint.ipynb 81
 def _reshape_warnings(
     scoring_report: pd.DataFrame, warning_details: Iterable[Any]
 ) -> Dict[str, Iterable[Tuple]]:
@@ -371,8 +389,8 @@ def _reshape_warnings(
     warnings_by_nb = {key: val for key, val in warnings_by_nb.items() if len(val) > 0}
     return warnings_by_nb
 
-# %% ../nbs/scilint.ipynb 87
-def _lint(conf: Dict[Any, Any]):
+# %% ../nbs/scilint.ipynb 88
+def _lint(conf: Dict[str, Any]):
     _, _, num_warnings = lint_nbs(conf, indicator_funcs)
     fail_over = conf["fail_over"]
     if fail_over == -1:
@@ -385,7 +403,7 @@ def _lint(conf: Dict[Any, Any]):
     else:
         print("Linting succeeded")
 
-# %% ../nbs/scilint.ipynb 89
+# %% ../nbs/scilint.ipynb 90
 def _build(conf: Dict[str, Any]):
     print("Tidying notebooks..")
     tidy()
@@ -400,7 +418,7 @@ def _build(conf: Dict[str, Any]):
         nbdev_clean.__wrapped__()
         print("Cleaned notebooks")
 
-# %% ../nbs/scilint.ipynb 91
+# %% ../nbs/scilint.ipynb 92
 def _load_conf(
     conf_path: str = None,
     exclusions: str = None,
@@ -430,12 +448,12 @@ def _load_conf(
             conf[override[0]] = override[1]
     return conf
 
-# %% ../nbs/scilint.ipynb 94
+# %% ../nbs/scilint.ipynb 95
 @call_parse
 def scilint_tidy():
     tidy()
 
-# %% ../nbs/scilint.ipynb 96
+# %% ../nbs/scilint.ipynb 97
 @call_parse
 def scilint_lint(
     conf_path: str = None,
@@ -450,7 +468,7 @@ def scilint_lint(
     )
     _lint(conf)
 
-# %% ../nbs/scilint.ipynb 98
+# %% ../nbs/scilint.ipynb 99
 @call_parse
 def scilint_build(
     conf_path: str = None,
@@ -465,7 +483,7 @@ def scilint_build(
     )
     _build(conf)
 
-# %% ../nbs/scilint.ipynb 100
+# %% ../nbs/scilint.ipynb 101
 @call_parse
 def scilint_ci(
     conf_path: str = None,
