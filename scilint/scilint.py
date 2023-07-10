@@ -338,11 +338,11 @@ def lint_nbs(conf: Dict[str, Any], indicators: Dict[str, Callable]):
 # %% ../nbs/scilint.ipynb 75
 def display_warning_report(all_warns: pd.DataFrame):
     print(
-        "\n*********************************Begin Scilint Warning Report*********************************"
+        "\n*********************************Begin Scilint Warning Report********************************"
     )
     print(all_warns.to_markdown(tablefmt="grid", index=False))
     print(
-        "\n*********************************End Scilint Warning Report***********************************\n"
+        "\n*********************************End Scilint Warning Report**********************************\n"
     )
 
 # %% ../nbs/scilint.ipynb 78
