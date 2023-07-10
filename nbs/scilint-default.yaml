@@ -1,18 +1,18 @@
 ---
   exclusions: ~
-  fail-over: 1
-  csv-out-path: "/tmp/scilint.csv"
+  fail_over: 1
+  out_dir: "/tmp/scilint/"
   precision: 3
-  print_syntax_errors: true
+  print_syntax_errors: false
   warnings:
     lt:
       calls_per_func_median: 1
       calls_per_func_mean: 1
-      in_func_perc: 20
+      in_func_pct: 20
       asserts_func_ratio: 1
       inline_asserts_per_func_median: 0
       inline_asserts_per_func_mean: 0.5
-      markdown_code_percent: 5
+      markdown_code_pct: 5
     gt:
       total_code_len: 30000
     equals:
