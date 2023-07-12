@@ -1,6 +1,6 @@
 ---
-  exclusions: ~
-  fail_over: 1
+  exclusions: "nbs/example_nbs/exploratory/non_nbdev.ipynb"
+  fail_over: 2
   out_dir: "/tmp/scilint/"
   precision: 3
   print_syntax_errors: false
@@ -16,6 +16,6 @@
       markdown_code_pct: 5
     gt:
       total_code_len: 100000
-      loc_per_md_section: 10000
+      loc_per_md_section: 5000
     equals:
       has_syntax_error: true

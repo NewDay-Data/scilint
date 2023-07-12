@@ -1,9 +1,10 @@
 ---
-  exclusions: ~
+  exclusions: "nbs/example_nbs/"
   fail_over: 1
   out_dir: "/tmp/scilint/"
   precision: 3
   print_syntax_errors: false
+  evaluate: true
   warnings:
     lt:
       calls_per_func_median: 1
@@ -14,7 +15,7 @@
       inline_asserts_per_func_mean: 0.5
       markdown_code_pct: 5
     gt:
-      total_code_len: 30000
-      loc_per_md_section: 1000
+      total_code_len: 50000
+      loc_per_md_section: 2000
     equals:
       has_syntax_error: true
