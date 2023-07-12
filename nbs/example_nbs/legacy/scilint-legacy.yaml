@@ -4,7 +4,7 @@
   out_dir: "/tmp/scilint/"
   precision: 3
   print_syntax_errors: false
-  evaluate: true
+  evaluate: false
   warnings:
     lt:
       calls_per_func_median: 0

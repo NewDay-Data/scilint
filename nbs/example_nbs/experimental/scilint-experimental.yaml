@@ -1,6 +1,6 @@
 ---
   exclusions: ~
-  fail_over: 1
+  fail_over: 3
   out_dir: "/tmp/scilint/"
   precision: 3
   print_syntax_errors: false
@@ -15,7 +15,7 @@
       inline_asserts_per_func_mean: 0.5
       markdown_code_pct: 5
     gt:
-      total_code_len: 30000
-      loc_per_md_section: 1000
+      total_code_len: 50000
+      loc_per_md_section: 2000
     equals:
       has_syntax_error: true
