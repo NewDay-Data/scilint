@@ -223,6 +223,21 @@ for argument expansion).*
 <img src="nbs/images/quality_standard.png" alt="Quality Standard" width="738" border="3px solid white">
 </p>
 
+- Legacy: especially on larger projects there may be a large number of
+  legacy notebooks that are not in use and no there is no obvious value
+  in improving their quality.
+- Exploratory: exploratory workflows are typically off-line and involve
+  much iteration. The benefit of some quality bar here is that it aids
+  collaboration, review and generally helps perform team-based Data
+  Science easier.
+- Experimental: we split production workflows into two groups:
+  experimental and validated. Experimental are as the name suggests
+  experimentsyet to be proven they should have a reasonably high quality
+  standard but not the same as proven work.
+- Validated: we need to have the most confidence that all validated
+  learning activity (experiments which have been accepted and scaled out
+  to all users) will run properly for along time after it is written.
+
 ## What does a lint report look like?
 
 The lint warnings are printed to the console and a more thorough report
