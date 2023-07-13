@@ -164,8 +164,11 @@ high quality notebook in practice.
     testing of functions not just usage.
 5.  **MarkdownToCodeRatio (MCP):** what is the ratio of markdown cells
     to code cells.
-6.  **TotalCodeLen (TCL)**: the total line length of the notebook.
-7.  **SyntaxErrors**: if the code within the notebook has invalid Python
+6.  **TotalCodeLen (TCL):** the total line length of the notebook code
+    cells.
+7.  **Loc-Per-MD-Section:** the lines of code per Markdown section
+    header.
+8.  **SyntaxErrors**: if the code within the notebook has invalid Python
     syntax.
 
 > *as already stated there is no definitive answer as to whether any of
@@ -178,6 +181,48 @@ high quality notebook in practice.
 > more experimental metrics then these intuitions can evaluated more
 > rigorously.*
 
+# 👓 Quality Specs
+
+Contemporary software engineering practices tend to gravitate towards a
+single quality bar. An example of such a bar might be Test-driven
+development with high test coverage and adequate acceptance tests
+coverage.
+
+More often in Software Engineering code is both likely to go into
+production and also likely to continue to be used once it does. Such a
+system makes sense in that operating environment. In the explore vs
+exploit decision making
+[trade-off](https://en.wikipedia.org/wiki/Exploration-exploitation_dilemma)
+this environment could be classified as high on the exploit side.
+
+For problems that are high on exploration, like most Data Science, we
+argue that a single quality bar is not sufficient. From experience
+adopting a progressive consolidation\* approach where exploration code
+starts with a speed of exploration goal and gradually the goal shifts to
+increase the emphasis on quality and reuse as the utility of the
+workflow becomes proven.
+
+`scilint` has a quality standard feature called “Quality Specs” which
+allow multiple different specification of quality to exist within a
+project. The standard can be a relatively low bar for exploration work
+but can become more demanding as you are closer to the productionisation
+of your work.
+
+\**(term first used by [Gaël Varoqouax](https://gael-varoquaux.info/);
+see
+[here](https://gael-varoquaux.info/programming/software-for-reproducible-science-lets-not-have-a-misunderstanding.html)
+for argument expansion).*
+
+## Reference Quality Spec
+
+> The progressive consolidation workflow that we use on projects is the
+> reference implementation for `scilint` and is summarised in the below
+> image:
+
+<p align="center">
+<img src="nbs/images/quality_standard.png" alt="Quality Standard" width="738" border="3px solid white">
+</p>
+
 ## What does a lint report look like?
 
 The lint warnings are printed to the console and a more thorough report
@@ -187,14 +232,12 @@ is generated and saved as a CSV file which looks like this:
 <img src="nbs/images/sample_report.png" alt="Sample Report" width="738" border="3px solid white">
 </p>
 
-# ➕ Adding New Indicators \[coming soon\]\*
+# ➕ Adding New Indicators
 
-\*requires:
-
-- *some code refactoring for practical handling of multiple indicators
-  (short-term issue)*
-- *an assessment framework for determining effectiveness of indicator
-  (slightly more challenging)*
+For now post your ideas as a feature request and we can discuss, if
+accepted you can provide a PR. We are looking for a more rigorous way
+link indicator and effectivess, until that is found discussion is the
+bestwe can do!
 
 # 🔁 Changing Behaviour - Recommended Usage
 
