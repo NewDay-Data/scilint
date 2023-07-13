@@ -97,6 +97,23 @@ provided that will enable a build to be marked as passed or failed.
 > where you can provide directories like “dir/” or specific notebooks
 > like “somenotebook.ipynb”
 
+#### `--display_report`
+
+> Print the lint warnings report as a markdown formatted table.
+
+#### `--out_dir`
+
+> Directory to persist the lint_report, warning_violations and the
+> confgiruation used.
+
+#### `--print_syntax_errors`
+
+> The code is parsed using the `ast` module if that parsing fails due to
+> syntax errors that is noted in the warning report but the exact syntax
+> error is not provided. With this flag the `SyntaxError` reason message
+> that failed notebook parsing will be printed to the screen for each
+> offending notebook.
+
 </details>
 <p align="center">
 <img src="nbs/images/scilint_lint.png" alt="scilint_lint" width="738" border="3px solid black">
@@ -186,7 +203,7 @@ high quality notebook in practice.
 For now post your ideas as a feature request and we can discuss, if
 accepted you can provide a PR. We are looking for a more rigorous way
 link indicator and effectivess, until that is found discussion is the
-bestwe can do!
+best we can do!
 
 # 👓 Quality Specs (& a Quality Standard)
 
@@ -226,7 +243,8 @@ for argument expansion).*
 
 - **Legacy:** especially on larger projects there may be a large number
   of legacy notebooks that are not in use and no there is no obvious
-  value in improving their quality.
+  value in improving their quality. This could be removed from the
+  workflow if you have enforced a quality standard from the outset.
 - **Exploratory:** exploratory workflows are typically off-line and
   involve much iteration. The benefit of some quality bar here is that
   it aids collaboration, review and generally helps perform team-based
@@ -293,17 +311,23 @@ We recommend using `scilint` in the following way to maximise benefit:
 1.  Decide upon a quality standard including the different specs for
     your ideal team workflow from idea to production - or just use the
     reference standard of:
-    `legacy, exploratory=>experimental=>validated`.
-2.  Open a terminal environment alongside your notebook environment: run
+    `legacy, exploratory=>experimental=>validated`. If you don’t want
+    the complexity of a multi-spec standard you can just use a single
+    default spec.
+2.  Set `fail_over` to 1 - there is a temptation to slide this value to
+    meet the amount of warning you have - it is probably easier to
+    enforce a `fail_over` of 1 and to discuss the value of the
+    thresholds instead if you feel the warning is not warranted.
+3.  Open a terminal environment alongside your notebook environment: run
     [`scilint_build`](https://newday-data.github.io/scilint/scilint.html#scilint_build)
     often to check your project is in good shape
-3.  Add pre-commit hooks to run
+4.  Add pre-commit hooks to run
     [`scilint_build`](https://newday-data.github.io/scilint/scilint.html#scilint_build)
     or
     [`scilint_ci`](https://newday-data.github.io/scilint/scilint.html#scilint_ci)
     (`nbdev` only) before your changes are commited. Don’t forget to
     commit your work often!
-4.  Add a CI build job that runs
+5.  Add a CI build job that runs
     [`scilint_build`](https://newday-data.github.io/scilint/scilint.html#scilint_build)
     or
     [`scilint_ci`](https://newday-data.github.io/scilint/scilint.html#scilint_ci).
