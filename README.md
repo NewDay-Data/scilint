@@ -48,10 +48,10 @@ and solve hard problems. That said, there are some practices that we
 have observed producing “better” notebooks workflows from experience in
 production Data Science teams. These are:
 
-- Extracting code to functions
-- Testing logic as well as data behaviour
-- Putting sufficient emphasis on legibility and ease of comprehension
-  through adequate use of markdown
+- **Extracting code to small modular functions**
+- **Testing those functions work in a variety of scenarios**
+- Putting sufficient **emphasis on legibility and ease of
+  comprehension** through adequate use of markdown
 
 These are the starting premises that permit the notebook quality
 conversation to start. To bring this to life a little, we would say that
@@ -144,7 +144,7 @@ check out the `nbdev` Github [page](https://github.com/fastai/nbdev).
 For more details on the Quarto project, check out their home
 [page](https://quarto.org/).
 
-# 📈 Potential Quality Indicators
+# 📈 Quality Indicators
 
 The below are potential quality indicators that you can use to set a
 minimum bar for quality and comprehensibility within your projects.
@@ -181,39 +181,40 @@ high quality notebook in practice.
 > more experimental metrics then these intuitions can evaluated more
 > rigorously.*
 
-# 👓 Quality Specs
+## ➕ Adding New Indicators
 
-Contemporary software engineering practices tend to gravitate towards a
-single quality bar. An example of such a bar might be Test-driven
-development with high test coverage and adequate acceptance tests
-coverage.
+For now post your ideas as a feature request and we can discuss, if
+accepted you can provide a PR. We are looking for a more rigorous way
+link indicator and effectivess, until that is found discussion is the
+bestwe can do!
 
-More often in Software Engineering code is both likely to go into
-production and also likely to continue to be used once it does. Such a
-system makes sense in that operating environment. In the explore vs
-exploit decision making
+# 👓 Quality Specs (& a Quality Standard)
+
+Often in Software Engineering code is both likely to go into production
+and likely to continue to be used once it does. In this enviroment it
+makes sense for codebases to have a single quality standard. In the
+**explore vs exploit** decision making
 [trade-off](https://en.wikipedia.org/wiki/Exploration-exploitation_dilemma)
-this environment could be classified as high on the exploit side.
+this environment could be classified as **high exploit**.
 
-For problems that are high on exploration, like most Data Science, we
-argue that a single quality bar is not sufficient. From experience
-adopting a progressive consolidation\* approach where exploration code
-starts with a speed of exploration goal and gradually the goal shifts to
-increase the emphasis on quality and reuse as the utility of the
-workflow becomes proven.
+For problems that are **high explore**, like most Data Science work, we
+argue that **a single quality bar is not sufficient**. `scilint`
+promotes adopting a *progressive consolidation*\* approach where
+exploration code starts with a speed of exploration goal and this may
+gradually shift to increase the emphasis on quality and reuse as the
+utility of the workflow becomes proven.
 
-`scilint` has a quality standard feature called “Quality Specs” which
-allow multiple different specification of quality to exist within a
-project. The standard can be a relatively low bar for exploration work
-but can become more demanding as you are closer to the productionisation
-of your work.
+This feature is known as “Quality Specs” and it allows multiple
+different specifications of quality to exist within a project. The
+standard can be a relatively low bar for exploration work but can become
+more demanding as you are closer to the productionisation of your work.
 
 \**(term first used by [Gaël Varoqouax](https://gael-varoquaux.info/);
 see
 [here](https://gael-varoquaux.info/programming/software-for-reproducible-science-lets-not-have-a-misunderstanding.html)
 for argument expansion).*
 
-## Reference Quality Spec
+## Reference Quality Standard
 
 > The progressive consolidation workflow that we use on projects is the
 > reference implementation for `scilint` and is summarised in the below
@@ -223,20 +224,52 @@ for argument expansion).*
 <img src="nbs/images/quality_standard.png" alt="Quality Standard" width="738" border="3px solid white">
 </p>
 
-- Legacy: especially on larger projects there may be a large number of
-  legacy notebooks that are not in use and no there is no obvious value
-  in improving their quality.
-- Exploratory: exploratory workflows are typically off-line and involve
-  much iteration. The benefit of some quality bar here is that it aids
-  collaboration, review and generally helps perform team-based Data
-  Science easier.
-- Experimental: we split production workflows into two groups:
-  experimental and validated. Experimental are as the name suggests
-  experimentsyet to be proven they should have a reasonably high quality
-  standard but not the same as proven work.
-- Validated: we need to have the most confidence that all validated
+- **Legacy:** especially on larger projects there may be a large number
+  of legacy notebooks that are not in use and no there is no obvious
+  value in improving their quality.
+- **Exploratory:** exploratory workflows are typically off-line and
+  involve much iteration. The benefit of some quality bar here is that
+  it aids collaboration, review and generally helps perform team-based
+  Data Science easier.
+- **Experimental:** we split production workflows into two groups:
+  experimental and validated. Experimental notebooks are, as the name
+  suggests, experiments that are yet to be proven. As they are released
+  to customers they should have a reasonably high quality standard but
+  not the same as validated work.
+- **Validated:** we need to have the most confidence that all validated
   learning activity (experiments which have been accepted and scaled out
   to all users) will run properly for along time after it is written.
+
+## What is a Quality Spec in practice?
+
+A quality spec in practice is just a yaml configuration file of the
+properties of the quality spec. It contains threshold values for warning
+along with some other settings. To adopt a multi-spec standard place a
+spec file into each directory that you want to have different standards
+for. Look at `nbs/examples/nbs` to see an example of a multi-spec
+standard.
+
+    ---
+      exclusions: ~
+      fail_over: 1
+      out_dir: "/tmp/scilint/"
+      precision: 3
+      print_syntax_errors: false
+      evaluate: true
+      warnings:
+        lt:
+          calls_per_func_median: 1
+          calls_per_func_mean: 1
+          in_func_pct: 20
+          asserts_func_ratio: 1
+          inline_asserts_per_func_median: 0
+          inline_asserts_per_func_mean: 0.5
+          markdown_code_pct: 5
+        gt:
+          total_code_len: 50000
+          loc_per_md_section: 2000
+        equals:
+          has_syntax_error: true
 
 ## What does a lint report look like?
 
@@ -246,13 +279,6 @@ is generated and saved as a CSV file which looks like this:
 <p align="center">
 <img src="nbs/images/sample_report.png" alt="Sample Report" width="738" border="3px solid white">
 </p>
-
-# ➕ Adding New Indicators
-
-For now post your ideas as a feature request and we can discuss, if
-accepted you can provide a PR. We are looking for a more rigorous way
-link indicator and effectivess, until that is found discussion is the
-bestwe can do!
 
 # 🔁 Changing Behaviour - Recommended Usage
 
@@ -264,16 +290,20 @@ nitpicking on small details repeatedly.
 
 We recommend using `scilint` in the following way to maximise benefit:
 
-1.  Open a terminal environment alongside your notebook environment: run
+1.  Decide upon a quality standard including the different specs for
+    your ideal team workflow from idea to production - or just use the
+    reference standard of:
+    `legacy, exploratory=>experimental=>validated`.
+2.  Open a terminal environment alongside your notebook environment: run
     [`scilint_build`](https://newday-data.github.io/scilint/scilint.html#scilint_build)
     often to check your project is in good shape
-2.  Add pre-commit hooks to run
+3.  Add pre-commit hooks to run
     [`scilint_build`](https://newday-data.github.io/scilint/scilint.html#scilint_build)
     or
     [`scilint_ci`](https://newday-data.github.io/scilint/scilint.html#scilint_ci)
     (`nbdev` only) before your changes are commited. Don’t forget to
     commit your work often!
-3.  Add a CI build job that runs
+4.  Add a CI build job that runs
     [`scilint_build`](https://newday-data.github.io/scilint/scilint.html#scilint_build)
     or
     [`scilint_ci`](https://newday-data.github.io/scilint/scilint.html#scilint_ci).
@@ -318,10 +348,10 @@ will focus on the major features we consider to have the most impact:
 
 # 👍 Contributing
 
-After you clone this repository, please run nbdev_install_hooks in your
-terminal. This sets up git hooks, which clean up the notebooks to remove
-the extraneous stuff stored in the notebooks (e.g. which cells you ran)
-which causes unnecessary merge conflicts.
+After you clone this repository, please run `nbdev_install_hooks` in
+your terminal. This sets up git hooks, which clean up the notebooks to
+remove the extraneous stuff stored in the notebooks (e.g. which cells
+you ran) which causes unnecessary merge conflicts.
 
 To run the tests in parallel, launch nbdev_test.
 
