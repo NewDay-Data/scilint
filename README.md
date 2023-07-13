@@ -60,7 +60,6 @@ right**..
 
 <p align="center">
 <img src="nbs/images/scilint_before_after_prep.png" alt="Low vs High" width="738" border="3px solid black">
-<em>Basic Quality Comparison</em>
 </p>
 
 # 🚀 Getting Started
@@ -337,7 +336,6 @@ We recommend using `scilint` in the following way to maximise benefit:
 
 <p align="center">
 <img src="nbs/images/scilint_pre_commit.png" alt="Pre-commit hook" width="738" border="3px solid black">
-<em>Example pre-commit hook workflow</em>
 </p>
 
 # 🙌 Standing on the shoulders of giants - *an nbdev library*
