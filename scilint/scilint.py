@@ -427,7 +427,6 @@ def _map_paths_specs(nb_glob: Path = None, specs_glob: Path = Path(".").resolve(
             skip_folder_re="ipynb_checkpoints|_proc",
         )
     ]
-    [p.name for p in spec_files]
     default_spec_files = [p for p in spec_files if p.name == "scilint-default.yaml"]
     default_spec_file = default_spec_files[0] if len(default_spec_files) > 0 else None
     spec_dirs = [p.parent for p in spec_files]
@@ -443,10 +442,11 @@ def _map_paths_specs(nb_glob: Path = None, specs_glob: Path = Path(".").resolve(
             if default_spec_file is not None:
                 spec_nbs[default_spec_file].append(nb)
             else:
-                raise ValueError(
-                    f"No spec found for: {nb} and no default spec provided; \
-                add custom spec for dir or create scilint-default.yaml spec"
-                )
+                # Special case: not actually a valid file path - triggers loading a fallback
+                fallback_path = Path("scilint-default")
+                if fallback_path not in spec_nbs:
+                    spec_nbs[fallback_path] = []
+                spec_nbs[fallback_path].append(nb)
 
     return spec_nbs
 
@@ -519,9 +519,12 @@ def lint(
     all_warns = []
     warns_count = []
     for spec, nbs in spec_nbs.items():
-        conf = _load_conf(
-            spec, exclusions, fail_over, out_dir, precision, print_syntax_errors
-        )
+        if spec == "scilint-default":
+            conf = get_default_spec()
+        else:
+            conf = _load_conf(
+                spec, exclusions, fail_over, out_dir, precision, print_syntax_errors
+            )
         if conf["evaluate"] == False:
             print(f"Linting skipped for: {spec.name} as evaluate is set to false")
             continue
