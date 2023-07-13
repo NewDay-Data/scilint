@@ -45,6 +45,11 @@ website:
               - example_nbs/legacy/syntax_error.ipynb
       - section: example_nbs
         contents:
+          - section: no_spec_provided
+            contents:
+              - example_nbs/no_spec_provided/nbdev.ipynb
+      - section: example_nbs
+        contents:
           - section: validated
             contents:
               - example_nbs/validated/nbdev_high_quality.ipynb
