@@ -10,3 +10,41 @@ website:
           - example_nbs/non_nbdev.ipynb
           - example_nbs/non_nbdev_low_quality.ipynb
           - example_nbs/syntax_error.ipynb
+          - section: experimental
+            contents:
+              - example_nbs/experimental/nbdev.ipynb
+      - section: example_nbs
+        contents:
+          - section: experimental
+            contents:
+              - example_nbs/experimental/non_nbdev.ipynb
+      - section: example_nbs
+        contents:
+          - section: exploratory
+            contents:
+              - example_nbs/exploratory/nbdev.ipynb
+      - section: example_nbs
+        contents:
+          - section: exploratory
+            contents:
+              - example_nbs/exploratory/non_nbdev.ipynb
+      - section: example_nbs
+        contents:
+          - section: exploratory
+            contents:
+              - example_nbs/exploratory/syntax_error.ipynb
+      - section: example_nbs
+        contents:
+          - section: legacy
+            contents:
+              - example_nbs/legacy/non_nbdev_low_quality.ipynb
+      - section: example_nbs
+        contents:
+          - section: legacy
+            contents:
+              - example_nbs/legacy/syntax_error.ipynb
+      - section: example_nbs
+        contents:
+          - section: validated
+            contents:
+              - example_nbs/validated/nbdev_high_quality.ipynb
