@@ -11,7 +11,7 @@ jobs:
           PYPI_USER: ${{ secrets.PYPI_USER }}
           PYPI_PWD: ${{ secrets.PYPI_PWD }}
         run: |
-          scilint_ci --exclusions "nbs/example_nbs/"
+          scilint_ci
           pip install twine
           echo "[pypi]" >> ~/.pypirc
           echo "repository = https://upload.pypi.org/legacy/" >> ~/.pypirc
