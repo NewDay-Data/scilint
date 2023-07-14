@@ -123,9 +123,16 @@ provided that will enable a build to be marked as passed or failed.
 
 To get a consistent style across your notebooks you can run
 [`scilint_tidy`](https://newday-data.github.io/scilint/scilint.html#scilint_tidy);
-this currently runs `autoflake`, `black` and `isort` in-place across all
-of your notebooks. This function wraps an opinionated flavour of the
-excellent [nbQA](https://github.com/nbQA-dev/nbQA) library.
+this currently runs `autoflake`, `black` and `isort` **in-place across
+all of the notebooks in your project**. This function wraps an
+opinionated flavour of the excellent
+[nbQA](https://github.com/nbQA-dev/nbQA) library.
+
+> ⚠️Note: as this **command runs in-place it will edit your existing
+> notebooks**. If you would like to test what this formatting does
+> without actually affecting their state then we recommended trying this
+> the first time from a clean git state. That way you can stash the
+> changes if you are not happy with them.
 
 <p align="center">
 <img src="nbs/images/scilint_tidy.png" alt="scilint_lint" width="738">
