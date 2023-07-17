@@ -181,12 +181,12 @@ high quality notebook in practice.
     function definitions and usage.*
 2.  In-Function-Percent (IFP): the **percentage of code that is within a
     function** rather than outside function scope.
-3.  Tests-Per-Func-Mean (TPF: the **average number of tests (where
+3.  Tests-Per-Function-Mean (TPF: the **average number of tests (where
     test==assert) for all functions**. *Mean value so may be dominated
     by outliers.*
-4.  Test-Func-Coverage-Pct (TFC): what percentage of all functions have
-    at least one tests. *Note: this is coverage at function-level not
-    line-based coverage.*
+4.  Tests-Function-Coverage-Pct (TFC): what **percentage of all
+    functions have at least one test**. *Note: this is coverage at
+    function-level not line-based coverage.*
 5.  MarkdownToCodeRatio (MCP): what is the **ratio of markdown cells to
     code cells**.
 6.  TotalCodeLen (TCL): the **total line length** of the notebook code
