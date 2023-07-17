@@ -190,39 +190,56 @@ def _incr_assert_count(
             func_ret_asserts[ret_vals[return_var]] += 1
 
 # %% ../nbs/indicators.ipynb 47
+# def _update_ret_vals(stmt, ret_vals):
+#     if type(stmt.value.func) == ast.Subscript:
+#         func_name = stmt.func.value.id
+#     else:
+#         if isinstance(stmt.value.func, ast.Attribute):
+#             if (
+#                 "func" in stmt.value.func.value.__dict__
+#                 and "id" in stmt.value.func.value.func.__dict__
+#             ):
+#                 func_name = stmt.value.func.value.func.id
+#             else:
+#                 if "attr" in stmt.value.func.__dict__:
+#                     func_name = stmt.value.func.attr
+#                 elif "value" in stmt.value.func.__dict__:
+#                     if "id" in stmt.value.func.value.__dict__:
+#                         func_name = stmt.value.func.value.id
+#                     elif "attr" in stmt.value.func.value.__dict__:
+#                         func_name = stmt.value.func.value.attr
+#                 else:
+#                     raise ValueError(f"{stmt.value.func.__dict__}")
+#         else:
+#             func_name = (
+#                 stmt.value.func.id
+#                 if "id" in stmt.value.func.__dict__
+#                 else stmt.func.attr
+#             )
+#     if isinstance(stmt.targets[0], ast.Name):
+#         ret_vals[stmt.targets[0].id] = func_name
+#     elif isinstance(stmt.targets[0], ast.Tuple):
+#         for elts in stmt.targets[0].elts:
+#             ret_vals[elts.id] = func_name
+
+# %% ../nbs/indicators.ipynb 48
 def _update_ret_vals(stmt, ret_vals):
-    if type(stmt.value.func) == ast.Subscript:
+    if isinstance(stmt.value.func, ast.Subscript):
         func_name = stmt.func.value.id
+    elif isinstance(stmt.value.func, ast.Attribute):
+        func_name = stmt.value.func.attr
     else:
-        if isinstance(stmt.value.func, ast.Attribute):
-            if (
-                "func" in stmt.value.func.value.__dict__
-                and "id" in stmt.value.func.value.func.__dict__
-            ):
-                func_name = stmt.value.func.value.func.id
-            else:
-                if "attr" in stmt.value.func.__dict__:
-                    func_name = stmt.value.func.attr
-                elif "value" in stmt.value.func.__dict__:
-                    if "id" in stmt.value.func.value.__dict__:
-                        func_name = stmt.value.func.value.id
-                    elif "attr" in stmt.value.func.value.__dict__:
-                        func_name = stmt.value.func.value.attr
-                else:
-                    raise ValueError(f"{stmt.value.func.__dict__}")
-        else:
-            func_name = (
-                stmt.value.func.id
-                if "id" in stmt.value.func.__dict__
-                else stmt.func.attr
-            )
+        func_name = (
+            stmt.value.func.id if hasattr(stmt.value.func, "id") else stmt.func.attr
+        )
+
     if isinstance(stmt.targets[0], ast.Name):
         ret_vals[stmt.targets[0].id] = func_name
     elif isinstance(stmt.targets[0], ast.Tuple):
         for elts in stmt.targets[0].elts:
             ret_vals[elts.id] = func_name
 
-# %% ../nbs/indicators.ipynb 49
+# %% ../nbs/indicators.ipynb 50
 def tests_per_function(nb):
     nb_cell_code = "\n".join(
         [
@@ -241,15 +258,15 @@ def _tests_per_function_code(nb_cell_code):
     func_ret_asserts.update(inline_asserts)
     return pd.Series(func_ret_asserts)
 
-# %% ../nbs/indicators.ipynb 52
+# %% ../nbs/indicators.ipynb 53
 def tests_per_func_mean(nb):
     return tests_per_function(nb).mean()
 
-# %% ../nbs/indicators.ipynb 54
+# %% ../nbs/indicators.ipynb 55
 def tests_func_coverage_pct(nb):
     return tests_per_function(nb).clip(upper=1).mean() * 100
 
-# %% ../nbs/indicators.ipynb 59
+# %% ../nbs/indicators.ipynb 60
 def calc_ifp(nb_cell_code):
     stmts_in_func = 0
     stmts_outside_func = 0
@@ -267,7 +284,7 @@ def calc_ifp(nb_cell_code):
         else (stmts_in_func / (stmts_outside_func + stmts_in_func)) * 100
     )
 
-# %% ../nbs/indicators.ipynb 61
+# %% ../nbs/indicators.ipynb 62
 def in_func_pct(nb):
     nb_cell_code = "\n".join(
         [
@@ -280,7 +297,7 @@ def in_func_pct(nb):
         return np.nan
     return calc_ifp(nb_cell_code)
 
-# %% ../nbs/indicators.ipynb 64
+# %% ../nbs/indicators.ipynb 65
 def markdown_code_pct(nb):
     md_cells = [c for c in nb.cells if c["cell_type"] == "markdown"]
     code_cells = [c for c in nb.cells if c["cell_type"] == "code"]
@@ -294,11 +311,11 @@ def markdown_code_pct(nb):
         else (num_md_cells / (num_md_cells + num_code_cells)) * 100
     )
 
-# %% ../nbs/indicators.ipynb 67
+# %% ../nbs/indicators.ipynb 68
 def total_code_len(nb):
     return sum([len(c["source"]) for c in nb.cells if c["cell_type"] == "code"])
 
-# %% ../nbs/indicators.ipynb 70
+# %% ../nbs/indicators.ipynb 71
 def loc_per_md_section(nb):
     num_md_sections = len(
         [
@@ -314,7 +331,7 @@ def loc_per_md_section(nb):
         result = total_code_len(nb) / num_md_sections
     return result
 
-# %% ../nbs/indicators.ipynb 73
+# %% ../nbs/indicators.ipynb 74
 indicator_funcs = {
     "calls_per_func_mean": calls_per_func_mean,
     "calls_per_func_median": calls_per_func_median,
