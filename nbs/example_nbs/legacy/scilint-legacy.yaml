@@ -10,9 +10,8 @@
       calls_per_func_median: 0
       calls_per_func_mean: 0
       in_func_pct: 0
-      asserts_func_ratio: 0
-      inline_asserts_per_func_median: 0
-      inline_asserts_per_func_mean: 0
+      tests_func_coverage_pct: 5
+      tests_per_func_mean: 0.1
       markdown_code_pct: 0
     gt:
       total_code_len: 1000000
