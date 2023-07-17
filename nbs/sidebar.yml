@@ -2,6 +2,7 @@ website:
   sidebar:
     contents:
       - index.ipynb
+      - indicators.ipynb
       - scilint.ipynb
       - section: example_nbs
         contents:
