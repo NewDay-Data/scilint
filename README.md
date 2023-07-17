@@ -176,24 +176,25 @@ These are not exhaustive or definite quality indicators - they are a
 starting point to open the conversation about what it means to have a
 high quality notebook in practice.
 
-1.  **Calls-Per-Function (CPF):** compares the amount of calls to the
-    amount of functions. Looks for possible relationship between
-    function definitions and usage.
-2.  **In-Function-Percent (IFP):** the percentage of code that is within
-    a function rather than outside function scope.
-3.  **Asserts-Per-Function (APF):** looks at how many tests (where
-    assert = test) there are compared to the total function count.
-4.  **InlineAssertsPerFunction (IAF):** examines how many times a
-    function is called within an assert statement - this aims to see
-    testing of functions not just usage.
-5.  **MarkdownToCodeRatio (MCP):** what is the ratio of markdown cells
-    to code cells.
-6.  **TotalCodeLen (TCL):** the total line length of the notebook code
+1.  Calls-Per-Function (CPF):\*\* compares the **amount of calls to the
+    amount of functions**. *Looks for possible relationship between
+    function definitions and usage.*
+2.  In-Function-Percent (IFP): the **percentage of code that is within a
+    function** rather than outside function scope.
+3.  Tests-Per-Func-Mean (TPF: the **average number of tests (where
+    test==assert) for all functions**. *Mean value so may be dominated
+    by outliers.*
+4.  Test-Func-Coverage-Pct (TFC): what percentage of all functions have
+    at least one tests. *Note: this is coverage at function-level not
+    line-based coverage.*
+5.  MarkdownToCodeRatio (MCP): what is the **ratio of markdown cells to
+    code cells**.
+6.  TotalCodeLen (TCL): the **total line length** of the notebook code
     cells.
-7.  **Loc-Per-MD-Section:** the lines of code per Markdown section
+7.  Loc-Per-MD-Section (LPS): the **lines of code per Markdown section**
     header.
-8.  **SyntaxErrors**: if the code within the notebook has invalid Python
-    syntax.
+8.  SyntaxErrors (SYN): if the code within the notebook has **invalid
+    Python syntax**.
 
 > *as already stated there is no definitive answer as to whether any of
 > these are low or high quality. However there are reasons to believe
@@ -286,9 +287,8 @@ standard.
           calls_per_func_median: 1
           calls_per_func_mean: 1
           in_func_pct: 20
-          asserts_func_ratio: 1
-          inline_asserts_per_func_median: 0
-          inline_asserts_per_func_mean: 0.5
+          tests_func_coverage_pct: 20
+          tests_per_func_mean: 0.5
           markdown_code_pct: 5
         gt:
           total_code_len: 50000
