@@ -208,7 +208,7 @@ def lint_nbs(
         nb_paths = [Path(p).absolute() for p in nb_paths]
 
     if len(nb_paths) == 0:
-        return None, None, None
+        raise ValueError("Attempt to lint notebooks but no files found")
 
     excluded_paths = None
     exclusions = conf["exclusions"]
@@ -240,7 +240,20 @@ def lint_nbs(
 
 # %% ../nbs/scilint.ipynb 32
 def _map_paths_specs(nb_glob: Path = None, specs_glob: Path = Path(".").resolve()):
-    nbs = nbglob(nb_glob)
+    if is_nbdev_project():
+        nbs = nbglob(nb_glob)
+    else:
+        nb_glob = Path(".") if nb_glob is None else nb_glob
+        nbs = [
+            p.absolute()
+            for p in globtastic(
+                path=Path("."),
+                skip_folder_re="^[_.]",
+                file_glob="*.ipynb",
+                skip_file_re="^[_.]",
+            ).map(Path)
+        ]
+        nbs = [str(p) for p in nbs]
     spec_files = [
         Path(p)
         for p in globtastic(
@@ -272,7 +285,7 @@ def _map_paths_specs(nb_glob: Path = None, specs_glob: Path = Path(".").resolve(
 
     return spec_nbs
 
-# %% ../nbs/scilint.ipynb 47
+# %% ../nbs/scilint.ipynb 48
 def display_warning_report(all_warns: pd.DataFrame):
     print(
         "\n******************************************Begin Scilint Warning Report*****************************************"
@@ -282,7 +295,7 @@ def display_warning_report(all_warns: pd.DataFrame):
         "\n******************************************End Scilint Warning Report*******************************************\n"
     )
 
-# %% ../nbs/scilint.ipynb 49
+# %% ../nbs/scilint.ipynb 50
 def _persist_results(
     lint_report: pd.DataFrame, all_warns: pd.DataFrame, conf: Dict[str, Any]
 ):
@@ -295,7 +308,7 @@ def _persist_results(
     all_warns.to_csv(Path(out_dir, "scilint_warnings.csv"), index=False)
     lint_report.to_csv(Path(out_dir, "scilint_report.csv"))
 
-# %% ../nbs/scilint.ipynb 52
+# %% ../nbs/scilint.ipynb 53
 def _load_conf(
     conf_path: str = None,
     exclusions: str = None,
@@ -325,7 +338,7 @@ def _load_conf(
             conf[override[0]] = override[1]
     return conf
 
-# %% ../nbs/scilint.ipynb 56
+# %% ../nbs/scilint.ipynb 57
 def lint(
     display_report: bool = True,
     nb_glob: Path = None,
@@ -337,10 +350,16 @@ def lint(
     print_syntax_errors: bool = None,
 ):
     spec_nbs = _map_paths_specs(nb_glob, specs_glob)
+    print(spec_nbs)
     lint_reports = []
     all_warns = []
     warns_count = []
     for spec, nbs in spec_nbs.items():
+        if len(nbs) == 0:
+            print(
+                f"Linting skipped for: {spec.name} as no notebooks found matching path expression"
+            )
+            continue
         if spec == "scilint-default":
             conf = get_default_spec()
         else:
@@ -388,7 +407,7 @@ def lint(
     _persist_results(lint_report, all_warns, conf)
     print("Linting completed")
 
-# %% ../nbs/scilint.ipynb 59
+# %% ../nbs/scilint.ipynb 60
 def build(
     display_report: bool = True,
     nb_glob: Path = None,
@@ -421,12 +440,12 @@ def build(
         nbdev_clean.__wrapped__()
         print("Cleaned notebooks")
 
-# %% ../nbs/scilint.ipynb 62
+# %% ../nbs/scilint.ipynb 63
 @call_parse
 def scilint_tidy():
     tidy()
 
-# %% ../nbs/scilint.ipynb 64
+# %% ../nbs/scilint.ipynb 65
 @call_parse
 def scilint_lint(
     display_report: Param("Print the lint report", store_false) = False,
@@ -449,7 +468,7 @@ def scilint_lint(
         print_syntax_errors,
     )
 
-# %% ../nbs/scilint.ipynb 67
+# %% ../nbs/scilint.ipynb 68
 @call_parse
 def scilint_build(
     display_report: Param("Print the lint report", store_false) = False,
@@ -472,7 +491,7 @@ def scilint_build(
         print_syntax_errors,
     )
 
-# %% ../nbs/scilint.ipynb 69
+# %% ../nbs/scilint.ipynb 70
 @call_parse
 def scilint_ci(
     display_report: Param("Print the lint report", store_false) = False,

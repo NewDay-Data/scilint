@@ -1,0 +1,20 @@
+---
+  exclusions: ~
+  fail_over: 2
+  out_dir: "/tmp/scilint/"
+  precision: 3
+  print_syntax_errors: false
+  evaluate: true
+  warnings:
+    lt:
+      calls_per_func_median: 1
+      calls_per_func_mean: 1.5
+      in_func_pct: 30
+      tests_func_coverage_pct: 50
+      tests_per_func_mean: 1
+      markdown_code_pct: 5
+    gt:
+      total_code_len: 20000
+      loc_per_md_section: 750
+    equals:
+      has_syntax_error: true
