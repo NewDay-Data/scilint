@@ -350,7 +350,6 @@ def lint(
     print_syntax_errors: bool = None,
 ):
     spec_nbs = _map_paths_specs(nb_glob, specs_glob)
-    print(spec_nbs)
     lint_reports = []
     all_warns = []
     warns_count = []
