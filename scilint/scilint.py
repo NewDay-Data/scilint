@@ -353,6 +353,7 @@ def lint(
     lint_reports = []
     all_warns = []
     warns_count = []
+    linting_failure = False
     for spec, nbs in spec_nbs.items():
         if len(nbs) == 0:
             print(
@@ -388,22 +389,26 @@ def lint(
             print(
                 f"Linting failed for: {spec.name}, total warnings ({num_warnings}) exceeded threshold ({fail_over_conf})"
             )
-            sys.exit(num_warnings)
+            linting_failure = True
+            continue
 
     lint_report = pd.concat(lint_reports) if len(lint_reports) > 0 else lint_report
     all_warns = pd.concat(all_warns) if len(all_warns) > 0 else report_warns
     num_warnings = sum(warns_count)
 
+    _persist_results(lint_report, all_warns, conf)
+
     if num_warnings > 0:
-        print(
-            f"{num_warnings} warnings founds, within tolerated thresholds for all specs"
-        )
         if display_report:
             display_warning_report(all_warns)
+        if not linting_failure:
+            print(
+                f"{num_warnings} warnings founds, within tolerated thresholds for all specs"
+            )
+        else:
+            sys.exit(num_warnings)
     elif num_warnings == 0:
         print("No issues found during linting")
-
-    _persist_results(lint_report, all_warns, conf)
     print("Linting completed")
 
 # %% ../nbs/scilint.ipynb 60
