@@ -4,6 +4,7 @@ website:
       - index.ipynb
       - indicators.ipynb
       - scilint.ipynb
+      - utils.ipynb
       - section: example_nbs
         contents:
           - example_nbs/nbdev.ipynb
