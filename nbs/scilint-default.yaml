@@ -1,6 +1,6 @@
 ---
   exclusions: "nbs/example_nbs/"
-  fail_over: 1
+  fail_over: 0
   out_dir: "/tmp/scilint/"
   precision: 3
   print_syntax_errors: false
