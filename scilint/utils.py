@@ -30,7 +30,18 @@ def get_project_root(path: Path = Path(".").resolve()):
     return find_project_root(tuple([str()]))
 
 # %% ../nbs/utils.ipynb 7
-def configure_logging(level=logging.WARN):
+def configure_logging(level_text: str == "warn"):
+    if level_text.lower() == "warn":
+        level = logging.WARN
+    elif level_text.lower() == "info":
+        level = logging.INFO
+    elif level_text.lower() == "error":
+        level = logging.ERROR
+    elif level_text.lower() == "debug":
+        level = logging.DEBUG
+    else:
+        raise ValueError(f"Unrecognised log level: {level_text}")
+
     logFormatter = logging.Formatter(
         "%(asctime)s [%(threadName)-12.12s] [%(levelname)-5.5s]  %(message)s"
     )
@@ -75,7 +86,7 @@ def resolve_nbs(nb_glob: str = None):
         nbs = [
             p.absolute()
             for p in globtastic(
-                path=Path("."),
+                path=nb_glob,
                 skip_folder_re="^[_.]",
                 file_glob="*.ipynb",
                 skip_file_re="^[_.]",
@@ -85,7 +96,7 @@ def resolve_nbs(nb_glob: str = None):
     logger.debug(f"Resolved notebook paths: {nbs}")
     return nbs
 
-# %% ../nbs/utils.ipynb 18
+# %% ../nbs/utils.ipynb 19
 def find_common_root(nb_glob: str = None) -> Path:
     """Expand a glob expression then find the common root directory"""
     nb_paths = resolve_nbs(nb_glob)
@@ -100,11 +111,11 @@ def find_common_root(nb_glob: str = None) -> Path:
             break
     return common_root
 
-# %% ../nbs/utils.ipynb 20
+# %% ../nbs/utils.ipynb 21
 def get_project_root(path: Path = Path(".").resolve()) -> Path:
     return find_project_root(tuple([str()]))
 
-# %% ../nbs/utils.ipynb 22
+# %% ../nbs/utils.ipynb 23
 def get_excluded_paths(paths: Iterable[Path], exclude_pattern: str) -> Iterable[Path]:
     """Excluded paths should either be absolute paths or paths rooted at the project root directory"""
     excl_paths = []
@@ -126,7 +137,7 @@ def get_excluded_paths(paths: Iterable[Path], exclude_pattern: str) -> Iterable[
             )
     return excl_paths
 
-# %% ../nbs/utils.ipynb 24
+# %% ../nbs/utils.ipynb 25
 def remove_ipython_special_directives(code):
     lines = code.split("\n")
     lines = [
@@ -136,11 +147,11 @@ def remove_ipython_special_directives(code):
     ]
     return "\n".join(lines)
 
-# %% ../nbs/utils.ipynb 27
+# %% ../nbs/utils.ipynb 28
 def safe_div(numer, denom):
     return 0 if denom == 0 else numer / denom
 
-# %% ../nbs/utils.ipynb 30
+# %% ../nbs/utils.ipynb 31
 def get_cell_code(nb):
     pnb = nbformat.from_dict(nb)
     nb_cell_code = "\n".join(

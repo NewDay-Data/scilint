@@ -5,6 +5,7 @@
   precision: 3
   print_syntax_errors: false
   evaluate: false
+  nb_path_display: "parent"
   warnings:
     lt:
       calls_per_func_median: 0

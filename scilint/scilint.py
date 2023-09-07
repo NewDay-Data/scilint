@@ -54,6 +54,7 @@ def get_default_spec():
         "precision": 3,
         "print_syntax_errors": False,
         "evaluate": True,
+        "nb_path_display": "parent",
         "warnings": {
             "lt": {
                 "calls_per_func_median": 0,
@@ -85,7 +86,7 @@ def lint_nb(
             indic_vals[i] = round(indicators[indic_name](nb), conf["precision"])
     except SyntaxError as se:
         if conf["print_syntax_errors"]:
-            print(f"Syntax error in notebook: {nb_path} reason: ", se)
+            logger.warn(f"Syntax error in notebook: {nb_path} reason: ", se)
         has_syntax_error = True
     indic_vals.append(has_syntax_error)
     indic_vals.append(include_in_scoring)
@@ -153,7 +154,20 @@ def _reshape_warnings(
         ],
     )
 
-# %% ../nbs/scilint.ipynb 24
+# %% ../nbs/scilint.ipynb 23
+def _get_nb_display_name(nb_path_display: str, nb_path: Path) -> str:
+    nb_name = None
+    if nb_path_display == "abs":
+        nb_name = str(nb_path)
+    elif nb_path_display == "parent":
+        nb_name = str(Path(nb_path.parent.stem, nb_path.stem))
+    elif nb_path_display == "stem":
+        nb_name = nb_path.stem
+    else:
+        raise ValueError("nb_path_display has to be one of: \{stem, parent, abs\}")
+    return nb_name
+
+# %% ../nbs/scilint.ipynb 26
 def lint_nbs(
     spec_name: str,
     conf: Dict[str, Any],
@@ -181,7 +195,8 @@ def lint_nbs(
         if exclusions is not None:
             include_in_scoring = False if nb_path in excluded_paths else True
 
-        nb_names.append(nb_path.stem)
+        nb_names.append(_get_nb_display_name(conf["nb_path_display"], nb_path))
+
         lint_result = lint_nb(spec_name, nb_path, conf, indicators, include_in_scoring)
         results.append(lint_result)
 
@@ -197,13 +212,16 @@ def lint_nbs(
     all_warns, num_warnings = _calculate_warnings(spec_name, scoring_report, conf)
     return lint_report, all_warns, num_warnings
 
-# %% ../nbs/scilint.ipynb 26
+# %% ../nbs/scilint.ipynb 28
 def _map_paths_specs(nb_glob: Path = None, specs_glob: Path = Path(".").resolve()):
+    logger.debug(f"Mapping notebooks (glob={nb_glob}) to specs (glob={specs_glob})")
     nbs = resolve_nbs(nb_glob)
     if len(nbs) == 0:
         raise ValueError(f"Path glob expression: {nb_glob} - matched no notebooks")
+    else:
+        logger.debug(f"Path glob matched {len(nbs)} notebooks: {nbs}")
     spec_files = [
-        Path(p)
+        Path(p).resolve()
         for p in globtastic(
             specs_glob,
             file_glob="scilint-*.yaml",
@@ -227,7 +245,7 @@ def _map_paths_specs(nb_glob: Path = None, specs_glob: Path = Path(".").resolve(
                 spec_nbs[default_spec_file].append(nb)
             else:
                 # Special case: not actually a valid file path - triggers loading a fallback
-                logger.info(f"No spec file found notebook: {nb} - using fallback spec")
+                logger.debug(f"No spec file found notebook: {nb} - using fallback spec")
                 fallback_path = Path("scilint-default")
                 if fallback_path not in spec_nbs:
                     spec_nbs[fallback_path] = []
@@ -236,7 +254,7 @@ def _map_paths_specs(nb_glob: Path = None, specs_glob: Path = Path(".").resolve(
     logger.debug(f"Specs to notebooks map:\n{spec_nbs}")
     return spec_nbs
 
-# %% ../nbs/scilint.ipynb 41
+# %% ../nbs/scilint.ipynb 43
 def display_warning_report(all_warns: pd.DataFrame):
     print(
         "\n******************************************Begin Scilint Warning Report*****************************************"
@@ -246,7 +264,7 @@ def display_warning_report(all_warns: pd.DataFrame):
         "\n******************************************End Scilint Warning Report*******************************************\n"
     )
 
-# %% ../nbs/scilint.ipynb 43
+# %% ../nbs/scilint.ipynb 45
 def _persist_results(
     lint_report: pd.DataFrame, all_warns: pd.DataFrame, conf: Dict[str, Any]
 ):
@@ -259,7 +277,7 @@ def _persist_results(
     all_warns.to_csv(Path(out_dir, "scilint_warnings.csv"), index=False)
     lint_report.to_csv(Path(out_dir, "scilint_report.csv"))
 
-# %% ../nbs/scilint.ipynb 47
+# %% ../nbs/scilint.ipynb 49
 def _load_conf(
     conf_path: str = None,
     exclusions: str = None,
@@ -271,12 +289,14 @@ def _load_conf(
     if conf_path is None:
         project_root = find_project_root(tuple([str(Path(".").resolve())]))
         conf_path = Path(project_root, "nbs", "scilint-default.yaml")
-        print(f"Loading default lint config: {conf_path}")
+        logger.info(f"Loading default lint config: {conf_path}")
     else:
         conf_path = Path(conf_path)
 
     logger.debug(f"Loading config from: {conf_path}")
     conf = yaml.safe_load(conf_path.read_text())
+    logger.debug(f"Loaded configuration\n {conf}")
+    conf["nb_path_display"]
     override_names = (
         "exclusions",
         "fail_over",
@@ -290,7 +310,7 @@ def _load_conf(
             conf[override[0]] = override[1]
     return conf
 
-# %% ../nbs/scilint.ipynb 51
+# %% ../nbs/scilint.ipynb 53
 def lint(
     display_report: bool = True,
     nb_glob: Path = None,
@@ -315,11 +335,13 @@ def lint(
             )
             continue
         if str(spec) == "scilint-default":
+            logger.info("No spec assignment found - using fallback spec configuration")
             conf = get_default_spec()
         else:
             conf = _load_conf(
                 spec, exclusions, fail_over, out_dir, precision, print_syntax_errors
             )
+            conf["nb_path_display"]
         if conf["evaluate"] == False:
             print(f"Linting skipped for: {spec.name} as evaluate is set to false")
             continue
@@ -367,7 +389,7 @@ def lint(
         print("No issues found during linting")
     return exit_code
 
-# %% ../nbs/scilint.ipynb 59
+# %% ../nbs/scilint.ipynb 60
 def build(
     display_report: bool = True,
     nb_glob: Path = None,
@@ -402,15 +424,15 @@ def build(
         nbdev_clean.__wrapped__()
         print("Cleaned notebooks")
 
-# %% ../nbs/scilint.ipynb 62
+# %% ../nbs/scilint.ipynb 63
 @call_parse
-def scilint_tidy(nb_glob: Path = None):
-    configure_logging()
+def scilint_tidy(nb_glob: Path = None, log_level: str = "warn"):
+    configure_logging(log_level)
     common_root = _find_common_root(nb_glob)
     logger.debug(f"Tidying from: {common_root}")
     tidy(common_root)
 
-# %% ../nbs/scilint.ipynb 64
+# %% ../nbs/scilint.ipynb 65
 @call_parse
 def scilint_lint(
     display_report: Param("Print the lint report", store_false) = False,
@@ -422,8 +444,9 @@ def scilint_lint(
     precision: int = None,
     print_syntax_errors: bool = None,
     exit_on_failure: bool = True,
+    log_level: str = "warn",
 ):
-    configure_logging()
+    configure_logging(log_level)
     lint(
         display_report,
         nb_glob,
@@ -435,7 +458,7 @@ def scilint_lint(
         print_syntax_errors,
     )
 
-# %% ../nbs/scilint.ipynb 67
+# %% ../nbs/scilint.ipynb 68
 @call_parse
 def scilint_build(
     display_report: Param("Print the lint report", store_false) = False,
@@ -447,8 +470,9 @@ def scilint_build(
     precision: int = None,
     print_syntax_errors: bool = None,
     exit_on_failure: bool = True,
+    log_level: str = "warn",
 ):
-    configure_logging()
+    configure_logging(log_level)
     build(
         display_report,
         nb_glob,
@@ -460,7 +484,7 @@ def scilint_build(
         print_syntax_errors,
     )
 
-# %% ../nbs/scilint.ipynb 69
+# %% ../nbs/scilint.ipynb 70
 @call_parse
 def scilint_ci(
     display_report: Param("Print the lint report", store_false) = False,
@@ -472,8 +496,9 @@ def scilint_ci(
     precision: int = None,
     print_syntax_errors: bool = None,
     exit_on_failure: bool = True,
+    log_level: str = "warn",
 ):
-    configure_logging()
+    configure_logging(log_level)
     if not is_nbdev_project():
         print("scilint_ci feature is only available for nbdev projects")
         return
