@@ -30,6 +30,7 @@ from nbqa.find_root import find_project_root
 from .indicators import indicator_funcs
 from scilint.utils import (
     configure_logging,
+    find_common_root,
     get_excluded_paths,
     get_project_root,
     is_nbdev_project,
@@ -43,7 +44,9 @@ logger = logging.getLogger(__name__)
 # %% ../nbs/scilint.ipynb 8
 def tidy(root_dir: Path = None):
     tidy_tools = ["black", "isort", "autoflake"]
-    [run_nbqa_cmd(c, root_dir) for c in tidy_tools]
+    for cmd in tidy_tools:
+        logger.debug(f"Running command {cmd} via nbQA CLI at root dir: {root_dir}")
+        run_nbqa_cmd(cmd, root_dir)
 
 # %% ../nbs/scilint.ipynb 12
 def get_default_spec():
@@ -254,7 +257,7 @@ def _map_paths_specs(nb_glob: Path = None, specs_glob: Path = Path(".").resolve(
     logger.debug(f"Specs to notebooks map:\n{spec_nbs}")
     return spec_nbs
 
-# %% ../nbs/scilint.ipynb 43
+# %% ../nbs/scilint.ipynb 44
 def display_warning_report(all_warns: pd.DataFrame):
     print(
         "\n******************************************Begin Scilint Warning Report*****************************************"
@@ -264,7 +267,7 @@ def display_warning_report(all_warns: pd.DataFrame):
         "\n******************************************End Scilint Warning Report*******************************************\n"
     )
 
-# %% ../nbs/scilint.ipynb 45
+# %% ../nbs/scilint.ipynb 46
 def _persist_results(
     lint_report: pd.DataFrame, all_warns: pd.DataFrame, conf: Dict[str, Any]
 ):
@@ -277,7 +280,7 @@ def _persist_results(
     all_warns.to_csv(Path(out_dir, "scilint_warnings.csv"), index=False)
     lint_report.to_csv(Path(out_dir, "scilint_report.csv"))
 
-# %% ../nbs/scilint.ipynb 49
+# %% ../nbs/scilint.ipynb 50
 def _load_conf(
     conf_path: str = None,
     exclusions: str = None,
@@ -310,7 +313,7 @@ def _load_conf(
             conf[override[0]] = override[1]
     return conf
 
-# %% ../nbs/scilint.ipynb 53
+# %% ../nbs/scilint.ipynb 54
 def lint(
     display_report: bool = True,
     nb_glob: Path = None,
@@ -389,7 +392,7 @@ def lint(
         print("No issues found during linting")
     return exit_code
 
-# %% ../nbs/scilint.ipynb 60
+# %% ../nbs/scilint.ipynb 61
 def build(
     display_report: bool = True,
     nb_glob: Path = None,
@@ -424,15 +427,15 @@ def build(
         nbdev_clean.__wrapped__()
         print("Cleaned notebooks")
 
-# %% ../nbs/scilint.ipynb 63
+# %% ../nbs/scilint.ipynb 64
 @call_parse
 def scilint_tidy(nb_glob: Path = None, log_level: str = "warn"):
     configure_logging(log_level)
-    common_root = _find_common_root(nb_glob)
+    common_root = find_common_root(nb_glob)
     logger.debug(f"Tidying from: {common_root}")
     tidy(common_root)
 
-# %% ../nbs/scilint.ipynb 65
+# %% ../nbs/scilint.ipynb 66
 @call_parse
 def scilint_lint(
     display_report: Param("Print the lint report", store_false) = False,
@@ -458,7 +461,7 @@ def scilint_lint(
         print_syntax_errors,
     )
 
-# %% ../nbs/scilint.ipynb 68
+# %% ../nbs/scilint.ipynb 69
 @call_parse
 def scilint_build(
     display_report: Param("Print the lint report", store_false) = False,
@@ -484,7 +487,7 @@ def scilint_build(
         print_syntax_errors,
     )
 
-# %% ../nbs/scilint.ipynb 70
+# %% ../nbs/scilint.ipynb 71
 @call_parse
 def scilint_ci(
     display_report: Param("Print the lint report", store_false) = False,

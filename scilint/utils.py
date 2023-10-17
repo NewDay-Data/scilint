@@ -14,7 +14,6 @@ from pathlib import Path
 from typing import Iterable
 
 import nbformat
-import pandas as pd
 from fastcore.xtras import globtastic
 from nbdev.config import get_config
 from nbdev.doclinks import nbglob
@@ -63,7 +62,7 @@ def run_nbqa_cmd(cmd: str, root_dir: Path = None):
     output_code = _main(args, configs)
     return output_code
 
-# %% ../nbs/utils.ipynb 12
+# %% ../nbs/utils.ipynb 11
 def is_nbdev_project(project_path: Path = Path(".")):
     is_nbdev = True
     project_root = find_project_root(tuple([str(project_path.resolve())]))
@@ -77,7 +76,7 @@ def is_nbdev_project(project_path: Path = Path(".")):
 
     return is_nbdev
 
-# %% ../nbs/utils.ipynb 16
+# %% ../nbs/utils.ipynb 15
 def resolve_nbs(nb_glob: str = None):
     if is_nbdev_project():
         nbs = nbglob(nb_glob)
@@ -96,26 +95,20 @@ def resolve_nbs(nb_glob: str = None):
     logger.debug(f"Resolved notebook paths: {nbs}")
     return nbs
 
-# %% ../nbs/utils.ipynb 19
+# %% ../nbs/utils.ipynb 18
 def find_common_root(nb_glob: str = None) -> Path:
     """Expand a glob expression then find the common root directory"""
-    nb_paths = resolve_nbs(nb_glob)
-    path_parts_coll = [p.parts for p in [Path(_) for _ in nb_paths]]
-    common_part_len = min([len(x) for x in path_parts_coll])
-    path_parts = pd.DataFrame.from_records(
-        [x[:common_part_len] for x in path_parts_coll]
-    )
-    for i in range(common_part_len):
-        if path_parts[i].nunique() > 1:
-            common_root = Path(*path_parts_coll[0][:i]).absolute()
-            break
-    return common_root
+    nb_paths = [Path(p) for p in resolve_nbs(nb_glob)]
+    if len(nb_paths) == 0:
+        raise ValueError("No notebooks found matching glob expression")
+    min_part_len = min([len(p.parts) for p in nb_paths])
+    return [Path(*p.parts[: min_part_len - 1]).absolute() for p in nb_paths][0]
 
-# %% ../nbs/utils.ipynb 21
+# %% ../nbs/utils.ipynb 20
 def get_project_root(path: Path = Path(".").resolve()) -> Path:
     return find_project_root(tuple([str()]))
 
-# %% ../nbs/utils.ipynb 23
+# %% ../nbs/utils.ipynb 22
 def get_excluded_paths(paths: Iterable[Path], exclude_pattern: str) -> Iterable[Path]:
     """Excluded paths should either be absolute paths or paths rooted at the project root directory"""
     excl_paths = []
@@ -137,7 +130,7 @@ def get_excluded_paths(paths: Iterable[Path], exclude_pattern: str) -> Iterable[
             )
     return excl_paths
 
-# %% ../nbs/utils.ipynb 25
+# %% ../nbs/utils.ipynb 24
 def remove_ipython_special_directives(code):
     lines = code.split("\n")
     lines = [
@@ -147,11 +140,11 @@ def remove_ipython_special_directives(code):
     ]
     return "\n".join(lines)
 
-# %% ../nbs/utils.ipynb 28
+# %% ../nbs/utils.ipynb 27
 def safe_div(numer, denom):
     return 0 if denom == 0 else numer / denom
 
-# %% ../nbs/utils.ipynb 31
+# %% ../nbs/utils.ipynb 30
 def get_cell_code(nb):
     pnb = nbformat.from_dict(nb)
     nb_cell_code = "\n".join(
