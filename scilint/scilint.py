@@ -39,7 +39,7 @@ from scilint.utils import (
 )
 
 reload(logging)
-logger = logging.getLogger(__name__)
+logger = logging.getLogger()
 
 # %% ../nbs/scilint.ipynb 8
 def tidy(root_dir: Path = None):
@@ -85,14 +85,18 @@ def lint_nb(
     conf: Dict[str, Any],
     indicators: Dict[str, Callable],
     include_in_scoring: bool,
+    out_dir: str,
 ) -> Tuple[float]:
+    logger.debug(f"Running linter on notebook: {nb_path} with spec: {spec_name}")
     nb = read_nb(nb_path)
 
     has_syntax_error = False
     indic_vals = list(np.repeat(np.nan, len(indicators)))
     try:
         for i, indic_name in enumerate(indicators):
-            indic_vals[i] = round(indicators[indic_name](nb), conf["precision"])
+            indic_vals[i] = round(
+                indicators[indic_name](nb, out_dir), conf["precision"]
+            )
     except SyntaxError as se:
         if conf["print_syntax_errors"]:
             logger.warn(f"Syntax error in notebook: {nb_path} reason: ", se)
@@ -111,7 +115,6 @@ def _calculate_warnings(
     include_missing: bool = False,
 ) -> Tuple[Dict[str, Any], int]:
     warning_details = []
-
     for op_text in list(conf["warnings"].keys()):
         for indic in conf["warnings"][op_text]:
             metric_series = scoring_report[indic]
@@ -182,6 +185,7 @@ def lint_nbs(
     conf: Dict[str, Any],
     indicators: Dict[str, Callable],
     nb_paths: Iterable[Path] = None,
+    out_dir: str = None,
     nb_glob: Path = None,
 ):
     if nb_paths is None:
@@ -206,7 +210,9 @@ def lint_nbs(
 
         nb_names.append(_get_nb_display_name(conf["nb_path_display"], nb_path))
 
-        lint_result = lint_nb(spec_name, nb_path, conf, indicators, include_in_scoring)
+        lint_result = lint_nb(
+            spec_name, nb_path, conf, indicators, include_in_scoring, out_dir
+        )
         results.append(lint_result)
 
     lint_report = pd.DataFrame.from_records(
@@ -355,7 +361,7 @@ def lint(
             print(f"Linting skipped for: {spec.name} as evaluate is set to false")
             continue
         lint_report, report_warns, num_warnings = lint_nbs(
-            spec.name, conf, indicator_funcs, nb_paths=nbs
+            spec.name, conf, indicator_funcs, nb_paths=nbs, out_dir=out_dir
         )
         lint_reports.append(lint_report)
         all_warns.append(report_warns)
