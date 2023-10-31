@@ -1,0 +1,1349 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.3.450">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="description" content="quality indicator functions used in linting">
+
+<title>scilint - indicators</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<script src="site_libs/quarto-html/quarto.js"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 20,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+
+<link rel="stylesheet" href="styles.css">
+<meta property="og:title" content="scilint - indicators">
+<meta property="og:description" content="quality indicator functions used in linting">
+<meta property="og:site-name" content="scilint">
+<meta name="twitter:title" content="scilint - indicators">
+<meta name="twitter:description" content="quality indicator functions used in linting">
+<meta name="twitter:card" content="summary">
+</head>
+
+<body class="nav-sidebar floating nav-fixed">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg navbar-dark ">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container">
+    <a class="navbar-brand" href="./index.html">
+    <span class="navbar-title">scilint</span>
+    </a>
+  </div>
+        <div class="quarto-navbar-tools ms-auto">
+</div>
+          <div id="quarto-search" class="" title="Search"></div>
+      </div> <!-- /container-fluid -->
+    </nav>
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+      <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./indicators.html">indicators</a></li></ol></nav>
+      <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+      </a>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal sidebar-navigation floating overflow-auto">
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">🧐 <code>scilint</code></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./indicators.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text">indicators</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./scilint.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Data Science Notebook Linting</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./utils.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Utilities</span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true">
+ <span class="menu-text">example_nbs</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./example_nbs/nbdev.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">nbdev format notebook Example</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./example_nbs/nbdev_high_quality.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">nbdev format notebook Example</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./example_nbs/non_nbdev.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">non_nbdev.html</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./example_nbs/non_nbdev_low_quality.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Preprocess Data</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./example_nbs/syntax_error.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">syntax_error.html</span></a>
+  </div>
+</li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" aria-expanded="false">
+ <span class="menu-text">experimental</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./example_nbs/experimental/nbdev.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">nbdev format notebook Example</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" aria-expanded="true">
+ <span class="menu-text">example_nbs</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" aria-expanded="false">
+ <span class="menu-text">experimental</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./example_nbs/experimental/non_nbdev.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">non_nbdev.html</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" aria-expanded="true">
+ <span class="menu-text">example_nbs</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-5" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-6" aria-expanded="false">
+ <span class="menu-text">exploratory</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-6" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-6" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./example_nbs/exploratory/nbdev.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">nbdev format notebook Example</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-7" aria-expanded="true">
+ <span class="menu-text">example_nbs</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-7" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-7" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-8" aria-expanded="false">
+ <span class="menu-text">exploratory</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-8" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-8" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./example_nbs/exploratory/non_nbdev.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">non_nbdev.html</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-9" aria-expanded="true">
+ <span class="menu-text">example_nbs</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-9" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-9" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-10" aria-expanded="false">
+ <span class="menu-text">exploratory</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-10" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-10" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./example_nbs/exploratory/syntax_error.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">syntax_error.html</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-11" aria-expanded="true">
+ <span class="menu-text">example_nbs</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-11" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-11" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-12" aria-expanded="false">
+ <span class="menu-text">legacy</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-12" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-12" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./example_nbs/legacy/non_nbdev_low_quality.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Preprocess Data</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-13" aria-expanded="true">
+ <span class="menu-text">example_nbs</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-13" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-13" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-14" aria-expanded="false">
+ <span class="menu-text">legacy</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-14" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-14" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./example_nbs/legacy/syntax_error.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">syntax_error.html</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-15" aria-expanded="true">
+ <span class="menu-text">example_nbs</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-15" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-15" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-16" aria-expanded="false">
+ <span class="menu-text">no_spec_provided</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-16" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-16" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./example_nbs/no_spec_provided/nbdev.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">nbdev format notebook Example</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-17" aria-expanded="true">
+ <span class="menu-text">example_nbs</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-17" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-17" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-18" aria-expanded="false">
+ <span class="menu-text">validated</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-18" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-18" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./example_nbs/validated/nbdev_high_quality.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">nbdev format notebook Example</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+      </ul>
+  </li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#test-data-prep" id="toc-test-data-prep" class="nav-link active" data-scroll-target="#test-data-prep">Test Data Prep</a></li>
+  <li><a href="#helpers" id="toc-helpers" class="nav-link" data-scroll-target="#helpers">Helpers</a>
+  <ul class="collapse">
+  <li><a href="#codeparseerror" id="toc-codeparseerror" class="nav-link" data-scroll-target="#codeparseerror">CodeParseError</a></li>
+  <li><a href="#ast-_count_func_calls" id="toc-ast-_count_func_calls" class="nav-link" data-scroll-target="#ast-_count_func_calls">AST: <code>_count_func_calls</code></a></li>
+  <li><a href="#ast-_get_func_defs" id="toc-ast-_get_func_defs" class="nav-link" data-scroll-target="#ast-_get_func_defs">AST: <code>_get_func_defs</code></a></li>
+  </ul></li>
+  <li><a href="#potential-quality-indicators" id="toc-potential-quality-indicators" class="nav-link" data-scroll-target="#potential-quality-indicators">Potential Quality Indicators</a>
+  <ul class="collapse">
+  <li><a href="#calls-per-function" id="toc-calls-per-function" class="nav-link" data-scroll-target="#calls-per-function">1. Calls-per-Function</a>
+  <ul class="collapse">
+  <li><a href="#calls_per_func" id="toc-calls_per_func" class="nav-link" data-scroll-target="#calls_per_func"><code>calls_per_func</code></a></li>
+  <li><a href="#calls_per_func-1" id="toc-calls_per_func-1" class="nav-link" data-scroll-target="#calls_per_func-1">calls_per_func</a></li>
+  <li><a href="#ind-calls_per_func_mean" id="toc-ind-calls_per_func_mean" class="nav-link" data-scroll-target="#ind-calls_per_func_mean">IND: <code>calls_per_func_mean</code></a></li>
+  <li><a href="#calls_per_func_mean" id="toc-calls_per_func_mean" class="nav-link" data-scroll-target="#calls_per_func_mean">calls_per_func_mean</a></li>
+  <li><a href="#ind-calls_per_func_median" id="toc-ind-calls_per_func_median" class="nav-link" data-scroll-target="#ind-calls_per_func_median">IND: <code>calls_per_func_median</code></a></li>
+  <li><a href="#calls_per_func_median" id="toc-calls_per_func_median" class="nav-link" data-scroll-target="#calls_per_func_median">calls_per_func_median</a></li>
+  </ul></li>
+  <li><a href="#tests-per-function" id="toc-tests-per-function" class="nav-link" data-scroll-target="#tests-per-function">2. Tests per Function</a>
+  <ul class="collapse">
+  <li><a href="#ast-_count_inline_asserts" id="toc-ast-_count_inline_asserts" class="nav-link" data-scroll-target="#ast-_count_inline_asserts">AST: <code>_count_inline_asserts</code></a></li>
+  <li><a href="#ast-_count_func_ret_asserts" id="toc-ast-_count_func_ret_asserts" class="nav-link" data-scroll-target="#ast-_count_func_ret_asserts">AST: <code>_count_func_ret_asserts</code></a></li>
+  <li><a href="#update_ret_vals" id="toc-update_ret_vals" class="nav-link" data-scroll-target="#update_ret_vals"><code>_update_ret_vals</code></a></li>
+  <li><a href="#traverse_asserts" id="toc-traverse_asserts" class="nav-link" data-scroll-target="#traverse_asserts"><code>traverse_asserts</code></a></li>
+  <li><a href="#traverse_asserts-1" id="toc-traverse_asserts-1" class="nav-link" data-scroll-target="#traverse_asserts-1">traverse_asserts</a></li>
+  <li><a href="#tests_per_function" id="toc-tests_per_function" class="nav-link" data-scroll-target="#tests_per_function"><code>tests_per_function</code></a></li>
+  <li><a href="#tests_per_function-1" id="toc-tests_per_function-1" class="nav-link" data-scroll-target="#tests_per_function-1">tests_per_function</a></li>
+  <li><a href="#tests_per_function_code" id="toc-tests_per_function_code" class="nav-link" data-scroll-target="#tests_per_function_code"><code>_tests_per_function_code</code></a></li>
+  <li><a href="#ind-tests_per_func_mean" id="toc-ind-tests_per_func_mean" class="nav-link" data-scroll-target="#ind-tests_per_func_mean">IND: <code>tests_per_func_mean</code></a></li>
+  <li><a href="#tests_per_func_mean" id="toc-tests_per_func_mean" class="nav-link" data-scroll-target="#tests_per_func_mean">tests_per_func_mean</a></li>
+  <li><a href="#ind-tests_func_coverage_pct" id="toc-ind-tests_func_coverage_pct" class="nav-link" data-scroll-target="#ind-tests_func_coverage_pct">IND: <code>tests_func_coverage_pct</code></a></li>
+  <li><a href="#tests_func_coverage_pct" id="toc-tests_func_coverage_pct" class="nav-link" data-scroll-target="#tests_func_coverage_pct">tests_func_coverage_pct</a></li>
+  </ul></li>
+  <li><a href="#in-function-percentage" id="toc-in-function-percentage" class="nav-link" data-scroll-target="#in-function-percentage">3. In-function Percentage</a>
+  <ul class="collapse">
+  <li><a href="#ast-calc_ifp" id="toc-ast-calc_ifp" class="nav-link" data-scroll-target="#ast-calc_ifp">AST: <code>calc_ifp</code></a></li>
+  <li><a href="#calc_ifp" id="toc-calc_ifp" class="nav-link" data-scroll-target="#calc_ifp">calc_ifp</a></li>
+  <li><a href="#ind-in_func_pct" id="toc-ind-in_func_pct" class="nav-link" data-scroll-target="#ind-in_func_pct">IND: <code>in_func_pct</code></a></li>
+  <li><a href="#in_func_pct" id="toc-in_func_pct" class="nav-link" data-scroll-target="#in_func_pct">in_func_pct</a></li>
+  </ul></li>
+  <li><a href="#markdown-to-code-percent" id="toc-markdown-to-code-percent" class="nav-link" data-scroll-target="#markdown-to-code-percent">4. Markdown to Code Percent</a>
+  <ul class="collapse">
+  <li><a href="#ind-markdown_code_pct" id="toc-ind-markdown_code_pct" class="nav-link" data-scroll-target="#ind-markdown_code_pct">IND: <code>markdown_code_pct</code></a></li>
+  <li><a href="#markdown_code_pct" id="toc-markdown_code_pct" class="nav-link" data-scroll-target="#markdown_code_pct">markdown_code_pct</a></li>
+  </ul></li>
+  <li><a href="#total-code-length" id="toc-total-code-length" class="nav-link" data-scroll-target="#total-code-length">5. Total Code Length</a>
+  <ul class="collapse">
+  <li><a href="#ind-total_code_len" id="toc-ind-total_code_len" class="nav-link" data-scroll-target="#ind-total_code_len">IND: <code>total_code_len</code></a></li>
+  <li><a href="#total_code_len" id="toc-total_code_len" class="nav-link" data-scroll-target="#total_code_len">total_code_len</a></li>
+  </ul></li>
+  <li><a href="#lines-of-code-per-markdown-section" id="toc-lines-of-code-per-markdown-section" class="nav-link" data-scroll-target="#lines-of-code-per-markdown-section">6. Lines-of-code per Markdown Section</a>
+  <ul class="collapse">
+  <li><a href="#ind-loc_per_md_section" id="toc-ind-loc_per_md_section" class="nav-link" data-scroll-target="#ind-loc_per_md_section">IND: <code>loc_per_md_section</code></a></li>
+  <li><a href="#loc_per_md_section" id="toc-loc_per_md_section" class="nav-link" data-scroll-target="#loc_per_md_section">loc_per_md_section</a></li>
+  </ul></li>
+  </ul></li>
+  <li><a href="#quality-indicator-function-map" id="toc-quality-indicator-function-map" class="nav-link" data-scroll-target="#quality-indicator-function-map">Quality Indicator Function Map</a></li>
+  </ul>
+<div class="toc-actions"><div><i class="bi bi-github"></i></div><div class="action-links"><p><a href="https://github.com/newday-data/scilint/tree/{branch}/issues/new" class="toc-action">Report an issue</a></p></div></div></nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">indicators</h1>
+</div>
+
+<div>
+  <div class="description">
+    quality indicator functions used in linting
+  </div>
+</div>
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+</header>
+
+<!-- WARNING: THIS FILE WAS AUTOGENERATED! DO NOT EDIT! -->
+<section id="test-data-prep" class="level1">
+<h1>Test Data Prep</h1>
+<div class="cell" data-tags="[]">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>nbdev_path <span class="op">=</span> Path(Path(<span class="st">"."</span>).resolve(), <span class="st">"example_nbs"</span>, <span class="st">"nbdev.ipynb"</span>)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>nbdev_hq_path <span class="op">=</span> Path(Path(<span class="st">"."</span>).resolve(), <span class="st">"example_nbs"</span>, <span class="st">"nbdev_high_quality.ipynb"</span>)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>non_nbdev_path <span class="op">=</span> Path(Path(<span class="st">"."</span>).resolve(), <span class="st">"example_nbs"</span>, <span class="st">"non_nbdev.ipynb"</span>)</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>non_nbdev_lq_path <span class="op">=</span> Path(</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>    Path(<span class="st">"."</span>).resolve(), <span class="st">"example_nbs"</span>, <span class="st">"non_nbdev_low_quality.ipynb"</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>index_path <span class="op">=</span> Path(Path(<span class="st">"."</span>).resolve(), <span class="st">"index.ipynb"</span>)</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>syntax_error_path <span class="op">=</span> Path(Path(<span class="st">"."</span>).resolve(), <span class="st">"syntax_error.ipynb"</span>)</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>nbdev_nb <span class="op">=</span> read_nb(nbdev_path)</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>nbdev_hq_nb <span class="op">=</span> read_nb(nbdev_hq_path)</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>non_nbdev_nb <span class="op">=</span> read_nb(non_nbdev_path)</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>non_nbdev_lq_nb <span class="op">=</span> read_nb(non_nbdev_lq_path)</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>index <span class="op">=</span> read_nb(index_path)</span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>syntax_error <span class="op">=</span> read_nb(index_path)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="helpers" class="level1">
+<h1>Helpers</h1>
+<hr>
+<p><a href="https://github.com/newday-data/scilint/tree/%7Bbranch%7D/blob/main/scilint/indicators.py#L26" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<section id="codeparseerror" class="level3">
+<h3 class="anchored" data-anchor-id="codeparseerror">CodeParseError</h3>
+<p>Common base class for all non-exit exceptions.</p>
+<div class="cell" data-tags="[]">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> gen_parse_filename(code: <span class="bu">str</span>, now: datetime <span class="op">=</span> <span class="va">None</span>):</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>    cleaned_code <span class="op">=</span> re.sub(<span class="vs">r"\W+"</span>, <span class="st">"-"</span>, code)[:<span class="dv">10</span>].strip(<span class="st">"-"</span>)</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> now <span class="kw">is</span> <span class="va">None</span>:</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>        now <span class="op">=</span> datetime.datetime.utcnow()</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>    date_str <span class="op">=</span> <span class="ss">f"</span><span class="sc">{</span>now<span class="sc">.</span>year<span class="sc">:04}{</span>now<span class="sc">.</span>month<span class="sc">:02}{</span>now<span class="sc">.</span>day<span class="sc">:02}</span><span class="ss">_</span><span class="sc">{</span>now<span class="sc">.</span>hour<span class="sc">:02}</span><span class="ss">_</span><span class="sc">{</span>now<span class="sc">.</span>minute<span class="sc">:02}</span><span class="ss">_</span><span class="sc">{</span>now<span class="sc">.</span>second<span class="sc">:02}</span><span class="ss">"</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> cleaned_code <span class="op">+</span> <span class="st">"_"</span> <span class="op">+</span> date_str <span class="op">+</span> <span class="st">".py"</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="ast-_count_func_calls" class="level2">
+<h2 class="anchored" data-anchor-id="ast-_count_func_calls">AST: <a href="https://newday-data.github.io/scilint/indicators.html#_count_func_calls"><code>_count_func_calls</code></a></h2>
+<div class="cell" data-tags="[]">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>output <span class="op">=</span> gen_parse_filename(</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>    <span class="st">"# | export </span><span class="ch">\n</span><span class="st"> from bla import foo; z= 3"</span>, now<span class="op">=</span>datetime.datetime(<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>, <span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">0</span>)</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="cf">assert</span> (</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>    <span class="st">"export-fr_00010203_00_00_00.py"</span> <span class="op">==</span> output</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>), <span class="ss">f"Expected 'export-fr_10203_00_00_00.py' but got '</span><span class="sc">{</span>output<span class="sc">}</span><span class="ss">'"</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell" data-tags="[]">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>test_code <span class="op">=</span> <span class="st">"""</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="st">self.hierarchical_topic_reduction(3); </span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="st">topic_reduction(3); </span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="st">lambda x: topic(x); </span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="st">hierarchical_topic_reduction[4]; </span></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a><span class="st">hierarchical_topic_reduction(4); </span></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a><span class="st">blabla()</span></span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a><span class="st">lambda y: other(5)</span></span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a><span class="st">funcs = [x, y]</span></span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a><span class="st">funcs[0](3)</span></span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a><span class="st">blabla(topic(7))</span></span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a><span class="st">func_ret()()()</span></span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a><span class="st">def zip(self, cycled=False): return self._new((zip_cycle if cycled else zip)(*self))</span></span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a><span class="st">func()</span></span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a><span class="st">obj.func()</span></span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a><span class="st">module.func()</span></span>
+<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a><span class="st">list[0]</span></span>
+<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a><span class="st">"""</span></span>
+<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a>test_func_defs <span class="op">=</span> [</span>
+<span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a>    <span class="st">"topic"</span>,</span>
+<span id="cb4-22"><a href="#cb4-22" aria-hidden="true" tabindex="-1"></a>    <span class="st">"topic_reduction"</span>,</span>
+<span id="cb4-23"><a href="#cb4-23" aria-hidden="true" tabindex="-1"></a>    <span class="st">"blablabla"</span>,</span>
+<span id="cb4-24"><a href="#cb4-24" aria-hidden="true" tabindex="-1"></a>    <span class="st">"hierarchical_topic_reduction"</span>,</span>
+<span id="cb4-25"><a href="#cb4-25" aria-hidden="true" tabindex="-1"></a>    <span class="st">"func_ret"</span>,</span>
+<span id="cb4-26"><a href="#cb4-26" aria-hidden="true" tabindex="-1"></a>    <span class="st">"func"</span>,</span>
+<span id="cb4-27"><a href="#cb4-27" aria-hidden="true" tabindex="-1"></a>    <span class="st">"obj.func"</span>,</span>
+<span id="cb4-28"><a href="#cb4-28" aria-hidden="true" tabindex="-1"></a>    <span class="st">"module.func"</span>,</span>
+<span id="cb4-29"><a href="#cb4-29" aria-hidden="true" tabindex="-1"></a>]</span>
+<span id="cb4-30"><a href="#cb4-30" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-31"><a href="#cb4-31" aria-hidden="true" tabindex="-1"></a><span class="cf">assert</span> _count_func_calls(test_code, test_func_defs) <span class="op">==</span> Counter(</span>
+<span id="cb4-32"><a href="#cb4-32" aria-hidden="true" tabindex="-1"></a>    {</span>
+<span id="cb4-33"><a href="#cb4-33" aria-hidden="true" tabindex="-1"></a>        <span class="st">"topic"</span>: <span class="dv">2</span>,</span>
+<span id="cb4-34"><a href="#cb4-34" aria-hidden="true" tabindex="-1"></a>        <span class="st">"topic_reduction"</span>: <span class="dv">1</span>,</span>
+<span id="cb4-35"><a href="#cb4-35" aria-hidden="true" tabindex="-1"></a>        <span class="st">"blablabla"</span>: <span class="dv">0</span>,</span>
+<span id="cb4-36"><a href="#cb4-36" aria-hidden="true" tabindex="-1"></a>        <span class="st">"hierarchical_topic_reduction"</span>: <span class="dv">2</span>,</span>
+<span id="cb4-37"><a href="#cb4-37" aria-hidden="true" tabindex="-1"></a>        <span class="st">"func_ret"</span>: <span class="dv">1</span>,</span>
+<span id="cb4-38"><a href="#cb4-38" aria-hidden="true" tabindex="-1"></a>        <span class="st">"func"</span>: <span class="dv">3</span>,</span>
+<span id="cb4-39"><a href="#cb4-39" aria-hidden="true" tabindex="-1"></a>        <span class="st">"obj.func"</span>: <span class="dv">0</span>,  <span class="co"># This won't be detected as "obj.func", but rather just "func"</span></span>
+<span id="cb4-40"><a href="#cb4-40" aria-hidden="true" tabindex="-1"></a>        <span class="st">"module.func"</span>: <span class="dv">0</span>,  <span class="co"># Similarly, this will be detected as "func" and not "module.func"</span></span>
+<span id="cb4-41"><a href="#cb4-41" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb4-42"><a href="#cb4-42" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell" data-tags="[]">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>nb_cell_code <span class="op">=</span> <span class="vs">r"""</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="vs">def something():</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="vs">    pass; pass # in x 2</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a><span class="vs">!ls -l</span></span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a><span class="vs">if 1!= 2:</span></span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a><span class="vs">    print(4)</span></span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a><span class="vs">#| export</span></span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a><span class="vs">import pandas as pd # out</span></span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a><span class="vs">from sciflow.utils import lib_path, odbc_connect, query # out</span></span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a><span class="vs">#| export</span></span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a><span class="vs">def nb_to_sagemaker_pipeline(</span></span>
+<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a><span class="vs">    nb_path: Path,</span></span>
+<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a><span class="vs">    silent: bool = True,</span></span>
+<span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a><span class="vs">):</span></span>
+<span id="cb5-21"><a href="#cb5-21" aria-hidden="true" tabindex="-1"></a><span class="vs">    nb = read_nb(nb_path)  # in</span></span>
+<span id="cb5-22"><a href="#cb5-22" aria-hidden="true" tabindex="-1"></a><span class="vs">    lib_name = get_config().get("lib_name")  # in</span></span>
+<span id="cb5-23"><a href="#cb5-23" aria-hidden="true" tabindex="-1"></a><span class="vs">    module_name = find_default_export(nb["cells"])  # in</span></span>
+<span id="cb5-24"><a href="#cb5-24" aria-hidden="true" tabindex="-1"></a><span class="vs">    </span></span>
+<span id="cb5-25"><a href="#cb5-25" aria-hidden="true" tabindex="-1"></a><span class="vs">x = [1,2,3] # out</span></span>
+<span id="cb5-26"><a href="#cb5-26" aria-hidden="true" tabindex="-1"></a><span class="vs">nb_to_sagemaker_pipeline() # out</span></span>
+<span id="cb5-27"><a href="#cb5-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-28"><a href="#cb5-28" aria-hidden="true" tabindex="-1"></a><span class="vs">plt.plot(fpr, tpr, color='darkorange', lw=2, label='ROC curve (area = </span><span class="sc">%0.2f</span><span class="vs">)' </span><span class="sc">% r</span><span class="vs">oc_auc)</span></span>
+<span id="cb5-29"><a href="#cb5-29" aria-hidden="true" tabindex="-1"></a><span class="vs">"""</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="ast-_get_func_defs" class="level2">
+<h2 class="anchored" data-anchor-id="ast-_get_func_defs">AST: <a href="https://newday-data.github.io/scilint/indicators.html#_get_func_defs"><code>_get_func_defs</code></a></h2>
+<div class="cell" data-tags="[]">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>test_code <span class="op">=</span> <span class="st">"""</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="st">x()</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="st">def y():</span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a><span class="st">    pass</span></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a><span class="st">def z():</span></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a><span class="st">    def a():</span></span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a><span class="st">        pass</span></span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a><span class="st">class A():</span></span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a><span class="st">    def b():</span></span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a><span class="st">        pass</span></span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a><span class="st">def blabla():</span></span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a><span class="st">    return 1</span></span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a><span class="st">def _hidden():</span></span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a><span class="st">    return None</span></span>
+<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a><span class="st">"""</span></span>
+<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a>func_defs <span class="op">=</span> [<span class="st">"a"</span>, <span class="st">"b"</span>, <span class="st">"blabla"</span>, <span class="st">"y"</span>, <span class="st">"z"</span>]</span>
+<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a><span class="cf">assert</span> func_defs <span class="op">==</span> <span class="bu">sorted</span>(_get_func_defs(test_code))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+</section>
+<section id="potential-quality-indicators" class="level1">
+<h1>Potential Quality Indicators</h1>
+<section id="calls-per-function" class="level2">
+<h2 class="anchored" data-anchor-id="calls-per-function">1. Calls-per-Function</h2>
+<section id="calls_per_func" class="level3">
+<h3 class="anchored" data-anchor-id="calls_per_func"><a href="https://newday-data.github.io/scilint/indicators.html#calls_per_func"><code>calls_per_func</code></a></h3>
+<hr>
+<p><a href="https://github.com/newday-data/scilint/tree/%7Bbranch%7D/blob/main/scilint/indicators.py#L88" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="calls_per_func-1" class="level3">
+<h3 class="anchored" data-anchor-id="calls_per_func-1">calls_per_func</h3>
+<blockquote class="blockquote">
+<pre><code> calls_per_func (nb, out_dir=None)</code></pre>
+</blockquote>
+</section>
+<section id="ind-calls_per_func_mean" class="level3">
+<h3 class="anchored" data-anchor-id="ind-calls_per_func_mean">IND: <a href="https://newday-data.github.io/scilint/indicators.html#calls_per_func_mean"><code>calls_per_func_mean</code></a></h3>
+<hr>
+<p><a href="https://github.com/newday-data/scilint/tree/%7Bbranch%7D/blob/main/scilint/indicators.py#L95" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="calls_per_func_mean" class="level3">
+<h3 class="anchored" data-anchor-id="calls_per_func_mean">calls_per_func_mean</h3>
+<blockquote class="blockquote">
+<pre><code> calls_per_func_mean (nb, out_dir=None)</code></pre>
+</blockquote>
+</section>
+<section id="ind-calls_per_func_median" class="level3">
+<h3 class="anchored" data-anchor-id="ind-calls_per_func_median">IND: <a href="https://newday-data.github.io/scilint/indicators.html#calls_per_func_median"><code>calls_per_func_median</code></a></h3>
+<hr>
+<p><a href="https://github.com/newday-data/scilint/tree/%7Bbranch%7D/blob/main/scilint/indicators.py#L99" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="calls_per_func_median" class="level3">
+<h3 class="anchored" data-anchor-id="calls_per_func_median">calls_per_func_median</h3>
+<blockquote class="blockquote">
+<pre><code> calls_per_func_median (nb, out_dir=None)</code></pre>
+</blockquote>
+<p>replace these type of tests with known good notebook data</p>
+<div class="cell" data-tags="[]">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="cf">assert</span> <span class="bu">round</span>(calls_per_func_mean(read_nb(nbdev_path)), <span class="dv">2</span>) <span class="op">==</span> <span class="fl">2.07</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="cf">assert</span> <span class="bu">round</span>(calls_per_func_mean(read_nb(nbdev_hq_path)), <span class="dv">2</span>) <span class="op">==</span> <span class="fl">2.31</span></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="cf">assert</span> <span class="bu">round</span>(calls_per_func_mean(read_nb(non_nbdev_path)), <span class="dv">2</span>) <span class="op">==</span> <span class="fl">1.0</span></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a><span class="cf">assert</span> <span class="bu">round</span>(calls_per_func_mean(read_nb(non_nbdev_lq_path)), <span class="dv">2</span>) <span class="op">==</span> <span class="fl">1.44</span></span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a><span class="cf">assert</span> pd.isnull(calls_per_func_mean(index))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell" data-tags="[]">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="cf">assert</span> calls_per_func_median(read_nb(nbdev_path)) <span class="op">==</span> <span class="fl">1.0</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="cf">assert</span> <span class="bu">round</span>(calls_per_func_median(read_nb(nbdev_hq_path)), <span class="dv">2</span>) <span class="op">==</span> <span class="fl">1.0</span></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a><span class="cf">assert</span> <span class="bu">round</span>(calls_per_func_median(read_nb(non_nbdev_path)), <span class="dv">2</span>) <span class="op">==</span> <span class="fl">1.0</span></span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a><span class="cf">assert</span> <span class="bu">round</span>(calls_per_func_median(read_nb(non_nbdev_lq_path)), <span class="dv">2</span>) <span class="op">==</span> <span class="fl">1.0</span></span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a><span class="cf">assert</span> pd.isnull(calls_per_func_median(index))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+</section>
+<section id="tests-per-function" class="level2">
+<h2 class="anchored" data-anchor-id="tests-per-function">2. Tests per Function</h2>
+<div class="cell" data-tags="[]">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>asserted_code <span class="op">=</span> <span class="vs">r"""</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a><span class="vs">def something():</span></span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a><span class="vs">    pass; pass # in x 2</span></span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a><span class="vs">    </span></span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a><span class="vs">assert True</span></span>
+<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a><span class="vs">#| export</span></span>
+<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a><span class="vs">def convert_nb(</span></span>
+<span id="cb12-13"><a href="#cb12-13" aria-hidden="true" tabindex="-1"></a><span class="vs">    nb_path: Path,</span></span>
+<span id="cb12-14"><a href="#cb12-14" aria-hidden="true" tabindex="-1"></a><span class="vs">    silent: bool = True,</span></span>
+<span id="cb12-15"><a href="#cb12-15" aria-hidden="true" tabindex="-1"></a><span class="vs">):</span></span>
+<span id="cb12-16"><a href="#cb12-16" aria-hidden="true" tabindex="-1"></a><span class="vs">     nb = read_nb(nb_path)  # in</span></span>
+<span id="cb12-17"><a href="#cb12-17" aria-hidden="true" tabindex="-1"></a><span class="vs">     lib_name = get_config().get("lib_name")  # in</span></span>
+<span id="cb12-18"><a href="#cb12-18" aria-hidden="true" tabindex="-1"></a><span class="vs">     module_name = find_default_export(nb["cells"])  # in</span></span>
+<span id="cb12-19"><a href="#cb12-19" aria-hidden="true" tabindex="-1"></a><span class="vs">    </span></span>
+<span id="cb12-20"><a href="#cb12-20" aria-hidden="true" tabindex="-1"></a><span class="vs">x = [1,2,3] # out</span></span>
+<span id="cb12-21"><a href="#cb12-21" aria-hidden="true" tabindex="-1"></a><span class="vs">assert len(x) &gt; 2</span></span>
+<span id="cb12-22"><a href="#cb12-22" aria-hidden="true" tabindex="-1"></a><span class="vs">assert something() is None # something +1</span></span>
+<span id="cb12-23"><a href="#cb12-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-24"><a href="#cb12-24" aria-hidden="true" tabindex="-1"></a><span class="vs">def tr():</span></span>
+<span id="cb12-25"><a href="#cb12-25" aria-hidden="true" tabindex="-1"></a><span class="vs">    return True</span></span>
+<span id="cb12-26"><a href="#cb12-26" aria-hidden="true" tabindex="-1"></a><span class="vs">    </span></span>
+<span id="cb12-27"><a href="#cb12-27" aria-hidden="true" tabindex="-1"></a><span class="vs">def get_seg(num):</span></span>
+<span id="cb12-28"><a href="#cb12-28" aria-hidden="true" tabindex="-1"></a><span class="vs">    return 2</span></span>
+<span id="cb12-29"><a href="#cb12-29" aria-hidden="true" tabindex="-1"></a><span class="vs">    </span></span>
+<span id="cb12-30"><a href="#cb12-30" aria-hidden="true" tabindex="-1"></a><span class="vs">assert(tr)</span></span>
+<span id="cb12-31"><a href="#cb12-31" aria-hidden="true" tabindex="-1"></a><span class="vs">assert(tr()) # tr +1</span></span>
+<span id="cb12-32"><a href="#cb12-32" aria-hidden="true" tabindex="-1"></a><span class="vs">assert(tr() == 4) # tr +1</span></span>
+<span id="cb12-33"><a href="#cb12-33" aria-hidden="true" tabindex="-1"></a><span class="vs">assert(4 ==tr()) # tr +1</span></span>
+<span id="cb12-34"><a href="#cb12-34" aria-hidden="true" tabindex="-1"></a><span class="vs">assert 0 != 0</span></span>
+<span id="cb12-35"><a href="#cb12-35" aria-hidden="true" tabindex="-1"></a><span class="vs">assert "' '".join(tr(1)) == "00" # tr +1</span></span>
+<span id="cb12-36"><a href="#cb12-36" aria-hidden="true" tabindex="-1"></a><span class="vs">assert len(get_seg(50)) == 50 # get_seg +1</span></span>
+<span id="cb12-37"><a href="#cb12-37" aria-hidden="true" tabindex="-1"></a><span class="vs">assert max([int(x) for x in get_seg(100)]) == 99 # get_seg +1</span></span>
+<span id="cb12-38"><a href="#cb12-38" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-39"><a href="#cb12-39" aria-hidden="true" tabindex="-1"></a><span class="vs">def single_ret():</span></span>
+<span id="cb12-40"><a href="#cb12-40" aria-hidden="true" tabindex="-1"></a><span class="vs">    pass</span></span>
+<span id="cb12-41"><a href="#cb12-41" aria-hidden="true" tabindex="-1"></a><span class="vs">def multival_ret():</span></span>
+<span id="cb12-42"><a href="#cb12-42" aria-hidden="true" tabindex="-1"></a><span class="vs">    pass</span></span>
+<span id="cb12-43"><a href="#cb12-43" aria-hidden="true" tabindex="-1"></a><span class="vs">def multi_val_part2():</span></span>
+<span id="cb12-44"><a href="#cb12-44" aria-hidden="true" tabindex="-1"></a><span class="vs">    pass</span></span>
+<span id="cb12-45"><a href="#cb12-45" aria-hidden="true" tabindex="-1"></a><span class="vs">    </span></span>
+<span id="cb12-46"><a href="#cb12-46" aria-hidden="true" tabindex="-1"></a><span class="vs">def untested():</span></span>
+<span id="cb12-47"><a href="#cb12-47" aria-hidden="true" tabindex="-1"></a><span class="vs">    1+2</span></span>
+<span id="cb12-48"><a href="#cb12-48" aria-hidden="true" tabindex="-1"></a><span class="vs">    </span></span>
+<span id="cb12-49"><a href="#cb12-49" aria-hidden="true" tabindex="-1"></a><span class="vs">def np_pandas():</span></span>
+<span id="cb12-50"><a href="#cb12-50" aria-hidden="true" tabindex="-1"></a><span class="vs">    1+1</span></span>
+<span id="cb12-51"><a href="#cb12-51" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-52"><a href="#cb12-52" aria-hidden="true" tabindex="-1"></a><span class="vs">x = single_ret()</span></span>
+<span id="cb12-53"><a href="#cb12-53" aria-hidden="true" tabindex="-1"></a><span class="vs">assert x  ==0</span></span>
+<span id="cb12-54"><a href="#cb12-54" aria-hidden="true" tabindex="-1"></a><span class="vs">5 ==5 </span></span>
+<span id="cb12-55"><a href="#cb12-55" aria-hidden="true" tabindex="-1"></a><span class="vs">x,y,z = multival_ret()</span></span>
+<span id="cb12-56"><a href="#cb12-56" aria-hidden="true" tabindex="-1"></a><span class="vs">a,b = multi_val_part2()</span></span>
+<span id="cb12-57"><a href="#cb12-57" aria-hidden="true" tabindex="-1"></a><span class="vs">assert x  ==0</span></span>
+<span id="cb12-58"><a href="#cb12-58" aria-hidden="true" tabindex="-1"></a><span class="vs">assert 1 == y</span></span>
+<span id="cb12-59"><a href="#cb12-59" aria-hidden="true" tabindex="-1"></a><span class="vs">assert x == y == z</span></span>
+<span id="cb12-60"><a href="#cb12-60" aria-hidden="true" tabindex="-1"></a><span class="vs">assert 2 == 2 and x == z</span></span>
+<span id="cb12-61"><a href="#cb12-61" aria-hidden="true" tabindex="-1"></a><span class="vs">assert a == x or b == z</span></span>
+<span id="cb12-62"><a href="#cb12-62" aria-hidden="true" tabindex="-1"></a><span class="vs">assert b</span></span>
+<span id="cb12-63"><a href="#cb12-63" aria-hidden="true" tabindex="-1"></a><span class="vs">assert a == single_ret()</span></span>
+<span id="cb12-64"><a href="#cb12-64" aria-hidden="true" tabindex="-1"></a><span class="vs">assert multi_val_part() == multi_val_part2()</span></span>
+<span id="cb12-65"><a href="#cb12-65" aria-hidden="true" tabindex="-1"></a><span class="vs">assert b == multival_ret()</span></span>
+<span id="cb12-66"><a href="#cb12-66" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-67"><a href="#cb12-67" aria-hidden="true" tabindex="-1"></a><span class="vs">X_train, y_test, n = np_pandas()</span></span>
+<span id="cb12-68"><a href="#cb12-68" aria-hidden="true" tabindex="-1"></a><span class="vs">assert X_train.isnull().sum().sum() == 0</span></span>
+<span id="cb12-69"><a href="#cb12-69" aria-hidden="true" tabindex="-1"></a><span class="vs">assert "person_home_ownership" not in X_train.columns</span></span>
+<span id="cb12-70"><a href="#cb12-70" aria-hidden="true" tabindex="-1"></a><span class="vs">assert len(y_test) &gt; 0</span></span>
+<span id="cb12-71"><a href="#cb12-71" aria-hidden="true" tabindex="-1"></a><span class="vs">assert len(y_test) == round(0.2 * n)</span></span>
+<span id="cb12-72"><a href="#cb12-72" aria-hidden="true" tabindex="-1"></a><span class="vs">assert X_train.dtypes.all() in [</span></span>
+<span id="cb12-73"><a href="#cb12-73" aria-hidden="true" tabindex="-1"></a><span class="vs">    np.dtype("float64"),</span></span>
+<span id="cb12-74"><a href="#cb12-74" aria-hidden="true" tabindex="-1"></a><span class="vs">    np.dtype("int64"),</span></span>
+<span id="cb12-75"><a href="#cb12-75" aria-hidden="true" tabindex="-1"></a><span class="vs">    np.dtype("uint8"),</span></span>
+<span id="cb12-76"><a href="#cb12-76" aria-hidden="true" tabindex="-1"></a><span class="vs">    np.dtype("bool"),</span></span>
+<span id="cb12-77"><a href="#cb12-77" aria-hidden="true" tabindex="-1"></a><span class="vs">]</span></span>
+<span id="cb12-78"><a href="#cb12-78" aria-hidden="true" tabindex="-1"></a><span class="vs">assert y_test.dtype == np.dtype("int64")</span></span>
+<span id="cb12-79"><a href="#cb12-79" aria-hidden="true" tabindex="-1"></a><span class="vs">assert y_test.isin([0, 1]).all()</span></span>
+<span id="cb12-80"><a href="#cb12-80" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-81"><a href="#cb12-81" aria-hidden="true" tabindex="-1"></a><span class="vs">if nested: args, sys.argv[1:] = p.parse_known_args()</span></span>
+<span id="cb12-82"><a href="#cb12-82" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-83"><a href="#cb12-83" aria-hidden="true" tabindex="-1"></a><span class="vs"># Expected total test counts</span></span>
+<span id="cb12-84"><a href="#cb12-84" aria-hidden="true" tabindex="-1"></a><span class="vs">#single_ret                  2</span></span>
+<span id="cb12-85"><a href="#cb12-85" aria-hidden="true" tabindex="-1"></a><span class="vs">#multival_ret                6</span></span>
+<span id="cb12-86"><a href="#cb12-86" aria-hidden="true" tabindex="-1"></a><span class="vs">#multi_val_part2             5</span></span>
+<span id="cb12-87"><a href="#cb12-87" aria-hidden="true" tabindex="-1"></a><span class="vs">#untested                    0</span></span>
+<span id="cb12-88"><a href="#cb12-88" aria-hidden="true" tabindex="-1"></a><span class="vs">#something                   1</span></span>
+<span id="cb12-89"><a href="#cb12-89" aria-hidden="true" tabindex="-1"></a><span class="vs">#nb_to_sagemaker_pipeline    0</span></span>
+<span id="cb12-90"><a href="#cb12-90" aria-hidden="true" tabindex="-1"></a><span class="vs">#tr                          4</span></span>
+<span id="cb12-91"><a href="#cb12-91" aria-hidden="true" tabindex="-1"></a><span class="vs">#get_seg                     2</span></span>
+<span id="cb12-92"><a href="#cb12-92" aria-hidden="true" tabindex="-1"></a><span class="vs">#np_pandas                   7</span></span>
+<span id="cb12-93"><a href="#cb12-93" aria-hidden="true" tabindex="-1"></a><span class="vs">"""</span></span>
+<span id="cb12-94"><a href="#cb12-94" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-95"><a href="#cb12-95" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> nbformat <span class="im">as</span> nbf</span>
+<span id="cb12-96"><a href="#cb12-96" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-97"><a href="#cb12-97" aria-hidden="true" tabindex="-1"></a>asserted_nb <span class="op">=</span> nbf.v4.new_notebook()</span>
+<span id="cb12-98"><a href="#cb12-98" aria-hidden="true" tabindex="-1"></a>asserted_nb[<span class="st">"cells"</span>] <span class="op">=</span> [nbf.v4.new_code_cell(asserted_code)]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<section id="ast-_count_inline_asserts" class="level3">
+<h3 class="anchored" data-anchor-id="ast-_count_inline_asserts">AST: <a href="https://newday-data.github.io/scilint/indicators.html#_count_inline_asserts"><code>_count_inline_asserts</code></a></h3>
+<div class="cell" data-tags="[]">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>test_code <span class="op">=</span> <span class="st">"""</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="st">assert foo()</span></span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a><span class="st">assert bar(foo())</span></span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a><span class="st">assert baz(foo(), bar())</span></span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a><span class="st">assert qux()</span></span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a><span class="st">assert risinstance(int)(1)</span></span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a><span class="st">"""</span></span>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a>test_func_defs <span class="op">=</span> [<span class="st">"foo"</span>, <span class="st">"bar"</span>, <span class="st">"baz"</span>, <span class="st">"qux"</span>, <span class="st">"quux"</span>, <span class="st">"risinstance"</span>]</span>
+<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a>expected_counts <span class="op">=</span> {</span>
+<span id="cb13-12"><a href="#cb13-12" aria-hidden="true" tabindex="-1"></a>    <span class="st">"foo"</span>: <span class="dv">3</span>,  <span class="co"># Directly in the first assert, and nested in the second</span></span>
+<span id="cb13-13"><a href="#cb13-13" aria-hidden="true" tabindex="-1"></a>    <span class="st">"bar"</span>: <span class="dv">2</span>,  <span class="co"># Directly in the second assert, and nested in the third</span></span>
+<span id="cb13-14"><a href="#cb13-14" aria-hidden="true" tabindex="-1"></a>    <span class="st">"baz"</span>: <span class="dv">1</span>,  <span class="co"># Directly in the third assert</span></span>
+<span id="cb13-15"><a href="#cb13-15" aria-hidden="true" tabindex="-1"></a>    <span class="st">"qux"</span>: <span class="dv">1</span>,  <span class="co"># Directly in the fourth assert</span></span>
+<span id="cb13-16"><a href="#cb13-16" aria-hidden="true" tabindex="-1"></a>    <span class="st">"quux"</span>: <span class="dv">0</span>,  <span class="co"># Not present in any assert</span></span>
+<span id="cb13-17"><a href="#cb13-17" aria-hidden="true" tabindex="-1"></a>    <span class="st">"risinstance"</span>: <span class="dv">1</span>,</span>
+<span id="cb13-18"><a href="#cb13-18" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb13-19"><a href="#cb13-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-20"><a href="#cb13-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-21"><a href="#cb13-21" aria-hidden="true" tabindex="-1"></a>actual_counts <span class="op">=</span> _count_inline_asserts(test_code, test_func_defs)</span>
+<span id="cb13-22"><a href="#cb13-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-23"><a href="#cb13-23" aria-hidden="true" tabindex="-1"></a><span class="cf">assert</span> (</span>
+<span id="cb13-24"><a href="#cb13-24" aria-hidden="true" tabindex="-1"></a>    actual_counts <span class="op">==</span> expected_counts</span>
+<span id="cb13-25"><a href="#cb13-25" aria-hidden="true" tabindex="-1"></a>), <span class="ss">f"Expected: </span><span class="sc">{</span>expected_counts<span class="sc">}</span><span class="ss">, but got: </span><span class="sc">{</span>actual_counts<span class="sc">}</span><span class="ss">"</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="ast-_count_func_ret_asserts" class="level3">
+<h3 class="anchored" data-anchor-id="ast-_count_func_ret_asserts">AST: <a href="https://newday-data.github.io/scilint/indicators.html#_count_func_ret_asserts"><code>_count_func_ret_asserts</code></a></h3>
+</section>
+<section id="update_ret_vals" class="level3">
+<h3 class="anchored" data-anchor-id="update_ret_vals"><a href="https://newday-data.github.io/scilint/indicators.html#_update_ret_vals"><code>_update_ret_vals</code></a></h3>
+</section>
+<section id="traverse_asserts" class="level3">
+<h3 class="anchored" data-anchor-id="traverse_asserts"><a href="https://newday-data.github.io/scilint/indicators.html#traverse_asserts"><code>traverse_asserts</code></a></h3>
+<hr>
+<p><a href="https://github.com/newday-data/scilint/tree/%7Bbranch%7D/blob/main/scilint/indicators.py#L203" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="traverse_asserts-1" class="level3">
+<h3 class="anchored" data-anchor-id="traverse_asserts-1">traverse_asserts</h3>
+<blockquote class="blockquote">
+<pre><code> traverse_asserts (stmt:ast.AST, ret_vals, func_ret_asserts,
+                   assert_func_counts, node:ast.AST)</code></pre>
+</blockquote>
+<div class="cell" data-tags="[]">
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>func_ret_asserts_expected <span class="op">=</span> Counter(</span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>    {</span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>        <span class="st">"something"</span>: <span class="dv">1</span>,</span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>        <span class="st">"tr"</span>: <span class="dv">0</span>,</span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>        <span class="st">"get_seg"</span>: <span class="dv">0</span>,</span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>        <span class="st">"convert_nb"</span>: <span class="dv">0</span>,</span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a>        <span class="st">"single_ret"</span>: <span class="dv">1</span>,</span>
+<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a>        <span class="st">"multival_ret"</span>: <span class="dv">5</span>,</span>
+<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a>        <span class="st">"multi_val_part2"</span>: <span class="dv">4</span>,</span>
+<span id="cb15-10"><a href="#cb15-10" aria-hidden="true" tabindex="-1"></a>        <span class="st">"untested"</span>: <span class="dv">0</span>,</span>
+<span id="cb15-11"><a href="#cb15-11" aria-hidden="true" tabindex="-1"></a>        <span class="st">"np_pandas"</span>: <span class="dv">7</span>,</span>
+<span id="cb15-12"><a href="#cb15-12" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb15-13"><a href="#cb15-13" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb15-14"><a href="#cb15-14" aria-hidden="true" tabindex="-1"></a>func_ret_asserts_actual <span class="op">=</span> _count_func_ret_asserts(get_cell_code(asserted_nb))</span>
+<span id="cb15-15"><a href="#cb15-15" aria-hidden="true" tabindex="-1"></a><span class="cf">assert</span> <span class="bu">sorted</span>(func_ret_asserts_actual) <span class="op">==</span> <span class="bu">sorted</span>(func_ret_asserts_expected)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="tests_per_function" class="level3">
+<h3 class="anchored" data-anchor-id="tests_per_function"><a href="https://newday-data.github.io/scilint/indicators.html#tests_per_function"><code>tests_per_function</code></a></h3>
+<hr>
+<p><a href="https://github.com/newday-data/scilint/tree/%7Bbranch%7D/blob/main/scilint/indicators.py#L230" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="tests_per_function-1" class="level3">
+<h3 class="anchored" data-anchor-id="tests_per_function-1">tests_per_function</h3>
+<blockquote class="blockquote">
+<pre><code> tests_per_function (nb, out_dir=None)</code></pre>
+</blockquote>
+</section>
+<section id="tests_per_function_code" class="level3">
+<h3 class="anchored" data-anchor-id="tests_per_function_code"><a href="https://newday-data.github.io/scilint/indicators.html#_tests_per_function_code"><code>_tests_per_function_code</code></a></h3>
+<div class="cell" data-tags="[]">
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>tests_count_actual <span class="op">=</span> _tests_per_function_code(get_cell_code(asserted_nb)).sort_index()</span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>tests_count_expected <span class="op">=</span> pd.Series(</span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>    {</span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>        <span class="st">"single_ret"</span>: <span class="dv">2</span>,</span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a>        <span class="st">"multival_ret"</span>: <span class="dv">6</span>,</span>
+<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a>        <span class="st">"multi_val_part2"</span>: <span class="dv">5</span>,</span>
+<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a>        <span class="st">"untested"</span>: <span class="dv">0</span>,</span>
+<span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a>        <span class="st">"something"</span>: <span class="dv">1</span>,</span>
+<span id="cb17-9"><a href="#cb17-9" aria-hidden="true" tabindex="-1"></a>        <span class="st">"convert_nb"</span>: <span class="dv">0</span>,</span>
+<span id="cb17-10"><a href="#cb17-10" aria-hidden="true" tabindex="-1"></a>        <span class="st">"tr"</span>: <span class="dv">4</span>,</span>
+<span id="cb17-11"><a href="#cb17-11" aria-hidden="true" tabindex="-1"></a>        <span class="st">"get_seg"</span>: <span class="dv">2</span>,</span>
+<span id="cb17-12"><a href="#cb17-12" aria-hidden="true" tabindex="-1"></a>        <span class="st">"np_pandas"</span>: <span class="dv">7</span>,</span>
+<span id="cb17-13"><a href="#cb17-13" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb17-14"><a href="#cb17-14" aria-hidden="true" tabindex="-1"></a>).sort_index()</span>
+<span id="cb17-15"><a href="#cb17-15" aria-hidden="true" tabindex="-1"></a><span class="cf">assert</span> tests_count_actual.equals(tests_count_expected)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell" data-tags="[]">
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>subscript_code <span class="op">=</span> <span class="st">"""</span></span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a><span class="st">proc = Processor()</span></span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a><span class="st">exp = proc.subs.subs(4)</span></span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a><span class="st">assert x.prop== exp</span></span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a><span class="st">def foo():</span></span>
+<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a><span class="st">    return proc</span></span>
+<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a><span class="st">flip, bar = foo().subs</span></span>
+<span id="cb18-8"><a href="#cb18-8" aria-hidden="true" tabindex="-1"></a><span class="st">assert 7 == flip.subs()</span></span>
+<span id="cb18-9"><a href="#cb18-9" aria-hidden="true" tabindex="-1"></a><span class="st">assert 7 == bar.subs</span></span>
+<span id="cb18-10"><a href="#cb18-10" aria-hidden="true" tabindex="-1"></a><span class="st">a,b,c= d</span></span>
+<span id="cb18-11"><a href="#cb18-11" aria-hidden="true" tabindex="-1"></a><span class="st">c.one = e</span></span>
+<span id="cb18-12"><a href="#cb18-12" aria-hidden="true" tabindex="-1"></a><span class="st">assert b.two.three == f</span></span>
+<span id="cb18-13"><a href="#cb18-13" aria-hidden="true" tabindex="-1"></a><span class="st">y = getattr(super(), name)(list(x), **kwargs)</span></span>
+<span id="cb18-14"><a href="#cb18-14" aria-hidden="true" tabindex="-1"></a><span class="st">"""</span></span>
+<span id="cb18-15"><a href="#cb18-15" aria-hidden="true" tabindex="-1"></a>_tests_per_function_code(subscript_code)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<pre><code>foo     0
+subs    1
+dtype: int64</code></pre>
+</div>
+</div>
+</section>
+<section id="ind-tests_per_func_mean" class="level3">
+<h3 class="anchored" data-anchor-id="ind-tests_per_func_mean">IND: <a href="https://newday-data.github.io/scilint/indicators.html#tests_per_func_mean"><code>tests_per_func_mean</code></a></h3>
+<hr>
+<p><a href="https://github.com/newday-data/scilint/tree/%7Bbranch%7D/blob/main/scilint/indicators.py#L251" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="tests_per_func_mean" class="level3">
+<h3 class="anchored" data-anchor-id="tests_per_func_mean">tests_per_func_mean</h3>
+<blockquote class="blockquote">
+<pre><code> tests_per_func_mean (nb, out_dir=None)</code></pre>
+</blockquote>
+</section>
+<section id="ind-tests_func_coverage_pct" class="level3">
+<h3 class="anchored" data-anchor-id="ind-tests_func_coverage_pct">IND: <a href="https://newday-data.github.io/scilint/indicators.html#tests_func_coverage_pct"><code>tests_func_coverage_pct</code></a></h3>
+<hr>
+<p><a href="https://github.com/newday-data/scilint/tree/%7Bbranch%7D/blob/main/scilint/indicators.py#L255" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="tests_func_coverage_pct" class="level3">
+<h3 class="anchored" data-anchor-id="tests_func_coverage_pct">tests_func_coverage_pct</h3>
+<blockquote class="blockquote">
+<pre><code> tests_func_coverage_pct (nb, out_dir=None)</code></pre>
+</blockquote>
+<div class="cell" data-tags="[]">
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="cf">assert</span> _tests_per_function_code(get_cell_code(asserted_nb)).mean() <span class="op">==</span> <span class="fl">3.0</span></span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a><span class="cf">assert</span> (</span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>    _tests_per_function_code(get_cell_code(asserted_nb)).clip(upper<span class="op">=</span><span class="dv">1</span>).mean() <span class="op">*</span> <span class="dv">100</span></span>
+<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a>    <span class="op">&gt;</span> <span class="fl">75.0</span></span>
+<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell" data-tags="[]">
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="cf">assert</span> tests_per_func_mean(nbdev_nb) <span class="op">&gt;</span> <span class="fl">0.5</span></span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a><span class="cf">assert</span> tests_per_func_mean(nbdev_hq_nb) <span class="op">&gt;</span> <span class="fl">0.5</span></span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a><span class="cf">assert</span> tests_per_func_mean(non_nbdev_nb) <span class="op">&lt;</span> <span class="fl">0.5</span></span>
+<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a><span class="cf">assert</span> tests_per_func_mean(non_nbdev_lq_nb) <span class="op">&lt;</span> <span class="fl">0.5</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell" data-tags="[]">
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="cf">assert</span> tests_func_coverage_pct(nbdev_nb) <span class="op">&gt;</span> <span class="dv">20</span></span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a><span class="cf">assert</span> tests_func_coverage_pct(nbdev_hq_nb) <span class="op">&gt;</span> <span class="dv">20</span></span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a><span class="cf">assert</span> tests_func_coverage_pct(non_nbdev_nb) <span class="op">&lt;</span> <span class="dv">20</span></span>
+<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a><span class="cf">assert</span> tests_func_coverage_pct(non_nbdev_lq_nb) <span class="op">&lt;</span> <span class="dv">20</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+</section>
+<section id="in-function-percentage" class="level2">
+<h2 class="anchored" data-anchor-id="in-function-percentage">3. In-function Percentage</h2>
+<section id="ast-calc_ifp" class="level3">
+<h3 class="anchored" data-anchor-id="ast-calc_ifp">AST: <a href="https://newday-data.github.io/scilint/indicators.html#calc_ifp"><code>calc_ifp</code></a></h3>
+<hr>
+<p><a href="https://github.com/newday-data/scilint/tree/%7Bbranch%7D/blob/main/scilint/indicators.py#L259" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="calc_ifp" class="level3">
+<h3 class="anchored" data-anchor-id="calc_ifp">calc_ifp</h3>
+<blockquote class="blockquote">
+<pre><code> calc_ifp (code, out_dir=None)</code></pre>
+</blockquote>
+<div class="cell" data-tags="[]">
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="cf">assert</span> (calc_ifp(nb_cell_code)) <span class="op">==</span> (<span class="dv">5</span> <span class="op">/</span> (<span class="dv">5</span> <span class="op">+</span> <span class="dv">6</span>)) <span class="op">*</span> <span class="dv">100</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="ind-in_func_pct" class="level3">
+<h3 class="anchored" data-anchor-id="ind-in_func_pct">IND: <a href="https://newday-data.github.io/scilint/indicators.html#in_func_pct"><code>in_func_pct</code></a></h3>
+<hr>
+<p><a href="https://github.com/newday-data/scilint/tree/%7Bbranch%7D/blob/main/scilint/indicators.py#L290" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="in_func_pct" class="level3">
+<h3 class="anchored" data-anchor-id="in_func_pct">in_func_pct</h3>
+<blockquote class="blockquote">
+<pre><code> in_func_pct (nb, out_dir=None)</code></pre>
+</blockquote>
+<div class="cell" data-tags="[]">
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="cf">assert</span> in_func_pct(nbdev_nb) <span class="op">&gt;=</span> <span class="dv">0</span></span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a><span class="cf">assert</span> in_func_pct(nbdev_hq_nb) <span class="op">&gt;=</span> <span class="dv">0</span></span>
+<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a><span class="cf">assert</span> in_func_pct(non_nbdev_nb) <span class="op">&gt;=</span> <span class="dv">0</span></span>
+<span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a><span class="cf">assert</span> in_func_pct(non_nbdev_lq_nb) <span class="op">&gt;=</span> <span class="dv">0</span></span>
+<span id="cb28-5"><a href="#cb28-5" aria-hidden="true" tabindex="-1"></a><span class="cf">assert</span> pd.isnull(in_func_pct(index))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+</section>
+<section id="markdown-to-code-percent" class="level2">
+<h2 class="anchored" data-anchor-id="markdown-to-code-percent">4. Markdown to Code Percent</h2>
+<section id="ind-markdown_code_pct" class="level3">
+<h3 class="anchored" data-anchor-id="ind-markdown_code_pct">IND: <a href="https://newday-data.github.io/scilint/indicators.html#markdown_code_pct"><code>markdown_code_pct</code></a></h3>
+<hr>
+<p><a href="https://github.com/newday-data/scilint/tree/%7Bbranch%7D/blob/main/scilint/indicators.py#L303" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="markdown_code_pct" class="level3">
+<h3 class="anchored" data-anchor-id="markdown_code_pct">markdown_code_pct</h3>
+<blockquote class="blockquote">
+<pre><code> markdown_code_pct (nb, out_dir=None)</code></pre>
+</blockquote>
+<div class="cell" data-tags="[]">
+<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="cf">assert</span> markdown_code_pct(nbdev_nb) <span class="op">&gt;=</span> <span class="dv">0</span></span>
+<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a><span class="cf">assert</span> markdown_code_pct(nbdev_hq_nb) <span class="op">&gt;=</span> <span class="dv">0</span></span>
+<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a><span class="cf">assert</span> markdown_code_pct(non_nbdev_nb) <span class="op">&gt;=</span> <span class="dv">0</span></span>
+<span id="cb30-4"><a href="#cb30-4" aria-hidden="true" tabindex="-1"></a><span class="cf">assert</span> markdown_code_pct(non_nbdev_lq_nb) <span class="op">&gt;=</span> <span class="dv">0</span></span>
+<span id="cb30-5"><a href="#cb30-5" aria-hidden="true" tabindex="-1"></a><span class="cf">assert</span> pd.isnull(markdown_code_pct(index))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+</section>
+<section id="total-code-length" class="level2">
+<h2 class="anchored" data-anchor-id="total-code-length">5. Total Code Length</h2>
+<section id="ind-total_code_len" class="level3">
+<h3 class="anchored" data-anchor-id="ind-total_code_len">IND: <a href="https://newday-data.github.io/scilint/indicators.html#total_code_len"><code>total_code_len</code></a></h3>
+<hr>
+<p><a href="https://github.com/newday-data/scilint/tree/%7Bbranch%7D/blob/main/scilint/indicators.py#L317" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="total_code_len" class="level3">
+<h3 class="anchored" data-anchor-id="total_code_len">total_code_len</h3>
+<blockquote class="blockquote">
+<pre><code> total_code_len (nb, out_dir=None)</code></pre>
+</blockquote>
+<div class="cell" data-tags="[]">
+<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="cf">assert</span> total_code_len(nbdev_nb) <span class="op">&gt;=</span> <span class="dv">50</span></span>
+<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a><span class="cf">assert</span> total_code_len(nbdev_hq_nb) <span class="op">&gt;=</span> <span class="dv">50</span></span>
+<span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a><span class="cf">assert</span> total_code_len(non_nbdev_nb) <span class="op">&gt;=</span> <span class="dv">50</span></span>
+<span id="cb32-4"><a href="#cb32-4" aria-hidden="true" tabindex="-1"></a><span class="cf">assert</span> total_code_len(non_nbdev_lq_nb) <span class="op">&gt;=</span> <span class="dv">50</span></span>
+<span id="cb32-5"><a href="#cb32-5" aria-hidden="true" tabindex="-1"></a><span class="cf">assert</span> total_code_len(index) <span class="op">==</span> <span class="dv">0</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+</section>
+<section id="lines-of-code-per-markdown-section" class="level2">
+<h2 class="anchored" data-anchor-id="lines-of-code-per-markdown-section">6. Lines-of-code per Markdown Section</h2>
+<section id="ind-loc_per_md_section" class="level3">
+<h3 class="anchored" data-anchor-id="ind-loc_per_md_section">IND: <a href="https://newday-data.github.io/scilint/indicators.html#loc_per_md_section"><code>loc_per_md_section</code></a></h3>
+<hr>
+<p><a href="https://github.com/newday-data/scilint/tree/%7Bbranch%7D/blob/main/scilint/indicators.py#L321" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="loc_per_md_section" class="level3">
+<h3 class="anchored" data-anchor-id="loc_per_md_section">loc_per_md_section</h3>
+<blockquote class="blockquote">
+<pre><code> loc_per_md_section (nb, out_dir=None)</code></pre>
+</blockquote>
+<div class="cell" data-tags="[]">
+<div class="sourceCode cell-code" id="cb34"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="cf">assert</span> loc_per_md_section(nbdev_nb) <span class="op">&lt;</span> <span class="dv">1000</span></span>
+<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a><span class="cf">assert</span> loc_per_md_section(nbdev_hq_nb) <span class="op">&lt;</span> <span class="dv">1000</span></span>
+<span id="cb34-3"><a href="#cb34-3" aria-hidden="true" tabindex="-1"></a><span class="cf">assert</span> loc_per_md_section(non_nbdev_nb) <span class="kw">is</span> np.nan</span>
+<span id="cb34-4"><a href="#cb34-4" aria-hidden="true" tabindex="-1"></a><span class="cf">assert</span> loc_per_md_section(non_nbdev_lq_nb) <span class="op">&gt;</span> <span class="dv">1000</span></span>
+<span id="cb34-5"><a href="#cb34-5" aria-hidden="true" tabindex="-1"></a><span class="cf">assert</span> loc_per_md_section(index) <span class="kw">is</span> np.nan</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+</section>
+</section>
+<section id="quality-indicator-function-map" class="level1">
+<h1>Quality Indicator Function Map</h1>
+<blockquote class="blockquote">
+<p>Add new quality indicators here to be used. Signature contract is nb -&gt; number. TODO: provide a proper typed signature, handle bools.</p>
+</blockquote>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    text: function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+</body></html>

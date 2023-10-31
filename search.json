@@ -1,0 +1,408 @@
+[
+  {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "🧐 scilint",
+    "section": "",
+    "text": "scilint aims to bring a style and quality standard into notebook based Data Science workflows. How you define a quality notebook is difficult and somewhat subjective. It can have the obvious meaning of being free of bugs but also legibility and ease of comprehension are important too.\nscilint takes the approach of breaking down potentially quality relevant aspects of the notebook and providing what we believe are sensible defaults that potentially correlate with higher quality workflows. We also let users define the quality line as they see fit through configuration of existing thresholds and ability to add new metrics (coming soon). As use of the library grows we anticipate being able to statistically relate some of the quality relevant attributes to key delivery metrics like “change failure rate” or “lead time to production”."
+  },
+  {
+    "objectID": "index.html#install",
+    "href": "index.html#install",
+    "title": "🧐 scilint",
+    "section": "Install",
+    "text": "Install\npip install scilint"
+  },
+  {
+    "objectID": "index.html#commands",
+    "href": "index.html#commands",
+    "title": "🧐 scilint",
+    "section": "Commands",
+    "text": "Commands\n\nscilint_lint\nExposes potential quality issues within your notebook using some pre-defined checks. Default threshold values for these checks are provided that will enable a build to be marked as passed or failed.\n\n\nShow parameters\n\n\n--fail_over\n\nFor now a very basic failure threshold is set by providing a number of warnings that will be accepted without failing the build. The default is 1 but this can be increased via the --fail_over parameter. As the library matures we will revisit adding more nuanced options.\n\n\n\n--exclusions\n\nYou can exclude individual notebooks or directories using the --exclusions parameter. This is a comma separated list of paths where you can provide directories like “dir/” or specific notebooks like “somenotebook.ipynb”\n\n\n\n--display_report\n\nPrint the lint warnings report as a markdown formatted table.\n\n\n\n--out_dir\n\nDirectory to persist the lint_report, warning_violations and the confgiruation used.\n\n\n\n--print_syntax_errors\n\nThe code is parsed using the ast module if that parsing fails due to syntax errors that is noted in the warning report but the exact syntax error is not provided. With this flag the SyntaxError reason message that failed notebook parsing will be printed to the screen for each offending notebook."
+  },
+  {
+    "objectID": "index.html#scilint_ci-nbdev-only",
+    "href": "index.html#scilint_ci-nbdev-only",
+    "title": "🧐 scilint",
+    "section": "scilint_ci [nbdev only]",
+    "text": "scilint_ci [nbdev only]\nAdds documentation generation to scilint_build. This requires an nbdev project and a working quarto build. Quarto is a core part of the nbdev system, if you are having trouble installing it, check out the nbdev Github page. For more details on the Quarto project, check out their home page."
+  },
+  {
+    "objectID": "index.html#adding-new-indicators",
+    "href": "index.html#adding-new-indicators",
+    "title": "🧐 scilint",
+    "section": "➕ Adding New Indicators",
+    "text": "➕ Adding New Indicators\nFor now post your ideas as a feature request and we can discuss, if accepted you can provide a PR. We are looking for a more rigorous way link indicator and effectivess, until that is found discussion is the best we can do!"
+  },
+  {
+    "objectID": "index.html#reference-quality-standard",
+    "href": "index.html#reference-quality-standard",
+    "title": "🧐 scilint",
+    "section": "Reference Quality Standard",
+    "text": "Reference Quality Standard\n\nThe progressive consolidation workflow that we use on projects is the reference implementation for scilint and is summarised in the below image:\n\n\n\n\n\nLegacy: especially on larger projects there may be a large number of legacy notebooks that are not in use and no there is no obvious value in improving their quality. This could be removed from the workflow if you have enforced a quality standard from the outset.\nExploratory: exploratory workflows are typically off-line and involve much iteration. The benefit of some quality bar here is that it aids collaboration, review and generally helps perform team-based Data Science easier.\nExperimental: we split production workflows into two groups: experimental and validated. Experimental notebooks are, as the name suggests, experiments that are yet to be proven. As they are released to customers they should have a reasonably high quality standard but not the same as validated work.\nValidated: we need to have the most confidence that all validated learning activity (experiments which have been accepted and scaled out to all users) will run properly for along time after it is written."
+  },
+  {
+    "objectID": "index.html#what-is-a-quality-spec-in-practice",
+    "href": "index.html#what-is-a-quality-spec-in-practice",
+    "title": "🧐 scilint",
+    "section": "What is a Quality Spec in practice?",
+    "text": "What is a Quality Spec in practice?\nA quality spec in practice is just a yaml configuration file of the properties of the quality spec. It contains threshold values for warning along with some other settings. To adopt a multi-spec standard place a spec file into each directory that you want to have different standards for. Look at nbs/examples/nbs to see an example of a multi-spec standard.\n---\n  exclusions: ~\n  fail_over: 1\n  out_dir: \"/tmp/scilint/\"\n  precision: 3\n  print_syntax_errors: false\n  evaluate: true\n  warnings:\n    lt:\n      calls_per_func_median: 1\n      calls_per_func_mean: 1\n      in_func_pct: 20\n      tests_func_coverage_pct: 20\n      tests_per_func_mean: 0.5\n      markdown_code_pct: 5\n    gt:\n      total_code_len: 50000\n      loc_per_md_section: 2000\n    equals:\n      has_syntax_error: true"
+  },
+  {
+    "objectID": "index.html#what-does-a-lint-report-look-like",
+    "href": "index.html#what-does-a-lint-report-look-like",
+    "title": "🧐 scilint",
+    "section": "What does a lint report look like?",
+    "text": "What does a lint report look like?\nThe lint warnings are printed to the console and a more thorough report is generated and saved as a CSV file which looks like this:"
+  },
+  {
+    "objectID": "index.html#make-the-switch-to-nbdev",
+    "href": "index.html#make-the-switch-to-nbdev",
+    "title": "🧐 scilint",
+    "section": "🤓 Make the switch to nbdev!",
+    "text": "🤓 Make the switch to nbdev!\nIn case you hadn’t guessed yet we are big nbdev fans. scilint has a better developer experience on an nbdev project and is more fully featured but mostly because it will really help you when trying to move from exploratory development to production processes.\nConverting your libraries to nbdev is not required for this tool to work but we argue that it would confer many benefits if you are part of a Production Data Science team. nbdev contains many features that are useful for Data Science workflows; too many in fact to cover here. We will focus on the major features we consider to have the most impact:\n\nExplicit separation of exploration from what is fundamental for the workflow to execute using the export directive.\nIntroducing a fit-for-purpose test runner for notebooks.\nIn-flow documentation of a notebook that is focused on the reader and powerfully expressive thanks to Quarto Markdown (aids building towards published reproducible research)\nGit friendly workflow via pre-commit hooks.\nBeing able to build a modular notebook workflow as it is easy to export and import functions from notebooks in your project - this puts shared reusable functions within reach of the team easily."
+  },
+  {
+    "objectID": "indicators.html",
+    "href": "indicators.html",
+    "title": "indicators",
+    "section": "",
+    "text": "nbdev_path = Path(Path(\".\").resolve(), \"example_nbs\", \"nbdev.ipynb\")\nnbdev_hq_path = Path(Path(\".\").resolve(), \"example_nbs\", \"nbdev_high_quality.ipynb\")\nnon_nbdev_path = Path(Path(\".\").resolve(), \"example_nbs\", \"non_nbdev.ipynb\")\nnon_nbdev_lq_path = Path(\n    Path(\".\").resolve(), \"example_nbs\", \"non_nbdev_low_quality.ipynb\"\n)\nindex_path = Path(Path(\".\").resolve(), \"index.ipynb\")\nsyntax_error_path = Path(Path(\".\").resolve(), \"syntax_error.ipynb\")\n\nnbdev_nb = read_nb(nbdev_path)\nnbdev_hq_nb = read_nb(nbdev_hq_path)\nnon_nbdev_nb = read_nb(non_nbdev_path)\nnon_nbdev_lq_nb = read_nb(non_nbdev_lq_path)\nindex = read_nb(index_path)\nsyntax_error = read_nb(index_path)"
+  },
+  {
+    "objectID": "indicators.html#ast-_count_func_calls",
+    "href": "indicators.html#ast-_count_func_calls",
+    "title": "indicators",
+    "section": "AST: _count_func_calls",
+    "text": "AST: _count_func_calls\n\noutput = gen_parse_filename(\n    \"# | export \\n from bla import foo; z= 3\", now=datetime.datetime(1, 2, 3, 0, 0, 0)\n)\nassert (\n    \"export-fr_00010203_00_00_00.py\" == output\n), f\"Expected 'export-fr_10203_00_00_00.py' but got '{output}'\"\n\n\ntest_code = \"\"\"\nself.hierarchical_topic_reduction(3); \ntopic_reduction(3); \nlambda x: topic(x); \nhierarchical_topic_reduction[4]; \nhierarchical_topic_reduction(4); \nblabla()\nlambda y: other(5)\nfuncs = [x, y]\nfuncs[0](3)\nblabla(topic(7))\nfunc_ret()()()\ndef zip(self, cycled=False): return self._new((zip_cycle if cycled else zip)(*self))\nfunc()\nobj.func()\nmodule.func()\nlist[0]\n\"\"\"\n\ntest_func_defs = [\n    \"topic\",\n    \"topic_reduction\",\n    \"blablabla\",\n    \"hierarchical_topic_reduction\",\n    \"func_ret\",\n    \"func\",\n    \"obj.func\",\n    \"module.func\",\n]\n\nassert _count_func_calls(test_code, test_func_defs) == Counter(\n    {\n        \"topic\": 2,\n        \"topic_reduction\": 1,\n        \"blablabla\": 0,\n        \"hierarchical_topic_reduction\": 2,\n        \"func_ret\": 1,\n        \"func\": 3,\n        \"obj.func\": 0,  # This won't be detected as \"obj.func\", but rather just \"func\"\n        \"module.func\": 0,  # Similarly, this will be detected as \"func\" and not \"module.func\"\n    }\n)\n\n\nnb_cell_code = r\"\"\"\ndef something():\n    pass; pass # in x 2\n\n\n\n!ls -l\nif 1!= 2:\n    print(4)\n#| export\n\nimport pandas as pd # out\nfrom sciflow.utils import lib_path, odbc_connect, query # out\n\n#| export\n\ndef nb_to_sagemaker_pipeline(\n    nb_path: Path,\n    silent: bool = True,\n):\n    nb = read_nb(nb_path)  # in\n    lib_name = get_config().get(\"lib_name\")  # in\n    module_name = find_default_export(nb[\"cells\"])  # in\n    \nx = [1,2,3] # out\nnb_to_sagemaker_pipeline() # out\n\nplt.plot(fpr, tpr, color='darkorange', lw=2, label='ROC curve (area = %0.2f)' % roc_auc)\n\"\"\""
+  },
+  {
+    "objectID": "indicators.html#ast-_get_func_defs",
+    "href": "indicators.html#ast-_get_func_defs",
+    "title": "indicators",
+    "section": "AST: _get_func_defs",
+    "text": "AST: _get_func_defs\n\ntest_code = \"\"\"\nx()\ndef y():\n    pass\ndef z():\n    def a():\n        pass\nclass A():\n    def b():\n        pass\ndef blabla():\n    return 1\ndef _hidden():\n    return None\n\"\"\"\nfunc_defs = [\"a\", \"b\", \"blabla\", \"y\", \"z\"]\nassert func_defs == sorted(_get_func_defs(test_code))"
+  },
+  {
+    "objectID": "indicators.html#calls-per-function",
+    "href": "indicators.html#calls-per-function",
+    "title": "indicators",
+    "section": "1. Calls-per-Function",
+    "text": "1. Calls-per-Function\n\ncalls_per_func\n\nsource\n\n\ncalls_per_func\n\n calls_per_func (nb, out_dir=None)\n\n\n\nIND: calls_per_func_mean\n\nsource\n\n\ncalls_per_func_mean\n\n calls_per_func_mean (nb, out_dir=None)\n\n\n\nIND: calls_per_func_median\n\nsource\n\n\ncalls_per_func_median\n\n calls_per_func_median (nb, out_dir=None)\n\nreplace these type of tests with known good notebook data\n\nassert round(calls_per_func_mean(read_nb(nbdev_path)), 2) == 2.07\nassert round(calls_per_func_mean(read_nb(nbdev_hq_path)), 2) == 2.31\nassert round(calls_per_func_mean(read_nb(non_nbdev_path)), 2) == 1.0\nassert round(calls_per_func_mean(read_nb(non_nbdev_lq_path)), 2) == 1.44\nassert pd.isnull(calls_per_func_mean(index))\n\n\nassert calls_per_func_median(read_nb(nbdev_path)) == 1.0\nassert round(calls_per_func_median(read_nb(nbdev_hq_path)), 2) == 1.0\nassert round(calls_per_func_median(read_nb(non_nbdev_path)), 2) == 1.0\nassert round(calls_per_func_median(read_nb(non_nbdev_lq_path)), 2) == 1.0\nassert pd.isnull(calls_per_func_median(index))"
+  },
+  {
+    "objectID": "indicators.html#tests-per-function",
+    "href": "indicators.html#tests-per-function",
+    "title": "indicators",
+    "section": "2. Tests per Function",
+    "text": "2. Tests per Function\n\nasserted_code = r\"\"\"\n\n\n\ndef something():\n    pass; pass # in x 2\n    \nassert True\n\n#| export\n\ndef convert_nb(\n    nb_path: Path,\n    silent: bool = True,\n):\n     nb = read_nb(nb_path)  # in\n     lib_name = get_config().get(\"lib_name\")  # in\n     module_name = find_default_export(nb[\"cells\"])  # in\n    \nx = [1,2,3] # out\nassert len(x) &gt; 2\nassert something() is None # something +1\n\ndef tr():\n    return True\n    \ndef get_seg(num):\n    return 2\n    \nassert(tr)\nassert(tr()) # tr +1\nassert(tr() == 4) # tr +1\nassert(4 ==tr()) # tr +1\nassert 0 != 0\nassert \"' '\".join(tr(1)) == \"00\" # tr +1\nassert len(get_seg(50)) == 50 # get_seg +1\nassert max([int(x) for x in get_seg(100)]) == 99 # get_seg +1\n\ndef single_ret():\n    pass\ndef multival_ret():\n    pass\ndef multi_val_part2():\n    pass\n    \ndef untested():\n    1+2\n    \ndef np_pandas():\n    1+1\n\nx = single_ret()\nassert x  ==0\n5 ==5 \nx,y,z = multival_ret()\na,b = multi_val_part2()\nassert x  ==0\nassert 1 == y\nassert x == y == z\nassert 2 == 2 and x == z\nassert a == x or b == z\nassert b\nassert a == single_ret()\nassert multi_val_part() == multi_val_part2()\nassert b == multival_ret()\n\nX_train, y_test, n = np_pandas()\nassert X_train.isnull().sum().sum() == 0\nassert \"person_home_ownership\" not in X_train.columns\nassert len(y_test) &gt; 0\nassert len(y_test) == round(0.2 * n)\nassert X_train.dtypes.all() in [\n    np.dtype(\"float64\"),\n    np.dtype(\"int64\"),\n    np.dtype(\"uint8\"),\n    np.dtype(\"bool\"),\n]\nassert y_test.dtype == np.dtype(\"int64\")\nassert y_test.isin([0, 1]).all()\n\nif nested: args, sys.argv[1:] = p.parse_known_args()\n\n# Expected total test counts\n#single_ret                  2\n#multival_ret                6\n#multi_val_part2             5\n#untested                    0\n#something                   1\n#nb_to_sagemaker_pipeline    0\n#tr                          4\n#get_seg                     2\n#np_pandas                   7\n\"\"\"\n\nimport nbformat as nbf\n\nasserted_nb = nbf.v4.new_notebook()\nasserted_nb[\"cells\"] = [nbf.v4.new_code_cell(asserted_code)]\n\n\nAST: _count_inline_asserts\n\ntest_code = \"\"\"\nassert foo()\nassert bar(foo())\nassert baz(foo(), bar())\nassert qux()\nassert risinstance(int)(1)\n\"\"\"\n\ntest_func_defs = [\"foo\", \"bar\", \"baz\", \"qux\", \"quux\", \"risinstance\"]\n\nexpected_counts = {\n    \"foo\": 3,  # Directly in the first assert, and nested in the second\n    \"bar\": 2,  # Directly in the second assert, and nested in the third\n    \"baz\": 1,  # Directly in the third assert\n    \"qux\": 1,  # Directly in the fourth assert\n    \"quux\": 0,  # Not present in any assert\n    \"risinstance\": 1,\n}\n\n\nactual_counts = _count_inline_asserts(test_code, test_func_defs)\n\nassert (\n    actual_counts == expected_counts\n), f\"Expected: {expected_counts}, but got: {actual_counts}\"\n\n\n\nAST: _count_func_ret_asserts\n\n\n_update_ret_vals\n\n\ntraverse_asserts\n\nsource\n\n\ntraverse_asserts\n\n traverse_asserts (stmt:ast.AST, ret_vals, func_ret_asserts,\n                   assert_func_counts, node:ast.AST)\n\n\nfunc_ret_asserts_expected = Counter(\n    {\n        \"something\": 1,\n        \"tr\": 0,\n        \"get_seg\": 0,\n        \"convert_nb\": 0,\n        \"single_ret\": 1,\n        \"multival_ret\": 5,\n        \"multi_val_part2\": 4,\n        \"untested\": 0,\n        \"np_pandas\": 7,\n    }\n)\nfunc_ret_asserts_actual = _count_func_ret_asserts(get_cell_code(asserted_nb))\nassert sorted(func_ret_asserts_actual) == sorted(func_ret_asserts_expected)\n\n\n\ntests_per_function\n\nsource\n\n\ntests_per_function\n\n tests_per_function (nb, out_dir=None)\n\n\n\n_tests_per_function_code\n\ntests_count_actual = _tests_per_function_code(get_cell_code(asserted_nb)).sort_index()\ntests_count_expected = pd.Series(\n    {\n        \"single_ret\": 2,\n        \"multival_ret\": 6,\n        \"multi_val_part2\": 5,\n        \"untested\": 0,\n        \"something\": 1,\n        \"convert_nb\": 0,\n        \"tr\": 4,\n        \"get_seg\": 2,\n        \"np_pandas\": 7,\n    }\n).sort_index()\nassert tests_count_actual.equals(tests_count_expected)\n\n\nsubscript_code = \"\"\"\nproc = Processor()\nexp = proc.subs.subs(4)\nassert x.prop== exp\ndef foo():\n    return proc\nflip, bar = foo().subs\nassert 7 == flip.subs()\nassert 7 == bar.subs\na,b,c= d\nc.one = e\nassert b.two.three == f\ny = getattr(super(), name)(list(x), **kwargs)\n\"\"\"\n_tests_per_function_code(subscript_code)\n\nfoo     0\nsubs    1\ndtype: int64\n\n\n\n\nIND: tests_per_func_mean\n\nsource\n\n\ntests_per_func_mean\n\n tests_per_func_mean (nb, out_dir=None)\n\n\n\nIND: tests_func_coverage_pct\n\nsource\n\n\ntests_func_coverage_pct\n\n tests_func_coverage_pct (nb, out_dir=None)\n\n\nassert _tests_per_function_code(get_cell_code(asserted_nb)).mean() == 3.0\nassert (\n    _tests_per_function_code(get_cell_code(asserted_nb)).clip(upper=1).mean() * 100\n    &gt; 75.0\n)\n\n\nassert tests_per_func_mean(nbdev_nb) &gt; 0.5\nassert tests_per_func_mean(nbdev_hq_nb) &gt; 0.5\nassert tests_per_func_mean(non_nbdev_nb) &lt; 0.5\nassert tests_per_func_mean(non_nbdev_lq_nb) &lt; 0.5\n\n\nassert tests_func_coverage_pct(nbdev_nb) &gt; 20\nassert tests_func_coverage_pct(nbdev_hq_nb) &gt; 20\nassert tests_func_coverage_pct(non_nbdev_nb) &lt; 20\nassert tests_func_coverage_pct(non_nbdev_lq_nb) &lt; 20"
+  },
+  {
+    "objectID": "indicators.html#in-function-percentage",
+    "href": "indicators.html#in-function-percentage",
+    "title": "indicators",
+    "section": "3. In-function Percentage",
+    "text": "3. In-function Percentage\n\nAST: calc_ifp\n\nsource\n\n\ncalc_ifp\n\n calc_ifp (code, out_dir=None)\n\n\nassert (calc_ifp(nb_cell_code)) == (5 / (5 + 6)) * 100\n\n\n\nIND: in_func_pct\n\nsource\n\n\nin_func_pct\n\n in_func_pct (nb, out_dir=None)\n\n\nassert in_func_pct(nbdev_nb) &gt;= 0\nassert in_func_pct(nbdev_hq_nb) &gt;= 0\nassert in_func_pct(non_nbdev_nb) &gt;= 0\nassert in_func_pct(non_nbdev_lq_nb) &gt;= 0\nassert pd.isnull(in_func_pct(index))"
+  },
+  {
+    "objectID": "indicators.html#markdown-to-code-percent",
+    "href": "indicators.html#markdown-to-code-percent",
+    "title": "indicators",
+    "section": "4. Markdown to Code Percent",
+    "text": "4. Markdown to Code Percent\n\nIND: markdown_code_pct\n\nsource\n\n\nmarkdown_code_pct\n\n markdown_code_pct (nb, out_dir=None)\n\n\nassert markdown_code_pct(nbdev_nb) &gt;= 0\nassert markdown_code_pct(nbdev_hq_nb) &gt;= 0\nassert markdown_code_pct(non_nbdev_nb) &gt;= 0\nassert markdown_code_pct(non_nbdev_lq_nb) &gt;= 0\nassert pd.isnull(markdown_code_pct(index))"
+  },
+  {
+    "objectID": "indicators.html#total-code-length",
+    "href": "indicators.html#total-code-length",
+    "title": "indicators",
+    "section": "5. Total Code Length",
+    "text": "5. Total Code Length\n\nIND: total_code_len\n\nsource\n\n\ntotal_code_len\n\n total_code_len (nb, out_dir=None)\n\n\nassert total_code_len(nbdev_nb) &gt;= 50\nassert total_code_len(nbdev_hq_nb) &gt;= 50\nassert total_code_len(non_nbdev_nb) &gt;= 50\nassert total_code_len(non_nbdev_lq_nb) &gt;= 50\nassert total_code_len(index) == 0"
+  },
+  {
+    "objectID": "indicators.html#lines-of-code-per-markdown-section",
+    "href": "indicators.html#lines-of-code-per-markdown-section",
+    "title": "indicators",
+    "section": "6. Lines-of-code per Markdown Section",
+    "text": "6. Lines-of-code per Markdown Section\n\nIND: loc_per_md_section\n\nsource\n\n\nloc_per_md_section\n\n loc_per_md_section (nb, out_dir=None)\n\n\nassert loc_per_md_section(nbdev_nb) &lt; 1000\nassert loc_per_md_section(nbdev_hq_nb) &lt; 1000\nassert loc_per_md_section(non_nbdev_nb) is np.nan\nassert loc_per_md_section(non_nbdev_lq_nb) &gt; 1000\nassert loc_per_md_section(index) is np.nan"
+  },
+  {
+    "objectID": "example_nbs/exploratory/nbdev.html",
+    "href": "example_nbs/exploratory/nbdev.html",
+    "title": "nbdev format notebook Example",
+    "section": "",
+    "text": "message = something()[\"message\"]\n\nAuto-reloading modules is very useful when using nbdev as changes to underlying modules are picked up without having to restart the kernel.\n\nParams\n\nsciflow uses the papermill format for paramaeterising notebooks. See here for how to specify papermill params: https://papermill.readthedocs.io/en/latest/usage-parameterize.html. These parameters will be available to use in your flows.\n\nnbdev tests are any cells which are not exporting code and do not have flags that say they should be ignored from testing.\n\nassert get_traffic_text(\"3\") == \"03\"\nassert get_traffic_text(\"13\") == \"13\"\nassert get_traffic_text(\"78\") == \"78\"\n\n\n\nNon-exported helper\n\ndef some_test_util(flag):\n    return not flag\n\n\n\nPreprocess Data\n\nassert get_experiment_segment(1) == (\"00\",)\nassert get_experiment_segment(3) == (\"00\", \"01\", \"02\")\nassert \"' '\".join(get_experiment_segment(1)) == \"00\"\nassert f\"\"\"IN ('{\"','\".join(get_experiment_segment(3))}')\"\"\" == \"IN ('00','01','02')\"\nassert len(get_experiment_segment(50)) == 50\nassert max([int(x) for x in get_experiment_segment(100)]) == 99\n\n\ndocuments = preprocess(message, traffic_percent)[\"documents\"]\n\n\nassert len(documents) &gt; 0\nassert (\n    pd.Series([\"Some other text\", \"Which should not be in the utterances\"])\n    .isin(pd.Series(documents))\n    .sum()\n    == 0\n)  # no button response texts\n\n\n\nFit\n\nTests which are long running can be ignored from test execution. You can use the tst flags in settings.ini or create your own in the same file. See https://nbdev.fast.ai/test for more info. In this example we use #slow to indicate this should be skipped.\n\n\nimport time\n\ntime.sleep(3)\n\n\nmodel = fit(documents, workers=workers)[\"model\"]\n\n\n\nEvaluate\n\n\nNumber of Topics\n\nmodel.get_num_topics()\n\n\n\nSize of Topics\n\ntopic_sizes, topic_nums = model.get_topic_sizes()\nassert all([s &gt; 0 for s in topic_sizes])\n\n\n\nGet Topic Words & Scores\n\ntopic_words, word_scores, topic_nums = model.get_topics(model.get_num_topics())\nassert len(topic_words) == model.get_num_topics()\n\n\n# time.sleep(120)\nmodel.plot_wordcloud()\n\n\nresults = evaluate(model)\nassert results[\"word_summaries\"]\nassert results[\"metrics\"] == [(\"mae\", 100, 0), (\"mae\", 67, 1), (\"mae\", 32, 2)]\nassert results[\"artifacts\"] == [\"/tmp/dataframe_artifact.csv\"]\n\n\n\nServe\n\nassert serve_num_topics(model) &gt; 0"
+  },
+  {
+    "objectID": "example_nbs/legacy/non_nbdev_low_quality.html",
+    "href": "example_nbs/legacy/non_nbdev_low_quality.html",
+    "title": "Preprocess Data",
+    "section": "",
+    "text": "message = \"The first step\"\nprint(f\"{message}\")\nresults = {\"message\": message}\n\nThe first step\n\n\n\nimport numpy as np\nimport pandas as pd\n\n\ntraffic_percent = 1\nworkers = 8\nmodel_level = \"dispatcher\"\nmin_date = \"2021-01-01\"\n\n\ndef get_traffic_text(percent):\n    return str(percent) if int(percent) &gt;= 10 else \"0\" + str(percent)\n\nnbdev tests are any cells which are not exporting code and do not have flags that say they should be ignored from testing.\n\ndef get_experiment_segment(traffic_percent):\n    return tuple(get_traffic_text(tp) for tp in range(traffic_percent))\n\n\nget_experiment_segment(traffic_percent)\ndummy_data = pd.Series(\n    np.random.choice(\n        [\n            \"Hello\",\n            \"Goodbye\",\n            \"Hi\",\n            \"Can you help?\",\n            \"I have an issue, can you help me?\",\n        ],\n        100,\n    ),\n    name=\"utterance\",\n)\n\n\nprint(f\"I captialised the message: {message.upper()}\")\ndata = dummy_data\ndocuments = data.tolist()\nresults = {\"documents\": documents}\n\nI captialised the message: THE FIRST STEP\n\n\n\nclass Topics:\n    def __init__(self, documents, workers):\n        pass\n\n    def get_num_topics(self):\n        return 6\n\n    def get_topic_sizes(self):\n        return [1, 2, 3, 4, 5, 6], [1, 2, 3, 4, 5, 6]\n\n    def get_topics(self, num_topics):\n        return (\n            [\"cat\", \"sat\", \"mat\", \"mouse\", \"house\", \"grouse\"],\n            np.asarray([1, 1, 1, 1, 1, 1]),\n            [1, 2, 3, 4, 5, 6],\n        )\n\n    def plot_wordcloud(self):\n        print(\"you may want to remove plotting code from testing to speed things up\")\n\n\nmodel = Topics(documents, workers=workers)\nresults = {\"model\": model}\n\n\n# import time\n\n# time.sleep(3)\n\n\nmodel.get_num_topics()\n\n6\n\n\n\ntopic_sizes, topic_nums = model.get_topic_sizes()\n\n\ntopic_words, word_scores, topic_nums = model.get_topics(model.get_num_topics())\n\n\n# time.sleep(120)\nmodel.plot_wordcloud()\n\nyou may want to remove plotting code from testing to speed things up\n\n\n\ndef evaluate(model):\n    topic_words, word_scores, topic_nums = model.get_topics(model.get_num_topics())\n\n    topic_contains_non_empty_words = all([len(tw) &gt; 0 for tw in topic_words])\n    word_scores_in_range = word_scores.min() &gt;= 0.0 and word_scores.max() &lt;= 1.0\n    as_many_items_as_topics = (\n        model.get_num_topics() == len(topic_words) == word_scores.shape[0]\n    )\n    word_summaries = (\n        topic_contains_non_empty_words\n        and word_scores_in_range\n        and as_many_items_as_topics\n    )\n    # You can add artifacts in a step that will be saved to block storage. Add the paths to the file on the local filesystem\n    # and the artifact will be uploaded to remote storage.\n    sample_df = pd.DataFrame(\n        {\"a\": model.get_topic_sizes()[0], \"b\": model.get_topic_sizes()[1]}\n    )\n    sample_df.to_csv(\"/tmp/dataframe_artifact.csv\", index=False)\n    artifacts = [\"/tmp/dataframe_artifact.csv\"]\n    # You can add step metrics too this time just add a list of 3-tuples where tuple order = (name, value, step)\n    metrics = [(\"mae\", 100, 0), (\"mae\", 67, 1), (\"mae\", 32, 2)]\n    results = {\n        \"word_summaries\": word_summaries,\n        \"artifacts\": artifacts,\n        \"metrics\": metrics,\n    }\n    return results\n\n\ndef serve_num_topics(model):\n    return model.get_num_topics()"
+  },
+  {
+    "objectID": "example_nbs/non_nbdev.html",
+    "href": "example_nbs/non_nbdev.html",
+    "title": "scilint",
+    "section": "",
+    "text": "from pathlib import Path\nfrom typing import Any, Dict, List\n\nimport numpy as np\nimport pandas as pd\n\n\nint_param = 3\nfloat_param = 1.1\nstr_param = \"vanilla notebook\"\ninput_path = Path(\".\").resolve()\nmodel_path = Path(\".\").resolve().parent\ndict_param = {\"a\": {\"b\": {\"c\": \"abc\"}}, \"another_key\": [1, 2, 3]}\nlist_param = [i for i in range(10**4)]\nones = np.ones(10**4)\ntext = np.repeat(\"some string that takess space and more of it\", 10**4)\nseries_param = pd.Series(text)\ndf_param = pd.DataFrame({\"a\": ones, \"b\": ones, \"c\": ones, \"d\": text})\n\n\ndef scalar(int_param: int, float_param: float, str_param: str):\n    print(f\"int_param: {int_param}\")\n    print(f\"float_param: {float_param}\")\n    print(f\"str_param: {str_param}\")\n    results = {\"int_param\": int_param}\n    return results\n\n\nscalar(int_param, float_param, str_param)\n\n\ndef py_advanced(input_path: Path, list_param: List[int], dict_param: Dict[str, Any]):\n    print(f\"input_path: {input_path}\")\n    print(f\"input_path: {list_param[:10]}\")\n    print(f\"input_path: {dict_param}\")\n\n\npy_advanced(input_path, list_param, dict_param)\n\n\ndef pandas(series_param: pd.Series, df_param: pd.DataFrame):\n    print(f\"series: {series_param.shape}\")\n    print(f\"df: {df_param.shape}\")\n\n\npandas(series_param, df_param)"
+  },
+  {
+    "objectID": "example_nbs/nbdev.html",
+    "href": "example_nbs/nbdev.html",
+    "title": "nbdev format notebook Example",
+    "section": "",
+    "text": "message = something()[\"message\"]\n\nAuto-reloading modules is very useful when using nbdev as changes to underlying modules are picked up without having to restart the kernel.\n\nParams\n\nsciflow uses the papermill format for paramaeterising notebooks. See here for how to specify papermill params: https://papermill.readthedocs.io/en/latest/usage-parameterize.html. These parameters will be available to use in your flows.\n\nnbdev tests are any cells which are not exporting code and do not have flags that say they should be ignored from testing.\n\nassert get_traffic_text(\"3\") == \"03\"\nassert get_traffic_text(\"13\") == \"13\"\nassert get_traffic_text(\"78\") == \"78\"\n\n\n\nNon-exported helper\n\ndef some_test_util(flag):\n    return not flag\n\n\n\nPreprocess Data\n\nassert get_experiment_segment(1) == (\"00\",)\nassert get_experiment_segment(3) == (\"00\", \"01\", \"02\")\nassert \"' '\".join(get_experiment_segment(1)) == \"00\"\nassert f\"\"\"IN ('{\"','\".join(get_experiment_segment(3))}')\"\"\" == \"IN ('00','01','02')\"\nassert len(get_experiment_segment(50)) == 50\nassert max([int(x) for x in get_experiment_segment(100)]) == 99\n\n\ndocuments = preprocess(message, traffic_percent)[\"documents\"]\n\n\nassert len(documents) &gt; 0\nassert (\n    pd.Series([\"Some other text\", \"Which should not be in the utterances\"])\n    .isin(pd.Series(documents))\n    .sum()\n    == 0\n)  # no button response texts\n\n\n\nFit\n\nTests which are long running can be ignored from test execution. You can use the tst flags in settings.ini or create your own in the same file. See https://nbdev.fast.ai/test for more info. In this example we use #slow to indicate this should be skipped.\n\n\nimport time\n\ntime.sleep(3)\n\n\nmodel = fit(documents, workers=workers)[\"model\"]\n\n\n\nEvaluate\n\n\nNumber of Topics\n\nmodel.get_num_topics()\n\n\n\nSize of Topics\n\ntopic_sizes, topic_nums = model.get_topic_sizes()\nassert all([s &gt; 0 for s in topic_sizes])\n\n\n\nGet Topic Words & Scores\n\ntopic_words, word_scores, topic_nums = model.get_topics(model.get_num_topics())\nassert len(topic_words) == model.get_num_topics()\n\n\n# time.sleep(120)\nmodel.plot_wordcloud()\n\n\nresults = evaluate(model)\nassert results[\"word_summaries\"]\nassert results[\"metrics\"] == [(\"mae\", 100, 0), (\"mae\", 67, 1), (\"mae\", 32, 2)]\nassert results[\"artifacts\"] == [\"/tmp/dataframe_artifact.csv\"]\n\n\n\nServe\n\nassert serve_num_topics(model) &gt; 0"
+  },
+  {
+    "objectID": "example_nbs/experimental/nbdev.html",
+    "href": "example_nbs/experimental/nbdev.html",
+    "title": "nbdev format notebook Example",
+    "section": "",
+    "text": "message = something()[\"message\"]\n\nAuto-reloading modules is very useful when using nbdev as changes to underlying modules are picked up without having to restart the kernel.\n\nParams\n\nsciflow uses the papermill format for paramaeterising notebooks. See here for how to specify papermill params: https://papermill.readthedocs.io/en/latest/usage-parameterize.html. These parameters will be available to use in your flows.\n\nnbdev tests are any cells which are not exporting code and do not have flags that say they should be ignored from testing.\n\nassert get_traffic_text(\"3\") == \"03\"\nassert get_traffic_text(\"13\") == \"13\"\nassert get_traffic_text(\"78\") == \"78\"\n\n\n\nNon-exported helper\n\ndef some_test_util(flag):\n    return not flag\n\n\n\nPreprocess Data\n\nassert get_experiment_segment(1) == (\"00\",)\nassert get_experiment_segment(3) == (\"00\", \"01\", \"02\")\nassert \"' '\".join(get_experiment_segment(1)) == \"00\"\nassert f\"\"\"IN ('{\"','\".join(get_experiment_segment(3))}')\"\"\" == \"IN ('00','01','02')\"\nassert len(get_experiment_segment(50)) == 50\nassert max([int(x) for x in get_experiment_segment(100)]) == 99\n\n\ndocuments = preprocess(message, traffic_percent)[\"documents\"]\n\n\nassert len(documents) &gt; 0\nassert (\n    pd.Series([\"Some other text\", \"Which should not be in the utterances\"])\n    .isin(pd.Series(documents))\n    .sum()\n    == 0\n)  # no button response texts\n\n\n\nFit\n\nTests which are long running can be ignored from test execution. You can use the tst flags in settings.ini or create your own in the same file. See https://nbdev.fast.ai/test for more info. In this example we use #slow to indicate this should be skipped.\n\n\nimport time\n\ntime.sleep(3)\n\n\nmodel = fit(documents, workers=workers)[\"model\"]\n\n\n\nEvaluate\n\n\nNumber of Topics\n\nmodel.get_num_topics()\n\n\n\nSize of Topics\n\ntopic_sizes, topic_nums = model.get_topic_sizes()\nassert all([s &gt; 0 for s in topic_sizes])\n\n\n\nGet Topic Words & Scores\n\ntopic_words, word_scores, topic_nums = model.get_topics(model.get_num_topics())\nassert len(topic_words) == model.get_num_topics()\n\n\n# time.sleep(120)\nmodel.plot_wordcloud()\n\n\nresults = evaluate(model)\nassert results[\"word_summaries\"]\nassert results[\"metrics\"] == [(\"mae\", 100, 0), (\"mae\", 67, 1), (\"mae\", 32, 2)]\nassert results[\"artifacts\"] == [\"/tmp/dataframe_artifact.csv\"]\n\n\n\nServe\n\nassert serve_num_topics(model) &gt; 0"
+  },
+  {
+    "objectID": "example_nbs/nbdev_high_quality.html",
+    "href": "example_nbs/nbdev_high_quality.html",
+    "title": "nbdev format notebook Example",
+    "section": "",
+    "text": "Intro\nThis notebook has tests and commentary is easier to read and potentially correlates with higher quality code.\n\nmessage = echo(\"hello\")\nassert message == \"hello\"\n\nAuto-reloading modules is very useful when using nbdev as changes to underlying modules are picked up without having to restart the kernel.\n\n\nParams\n\nsciflow uses the papermill format for paramaeterising notebooks. See here for how to specify papermill params: https://papermill.readthedocs.io/en/latest/usage-parameterize.html. These parameters will be available to use in your flows.\n\nnbdev tests are any cells which are not exporting code and do not have flags that say they should be ignored from testing.\n\nassert get_traffic_text(\"3\") == \"03\"\nassert get_traffic_text(\"13\") == \"13\"\nassert get_traffic_text(\"78\") == \"78\"\n\n\n\nPreprocess Data\n\nassert get_experiment_segment(1) == (\"00\",)\nassert get_experiment_segment(3) == (\"00\", \"01\", \"02\")\nassert \"' '\".join(get_experiment_segment(1)) == \"00\"\nassert f\"\"\"IN ('{\"','\".join(get_experiment_segment(3))}')\"\"\" == \"IN ('00','01','02')\"\nassert len(get_experiment_segment(50)) == 50\nassert max([int(x) for x in get_experiment_segment(100)]) == 99\n\n\nassert get_utterances().sort_values().iloc[0] == \"Can you help?\"\n\n\nresults = preprocess(message, traffic_percent)\ndocuments = results[\"documents\"]\nassert (\n    results[\"documents\"].sort_values(ascending=False).iloc[0]\n    == \"I have an issue, can you help me?\"\n)\n\nI captialised the message: HELLO\n\n\n\nassert len(documents) &gt; 0\nassert (\n    pd.Series([\"Some other text\", \"Which should not be in the utterances\"])\n    .isin(pd.Series(documents))\n    .sum()\n    == 0\n)  # no button response texts\n\n\n\nFit\n\nTests which are long running can be ignored from test execution. You can use the tst flags in settings.ini or create your own in the same file. See https://nbdev.fast.ai/test for more info. In this example we use #slow to indicate this should be skipped.\n\n\nimport time\n\ntime.sleep(3)\n\n\nmodel = fit(documents, workers=workers)[\"model\"]\n\n\n\nEvaluate\n\n\nNumber of Topics\n\nmodel.get_num_topics()\n\n6\n\n\n\n\nSize of Topics\n\ntopic_sizes, topic_nums = model.get_topic_sizes()\nassert all([s &gt; 0 for s in topic_sizes])\n\n\n\nGet Topic Words & Scores\n\ntopic_words, word_scores, topic_nums = model.get_topics(model.get_num_topics())\nassert len(topic_words) == model.get_num_topics()\n\n\n# time.sleep(120)\nmodel.plot_wordcloud()\n\nyou may want to remove plotting code from testing to speed things up\n\n\n\nresults = evaluate(model)\nassert results[\"word_summaries\"]\nassert results[\"metrics\"] == [(\"mae\", 100, 0), (\"mae\", 67, 1), (\"mae\", 32, 2)]\nassert results[\"artifacts\"] == [\"/tmp/dataframe_artifact.csv\"]\n\n\n\nServe\n\nassert serve_num_topics(model) &gt; 0"
+  },
+  {
+    "objectID": "example_nbs/no_spec_provided/nbdev.html",
+    "href": "example_nbs/no_spec_provided/nbdev.html",
+    "title": "nbdev format notebook Example",
+    "section": "",
+    "text": "message = something()[\"message\"]\n\nAuto-reloading modules is very useful when using nbdev as changes to underlying modules are picked up without having to restart the kernel.\n\nParams\n\nsciflow uses the papermill format for paramaeterising notebooks. See here for how to specify papermill params: https://papermill.readthedocs.io/en/latest/usage-parameterize.html. These parameters will be available to use in your flows.\n\nnbdev tests are any cells which are not exporting code and do not have flags that say they should be ignored from testing.\n\nassert get_traffic_text(\"3\") == \"03\"\nassert get_traffic_text(\"13\") == \"13\"\nassert get_traffic_text(\"78\") == \"78\"\n\n\n\nNon-exported helper\n\ndef some_test_util(flag):\n    return not flag\n\n\n\nPreprocess Data\n\nassert get_experiment_segment(1) == (\"00\",)\nassert get_experiment_segment(3) == (\"00\", \"01\", \"02\")\nassert \"' '\".join(get_experiment_segment(1)) == \"00\"\nassert f\"\"\"IN ('{\"','\".join(get_experiment_segment(3))}')\"\"\" == \"IN ('00','01','02')\"\nassert len(get_experiment_segment(50)) == 50\nassert max([int(x) for x in get_experiment_segment(100)]) == 99\n\n\ndocuments = preprocess(message, traffic_percent)[\"documents\"]\n\n\nassert len(documents) &gt; 0\nassert (\n    pd.Series([\"Some other text\", \"Which should not be in the utterances\"])\n    .isin(pd.Series(documents))\n    .sum()\n    == 0\n)  # no button response texts\n\n\n\nFit\n\nTests which are long running can be ignored from test execution. You can use the tst flags in settings.ini or create your own in the same file. See https://nbdev.fast.ai/test for more info. In this example we use #slow to indicate this should be skipped.\n\n\nimport time\n\ntime.sleep(3)\n\n\nmodel = fit(documents, workers=workers)[\"model\"]\n\n\n\nEvaluate\n\n\nNumber of Topics\n\nmodel.get_num_topics()\n\n\n\nSize of Topics\n\ntopic_sizes, topic_nums = model.get_topic_sizes()\nassert all([s &gt; 0 for s in topic_sizes])\n\n\n\nGet Topic Words & Scores\n\ntopic_words, word_scores, topic_nums = model.get_topics(model.get_num_topics())\nassert len(topic_words) == model.get_num_topics()\n\n\n# time.sleep(120)\nmodel.plot_wordcloud()\n\n\nresults = evaluate(model)\nassert results[\"word_summaries\"]\nassert results[\"metrics\"] == [(\"mae\", 100, 0), (\"mae\", 67, 1), (\"mae\", 32, 2)]\nassert results[\"artifacts\"] == [\"/tmp/dataframe_artifact.csv\"]\n\n\n\nServe\n\nassert serve_num_topics(model) &gt; 0"
+  },
+  {
+    "objectID": "utils.html",
+    "href": "utils.html",
+    "title": "Utilities",
+    "section": "",
+    "text": "source\n\n\n\n get_project_root\n                   (path:pathlib.Path=Path('/home/runner/work/scilint/scil\n                   int'))"
+  },
+  {
+    "objectID": "utils.html#get_project_root",
+    "href": "utils.html#get_project_root",
+    "title": "Utilities",
+    "section": "",
+    "text": "source\n\n\n\n get_project_root\n                   (path:pathlib.Path=Path('/home/runner/work/scilint/scil\n                   int'))"
+  },
+  {
+    "objectID": "utils.html#configure_logging",
+    "href": "utils.html#configure_logging",
+    "title": "Utilities",
+    "section": "configure_logging",
+    "text": "configure_logging\n\nsource\n\nconfigure_logging\n\n configure_logging (level_text:False)"
+  },
+  {
+    "objectID": "utils.html#run_nbqa_cmd",
+    "href": "utils.html#run_nbqa_cmd",
+    "title": "Utilities",
+    "section": "run_nbqa_cmd",
+    "text": "run_nbqa_cmd\n\nsource\n\nrun_nbqa_cmd\n\n run_nbqa_cmd (cmd:str, root_dir:pathlib.Path=None)"
+  },
+  {
+    "objectID": "utils.html#is_nbdev_project",
+    "href": "utils.html#is_nbdev_project",
+    "title": "Utilities",
+    "section": "is_nbdev_project",
+    "text": "is_nbdev_project\n\nsource\n\nis_nbdev_project\n\n is_nbdev_project (project_path:pathlib.Path=Path('.'))\n\n\nassert is_nbdev_project()\n\n\nimport tempfile\n\nwith tempfile.TemporaryDirectory() as tmp_dir:\n    assert not is_nbdev_project(Path(tmp_dir))"
+  },
+  {
+    "objectID": "utils.html#resolve_nbs",
+    "href": "utils.html#resolve_nbs",
+    "title": "Utilities",
+    "section": "resolve_nbs",
+    "text": "resolve_nbs\n\nsource\n\nresolve_nbs\n\n resolve_nbs (nb_glob:str=None)\n\n\n# TODO Create a temp dir and touch some notebooks"
+  },
+  {
+    "objectID": "utils.html#find_common_root",
+    "href": "utils.html#find_common_root",
+    "title": "Utilities",
+    "section": "find_common_root",
+    "text": "find_common_root\n\nsource\n\nfind_common_root\n\n find_common_root (nb_glob:str=None)\n\nExpand a glob expression then find the common root directory\n\nassert find_common_root() == Path(Path(\".\").resolve())\nassert find_common_root(\"example_nbs/\") == Path(Path(\".\").resolve(), \"example_nbs/\")\n\n\nsource\n\n\nget_project_root\n\n get_project_root\n                   (path:pathlib.Path=Path('/home/runner/work/scilint/scil\n                   int'))"
+  },
+  {
+    "objectID": "utils.html#get_excluded_paths",
+    "href": "utils.html#get_excluded_paths",
+    "title": "Utilities",
+    "section": "get_excluded_paths",
+    "text": "get_excluded_paths\n\nsource\n\nget_excluded_paths\n\n get_excluded_paths (paths:Iterable[pathlib.Path], exclude_pattern:str)\n\nExcluded paths should either be absolute paths or paths rooted at the project root directory\n\npaths = [Path(p) for p in nbglob(Path(\".\"))]\nassert sorted(\n    [\n        p.name\n        for p in get_excluded_paths(\n            paths, exclude_pattern=\"nbs/example_nbs/experimental,nbs/index.ipynb\"\n        )\n    ]\n) == sorted([\"non_nbdev.ipynb\", \"nbdev.ipynb\", \"index.ipynb\"])\nassert sorted(\n    [\n        p.name\n        for p in get_excluded_paths(\n            paths, exclude_pattern=\"nbs/example_nbs/nbdev.ipynb\"\n        )\n    ]\n) == sorted([\"nbdev.ipynb\"])\n\n\nsource\n\n\nremove_ipython_special_directives\n\n remove_ipython_special_directives (code)\n\n\nnb_cell_code = \"\"\"\n\n\nimport matplotlib\n\ndont_remove_this = \"% literal\"\ndont_remove_this = some_var('% literal')\n\"\"\"\n\n\nthrows = False\ntry:\n    assert ast.parse(nb_cell_code)\nexcept SyntaxError:\n    throws = True\nassert throws\nassert type(ast.parse(remove_ipython_special_directives(nb_cell_code))) == ast.Module\n\n\nsource\n\n\nsafe_div\n\n safe_div (numer, denom)\n\n\nassert safe_div(1, 1) == 1\nassert safe_div(2, 1) == 2\nassert safe_div(1, 2) == 0.5\nassert safe_div(0, 1) == 0\nassert safe_div(1, 0) == 0\nassert safe_div(10, 1) == 10"
+  },
+  {
+    "objectID": "utils.html#get_cell_code",
+    "href": "utils.html#get_cell_code",
+    "title": "Utilities",
+    "section": "get_cell_code",
+    "text": "get_cell_code\n\nsource\n\nget_cell_code\n\n get_cell_code (nb)\n\n\nnb = nbformat.v4.new_notebook()\nnb[\"cells\"] = [nbformat.v4.new_code_cell(nb_cell_code)]\n\n\nassert (\n    get_cell_code(nb)\n    == \"\"\"\nimport matplotlib\ndont_remove_this = \"% literal\"\ndont_remove_this = some_var('% literal')\n\"\"\"\n)"
+  },
+  {
+    "objectID": "example_nbs/syntax_error.html",
+    "href": "example_nbs/syntax_error.html",
+    "title": "scilint",
+    "section": "",
+    "text": "int_param = 3\nfloat_param = 1.1\nstr_param = \"vanilla notebook\"\ninput_path = Path(\".\").resolve()\nmodel_path = Path(\".\").resolve().parent\ndict_param = {\"a\": {\"b\": {\"c\": \"abc\"}}, \"another_key\": [1, 2, 3]}\nlist_param = [i for i in range(10**4)]\nones = np.ones(10**7)\ntext = np.repeat(\"some string that takess space and more of it\", 10**7"
+  },
+  {
+    "objectID": "example_nbs/non_nbdev_low_quality.html",
+    "href": "example_nbs/non_nbdev_low_quality.html",
+    "title": "Preprocess Data",
+    "section": "",
+    "text": "message = \"The first step\"\nprint(f\"{message}\")\nresults = {\"message\": message}\n\nThe first step\n\n\n\nimport numpy as np\nimport pandas as pd\n\n\ntraffic_percent = 1\nworkers = 8\nmodel_level = \"dispatcher\"\nmin_date = \"2021-01-01\"\n\n\ndef get_traffic_text(percent):\n    return str(percent) if int(percent) &gt;= 10 else \"0\" + str(percent)\n\nnbdev tests are any cells which are not exporting code and do not have flags that say they should be ignored from testing.\n\ndef get_experiment_segment(traffic_percent):\n    return tuple(get_traffic_text(tp) for tp in range(traffic_percent))\n\n\nget_experiment_segment(traffic_percent)\ndummy_data = pd.Series(\n    np.random.choice(\n        [\n            \"Hello\",\n            \"Goodbye\",\n            \"Hi\",\n            \"Can you help?\",\n            \"I have an issue, can you help me?\",\n        ],\n        100,\n    ),\n    name=\"utterance\",\n)\n\n\nprint(f\"I captialised the message: {message.upper()}\")\ndata = dummy_data\ndocuments = data.tolist()\nresults = {\"documents\": documents}\n\nI captialised the message: THE FIRST STEP\n\n\n\nclass Topics:\n    def __init__(self, documents, workers):\n        pass\n\n    def get_num_topics(self):\n        return 6\n\n    def get_topic_sizes(self):\n        return [1, 2, 3, 4, 5, 6], [1, 2, 3, 4, 5, 6]\n\n    def get_topics(self, num_topics):\n        return (\n            [\"cat\", \"sat\", \"mat\", \"mouse\", \"house\", \"grouse\"],\n            np.asarray([1, 1, 1, 1, 1, 1]),\n            [1, 2, 3, 4, 5, 6],\n        )\n\n    def plot_wordcloud(self):\n        print(\"you may want to remove plotting code from testing to speed things up\")\n\n\nmodel = Topics(documents, workers=workers)\nresults = {\"model\": model}\n\n\n# import time\n\n# time.sleep(3)\n\n\nmodel.get_num_topics()\n\n6\n\n\n\ntopic_sizes, topic_nums = model.get_topic_sizes()\n\n\ntopic_words, word_scores, topic_nums = model.get_topics(model.get_num_topics())\n\n\n# time.sleep(120)\nmodel.plot_wordcloud()\n\nyou may want to remove plotting code from testing to speed things up\n\n\n\ndef evaluate(model):\n    topic_words, word_scores, topic_nums = model.get_topics(model.get_num_topics())\n\n    topic_contains_non_empty_words = all([len(tw) &gt; 0 for tw in topic_words])\n    word_scores_in_range = word_scores.min() &gt;= 0.0 and word_scores.max() &lt;= 1.0\n    as_many_items_as_topics = (\n        model.get_num_topics() == len(topic_words) == word_scores.shape[0]\n    )\n    word_summaries = (\n        topic_contains_non_empty_words\n        and word_scores_in_range\n        and as_many_items_as_topics\n    )\n    # You can add artifacts in a step that will be saved to block storage. Add the paths to the file on the local filesystem\n    # and the artifact will be uploaded to remote storage.\n    sample_df = pd.DataFrame(\n        {\"a\": model.get_topic_sizes()[0], \"b\": model.get_topic_sizes()[1]}\n    )\n    sample_df.to_csv(\"/tmp/dataframe_artifact.csv\", index=False)\n    artifacts = [\"/tmp/dataframe_artifact.csv\"]\n    # You can add step metrics too this time just add a list of 3-tuples where tuple order = (name, value, step)\n    metrics = [(\"mae\", 100, 0), (\"mae\", 67, 1), (\"mae\", 32, 2)]\n    results = {\n        \"word_summaries\": word_summaries,\n        \"artifacts\": artifacts,\n        \"metrics\": metrics,\n    }\n    return results\n\n\ndef serve_num_topics(model):\n    return model.get_num_topics()"
+  },
+  {
+    "objectID": "example_nbs/experimental/non_nbdev.html",
+    "href": "example_nbs/experimental/non_nbdev.html",
+    "title": "scilint",
+    "section": "",
+    "text": "from pathlib import Path\nfrom typing import Any, Dict, List\n\nimport numpy as np\nimport pandas as pd\n\n\nint_param = 3\nfloat_param = 1.1\nstr_param = \"vanilla notebook\"\ninput_path = Path(\".\").resolve()\nmodel_path = Path(\".\").resolve().parent\ndict_param = {\"a\": {\"b\": {\"c\": \"abc\"}}, \"another_key\": [1, 2, 3]}\nlist_param = [i for i in range(10**4)]\nones = np.ones(10**4)\ntext = np.repeat(\"some string that takess space and more of it\", 10**4)\nseries_param = pd.Series(text)\ndf_param = pd.DataFrame({\"a\": ones, \"b\": ones, \"c\": ones, \"d\": text})\n\n\ndef scalar(int_param: int, float_param: float, str_param: str):\n    print(f\"int_param: {int_param}\")\n    print(f\"float_param: {float_param}\")\n    print(f\"str_param: {str_param}\")\n    results = {\"int_param\": int_param}\n    return results\n\n\nscalar(int_param, float_param, str_param)\n\nint_param: 3\nfloat_param: 1.1\nstr_param: vanilla notebook\n\n\n{'int_param': 3}\n\n\n\ndef py_advanced(input_path: Path, list_param: List[int], dict_param: Dict[str, Any]):\n    print(f\"input_path: {input_path}\")\n    print(f\"input_path: {list_param[:10]}\")\n    print(f\"input_path: {dict_param}\")\n\n\npy_advanced(input_path, list_param, dict_param)\n\ninput_path: /home/sagemaker-user/git/scilint/nbs/example_nbs/experimental\ninput_path: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]\ninput_path: {'a': {'b': {'c': 'abc'}}, 'another_key': [1, 2, 3]}\n\n\n\ndef pandas(series_param: pd.Series, df_param: pd.DataFrame):\n    print(f\"series: {series_param.shape}\")\n    print(f\"df: {df_param.shape}\")\n\n\npandas(series_param, df_param)\n\nseries: (10000000,)\ndf: (10000000, 4)"
+  },
+  {
+    "objectID": "example_nbs/validated/nbdev_high_quality.html",
+    "href": "example_nbs/validated/nbdev_high_quality.html",
+    "title": "nbdev format notebook Example",
+    "section": "",
+    "text": "Intro\nThis notebook has tests and commentary is easier to read and potentially correlates with higher quality code.\n\nmessage = echo(\"hello\")\nassert message == \"hello\"\n\nAuto-reloading modules is very useful when using nbdev as changes to underlying modules are picked up without having to restart the kernel.\n\n\nParams\n\nsciflow uses the papermill format for paramaeterising notebooks. See here for how to specify papermill params: https://papermill.readthedocs.io/en/latest/usage-parameterize.html. These parameters will be available to use in your flows.\n\nnbdev tests are any cells which are not exporting code and do not have flags that say they should be ignored from testing.\n\nassert get_traffic_text(\"3\") == \"03\"\nassert get_traffic_text(\"13\") == \"13\"\nassert get_traffic_text(\"78\") == \"78\"\n\n\n\nPreprocess Data\n\nassert get_experiment_segment(1) == (\"00\",)\nassert get_experiment_segment(3) == (\"00\", \"01\", \"02\")\nassert \"' '\".join(get_experiment_segment(1)) == \"00\"\nassert f\"\"\"IN ('{\"','\".join(get_experiment_segment(3))}')\"\"\" == \"IN ('00','01','02')\"\nassert len(get_experiment_segment(50)) == 50\nassert max([int(x) for x in get_experiment_segment(100)]) == 99\n\n\nassert get_utterances().sort_values().iloc[0] == \"Can you help?\"\n\n\nresults = preprocess(message, traffic_percent)\ndocuments = results[\"documents\"]\nassert (\n    results[\"documents\"].sort_values(ascending=False).iloc[0]\n    == \"I have an issue, can you help me?\"\n)\n\nI captialised the message: HELLO\n\n\n\nassert len(documents) &gt; 0\nassert (\n    pd.Series([\"Some other text\", \"Which should not be in the utterances\"])\n    .isin(pd.Series(documents))\n    .sum()\n    == 0\n)  # no button response texts\n\n\n\nFit\n\nTests which are long running can be ignored from test execution. You can use the tst flags in settings.ini or create your own in the same file. See https://nbdev.fast.ai/test for more info. In this example we use #slow to indicate this should be skipped.\n\n\nimport time\n\ntime.sleep(3)\n\n\nmodel = fit(documents, workers=workers)[\"model\"]\n\n\n\nEvaluate\n\n\nNumber of Topics\n\nmodel.get_num_topics()\n\n6\n\n\n\n\nSize of Topics\n\ntopic_sizes, topic_nums = model.get_topic_sizes()\nassert all([s &gt; 0 for s in topic_sizes])\n\n\n\nGet Topic Words & Scores\n\ntopic_words, word_scores, topic_nums = model.get_topics(model.get_num_topics())\nassert len(topic_words) == model.get_num_topics()\n\n\n# time.sleep(120)\nmodel.plot_wordcloud()\n\nyou may want to remove plotting code from testing to speed things up\n\n\n\nresults = evaluate(model)\nassert results[\"word_summaries\"]\nassert results[\"metrics\"] == [(\"mae\", 100, 0), (\"mae\", 67, 1), (\"mae\", 32, 2)]\nassert results[\"artifacts\"] == [\"/tmp/dataframe_artifact.csv\"]\n\n\n\nServe\n\nassert serve_num_topics(model) &gt; 0"
+  },
+  {
+    "objectID": "example_nbs/legacy/syntax_error.html",
+    "href": "example_nbs/legacy/syntax_error.html",
+    "title": "scilint",
+    "section": "",
+    "text": "int_param = 3\nfloat_param = 1.1\nstr_param = \"vanilla notebook\"\ninput_path = Path(\".\").resolve()\nmodel_path = Path(\".\").resolve().parent\ndict_param = {\"a\": {\"b\": {\"c\": \"abc\"}}, \"another_key\": [1, 2, 3]}\nlist_param = [i for i in range(10**4)]\nones = np.ones(10**7)\ntext = np.repeat(\"some string that takess space and more of it\", 10**7"
+  },
+  {
+    "objectID": "example_nbs/exploratory/syntax_error.html",
+    "href": "example_nbs/exploratory/syntax_error.html",
+    "title": "scilint",
+    "section": "",
+    "text": "int_param = 3\nfloat_param = 1.1\nstr_param = \"vanilla notebook\"\ninput_path = Path(\".\").resolve()\nmodel_path = Path(\".\").resolve().parent\ndict_param = {\"a\": {\"b\": {\"c\": \"abc\"}}, \"another_key\": [1, 2, 3]}\nlist_param = [i for i in range(10**4)]\nones = np.ones(10**7)\ntext = np.repeat(\"some string that takess space and more of it\", 10**7"
+  },
+  {
+    "objectID": "example_nbs/exploratory/non_nbdev.html",
+    "href": "example_nbs/exploratory/non_nbdev.html",
+    "title": "scilint",
+    "section": "",
+    "text": "from pathlib import Path\nfrom typing import Any, Dict, List\n\nimport numpy as np\nimport pandas as pd\n\n\nint_param = 3\nfloat_param = 1.1\nstr_param = \"vanilla notebook\"\ninput_path = Path(\".\").resolve()\nmodel_path = Path(\".\").resolve().parent\ndict_param = {\"a\": {\"b\": {\"c\": \"abc\"}}, \"another_key\": [1, 2, 3]}\nlist_param = [i for i in range(10**4)]\nones = np.ones(10**4)\ntext = np.repeat(\"some string that takess space and more of it\", 10**4)\nseries_param = pd.Series(text)\ndf_param = pd.DataFrame({\"a\": ones, \"b\": ones, \"c\": ones, \"d\": text})\n\n\ndef scalar(int_param: int, float_param: float, str_param: str):\n    print(f\"int_param: {int_param}\")\n    print(f\"float_param: {float_param}\")\n    print(f\"str_param: {str_param}\")\n    results = {\"int_param\": int_param}\n    return results\n\n\nscalar(int_param, float_param, str_param)\n\n\ndef py_advanced(input_path: Path, list_param: List[int], dict_param: Dict[str, Any]):\n    print(f\"input_path: {input_path}\")\n    print(f\"input_path: {list_param[:10]}\")\n    print(f\"input_path: {dict_param}\")\n\n\npy_advanced(input_path, list_param, dict_param)\n\n\ndef pandas(series_param: pd.Series, df_param: pd.DataFrame):\n    print(f\"series: {series_param.shape}\")\n    print(f\"df: {df_param.shape}\")\n\n\npandas(series_param, df_param)"
+  },
+  {
+    "objectID": "scilint.html",
+    "href": "scilint.html",
+    "title": "Data Science Notebook Linting",
+    "section": "",
+    "text": "nbdev_path = Path(Path(\".\").resolve(), \"example_nbs\", \"nbdev.ipynb\")\nnbdev_hq_path = Path(Path(\".\").resolve(), \"example_nbs\", \"nbdev_high_quality.ipynb\")\nnon_nbdev_path = Path(Path(\".\").resolve(), \"example_nbs\", \"non_nbdev.ipynb\")\nnon_nbdev_lq_path = Path(\n    Path(\".\").resolve(), \"example_nbs\", \"non_nbdev_low_quality.ipynb\"\n)\nindex_path = Path(Path(\".\").resolve(), \"index.ipynb\")\nsyntax_error_path = Path(Path(\".\").resolve(), \"syntax_error.ipynb\")\n\nnbdev_nb = read_nb(nbdev_path)\nnbdev_hq_nb = read_nb(nbdev_hq_path)\nnon_nbdev_nb = read_nb(non_nbdev_path)\nnon_nbdev_lq_nb = read_nb(non_nbdev_lq_path)\nindex = read_nb(index_path)\nsyntax_error = read_nb(index_path)"
+  },
+  {
+    "objectID": "scilint.html#get_default_spec",
+    "href": "scilint.html#get_default_spec",
+    "title": "Data Science Notebook Linting",
+    "section": "get_default_spec",
+    "text": "get_default_spec\n\nsource\n\nget_default_spec\n\n get_default_spec ()"
+  },
+  {
+    "objectID": "scilint.html#lint_nb",
+    "href": "scilint.html#lint_nb",
+    "title": "Data Science Notebook Linting",
+    "section": "lint_nb",
+    "text": "lint_nb\n\nsource\n\nlint_nb\n\n lint_nb (spec_name:str, nb_path:pathlib.Path, conf:Dict[str,Any],\n          indicators:Dict[str,Callable], include_in_scoring:bool,\n          out_dir:str)\n\n\n# TODO test"
+  },
+  {
+    "objectID": "scilint.html#calculate_warnings",
+    "href": "scilint.html#calculate_warnings",
+    "title": "Data Science Notebook Linting",
+    "section": "_calculate_warnings",
+    "text": "_calculate_warnings\n\n# TODO test"
+  },
+  {
+    "objectID": "scilint.html#reshape_warnings",
+    "href": "scilint.html#reshape_warnings",
+    "title": "Data Science Notebook Linting",
+    "section": "_reshape_warnings",
+    "text": "_reshape_warnings\n\n# TODO test\n\n\nraises = False\ntry:\n    _get_nb_display_name(\"paren\", nbdev_path)\nexcept ValueError:\n    raises = True\nassert raises\nassert \"example_nbs/nbdev\" == _get_nb_display_name(\"parent\", nbdev_path)\nassert str(nbdev_path) == _get_nb_display_name(\"abs\", nbdev_path)\nassert \"nbdev\" == _get_nb_display_name(\"stem\", nbdev_path)"
+  },
+  {
+    "objectID": "scilint.html#lint_nbs",
+    "href": "scilint.html#lint_nbs",
+    "title": "Data Science Notebook Linting",
+    "section": "lint_nbs",
+    "text": "lint_nbs\n\nsource\n\nlint_nbs\n\n lint_nbs (spec_name:str, conf:Dict[str,Any],\n           indicators:Dict[str,Callable],\n           nb_paths:Iterable[pathlib.Path]=None, out_dir:str=None,\n           nb_glob:pathlib.Path=None)"
+  },
+  {
+    "objectID": "scilint.html#map_paths_to_specs",
+    "href": "scilint.html#map_paths_to_specs",
+    "title": "Data Science Notebook Linting",
+    "section": "_map_paths_to_specs",
+    "text": "_map_paths_to_specs\n\nlegacy_dir = Path(Path(\".\").resolve(), \"example_nbs/legacy\")\nlegacy_spec_nbs = _map_paths_specs(legacy_dir, legacy_dir)\nlegacy_spec = Path(Path(\".\").resolve(), \"example_nbs\", \"legacy\", \"scilint-legacy.yaml\")\nassert legacy_spec in legacy_spec_nbs\nassert len(legacy_spec_nbs[legacy_spec]) == 2\n\n\nlegacy_dir = Path(Path(\".\").resolve(), \"example_nbs/legacy\")\nlegacy_spec_nbs = _map_paths_specs(legacy_dir)\nlegacy_spec = Path(Path(\".\").resolve(), \"example_nbs\", \"legacy\", \"scilint-legacy.yaml\")\nassert legacy_spec in legacy_spec_nbs\nassert len(legacy_spec_nbs[legacy_spec]) == 2\n\n\nno_spec_dir = Path(Path(\".\").resolve(), \"example_nbs/no_spec_provided/\")\nno_spec_nbs = _map_paths_specs(no_spec_dir, no_spec_dir)\nassert Path(\"scilint-default\") in no_spec_nbs\nassert len(no_spec_nbs) == 1\nassert len(no_spec_nbs[Path(\"scilint-default\")]) == 1\n\n\nspec_nbs = _map_paths_specs()\nassert len(spec_nbs[Path(Path(\".\").resolve(), \"scilint-default.yaml\")]) == 10\nassert (\n    len(\n        spec_nbs[\n            Path(\n                Path(\".\").resolve(),\n                \"example_nbs\",\n                \"exploratory\",\n                f\"scilint-exploratory.yaml\",\n            )\n        ]\n    )\n    == 3\n)\nassert (\n    len(\n        spec_nbs[\n            Path(\n                Path(\".\").resolve(),\n                \"example_nbs\",\n                \"experimental\",\n                f\"scilint-experimental.yaml\",\n            )\n        ]\n    )\n    == 2\n)\nassert (\n    len(\n        spec_nbs[\n            Path(\n                Path(\".\").resolve(),\n                \"example_nbs\",\n                \"validated\",\n                f\"scilint-validated.yaml\",\n            )\n        ]\n    )\n    == 1\n)\n\n\nspec_nbs = _map_paths_specs(specs_glob=get_project_root())\nassert sorted([k.name for k in spec_nbs.keys()]) == sorted(\n    [\n        \"scilint-default.yaml\",\n        \"scilint-validated.yaml\",\n        \"scilint-experimental.yaml\",\n        \"scilint-exploratory.yaml\",\n        \"scilint-legacy.yaml\",\n        \"scilint-no-nbs.yaml\",\n    ]\n)"
+  },
+  {
+    "objectID": "scilint.html#testing-lint_nbs",
+    "href": "scilint.html#testing-lint_nbs",
+    "title": "Data Science Notebook Linting",
+    "section": "Testing lint_nbs",
+    "text": "Testing lint_nbs\n\nconf = yaml.safe_load(Path(\"scilint-default.yaml\").read_text())\ndefault_spec_paths = list(_map_paths_specs().values())[0]\n\n\nlint_nbs(\"scilint-default.yaml\", conf, indicator_funcs, nb_paths=default_spec_paths)\n\n(                                              spec_name  calls_per_func_mean   \n nbs/utils                          scilint-default.yaml                1.800  \\\n example_nbs/nbdev                  scilint-default.yaml                2.071   \n no_spec_provided/nbdev             scilint-default.yaml                2.071   \n example_nbs/non_nbdev_low_quality  scilint-default.yaml                1.444   \n example_nbs/nbdev_high_quality     scilint-default.yaml                2.308   \n nbs/scilint                        scilint-default.yaml                2.389   \n example_nbs/non_nbdev              scilint-default.yaml                1.000   \n nbs/indicators                     scilint-default.yaml                3.550   \n nbs/index                          scilint-default.yaml                  NaN   \n example_nbs/syntax_error           scilint-default.yaml                  NaN   \n \n                                    calls_per_func_median  tests_per_func_mean   \n nbs/utils                                            1.5                1.364  \\\n example_nbs/nbdev                                    1.0                1.071   \n no_spec_provided/nbdev                               1.0                1.071   \n example_nbs/non_nbdev_low_quality                    1.0                0.000   \n example_nbs/nbdev_high_quality                       1.0                1.385   \n nbs/scilint                                          1.0                1.737   \n example_nbs/non_nbdev                                1.0                0.000   \n nbs/indicators                                       4.0                3.480   \n nbs/index                                            NaN                  NaN   \n example_nbs/syntax_error                             NaN                  NaN   \n \n                                    tests_func_coverage_pct  in_func_pct   \n nbs/utils                                           63.636       51.899  \\\n example_nbs/nbdev                                   42.857       50.725   \n no_spec_provided/nbdev                              42.857       50.725   \n example_nbs/non_nbdev_low_quality                    0.000       45.000   \n example_nbs/nbdev_high_quality                      69.231       44.118   \n nbs/scilint                                         31.579       36.747   \n example_nbs/non_nbdev                                0.000       35.714   \n nbs/indicators                                      76.000       27.869   \n nbs/index                                              NaN          NaN   \n example_nbs/syntax_error                               NaN          NaN   \n \n                                    markdown_code_pct  loc_per_md_section   \n nbs/utils                                     27.273             798.375  \\\n example_nbs/nbdev                             30.769             546.444   \n no_spec_provided/nbdev                        30.769             546.444   \n example_nbs/non_nbdev_low_quality             15.789            2955.000   \n example_nbs/nbdev_high_quality                30.769             553.111   \n nbs/scilint                                   29.167            1103.810   \n example_nbs/non_nbdev                          0.000                 NaN   \n nbs/indicators                                37.333             678.111   \n nbs/index                                        NaN                 NaN   \n example_nbs/syntax_error                         NaN                 NaN   \n \n                                    total_code_len  has_syntax_error   \n nbs/utils                                  6387.0             False  \\\n example_nbs/nbdev                          4918.0             False   \n no_spec_provided/nbdev                     4918.0             False   \n example_nbs/non_nbdev_low_quality          2955.0             False   \n example_nbs/nbdev_high_quality             4978.0             False   \n nbs/scilint                               23180.0             False   \n example_nbs/non_nbdev                      1233.0             False   \n nbs/indicators                            18309.0             False   \n nbs/index                                     0.0             False   \n example_nbs/syntax_error                      NaN              True   \n \n                                    include_in_scoring  \n nbs/utils                                        True  \n example_nbs/nbdev                               False  \n no_spec_provided/nbdev                          False  \n example_nbs/non_nbdev_low_quality               False  \n example_nbs/nbdev_high_quality                  False  \n nbs/scilint                                      True  \n example_nbs/non_nbdev                           False  \n nbs/indicators                                   True  \n nbs/index                                        True  \n example_nbs/syntax_error                        False  ,\n Empty DataFrame\n Columns: [spec_name, notebook, indicator, value, operator, threshold]\n Index: [],\n 0)\n\n\n\nlint_report, all_warns, num_warns = lint_nbs(\n    \"scilint-default.yaml\", conf, indicator_funcs, nb_paths=default_spec_paths\n)\nassert num_warns == 0\n\n\nconf[\"exclusions\"] = None\nlint_report, all_warns, num_warns = lint_nbs(\n    \"scilint-default.yaml\", conf, indicator_funcs, nb_paths=default_spec_paths\n)\nassert num_warns == 7\n\n\nconf = yaml.safe_load(\n    Path(\n        Path(\".\").resolve(), \"example_nbs\", \"experimental\", \"scilint-experimental.yaml\"\n    ).read_text()\n)\nlint_report, all_warns, num_warns = lint_nbs(\n    \"scilint-experimental.yaml\",\n    conf,\n    indicator_funcs,\n    nb_glob=Path(\"example_nbs/experimental/\"),\n)\nassert num_warns == 3\n\n\nconf[\"exclusions\"] = \"\"\"nbs/example_nbs/,nbs/index.ipynb\"\"\"\n_, all_warns, num_warns = lint_nbs(\n    \"scilint-experimental.yaml\",\n    conf,\n    indicator_funcs,\n    nb_glob=Path(\"example_nbs/experimental/\"),\n)\nassert num_warns == 0\nconf[\"exclusions\"] = None\n\n\nconf[\"exclusions\"] = \"\"\"nbs/example_nbs/experimental/non_nbdev.ipynb\"\"\"\n_, all_warns, num_warns = lint_nbs(\n    \"scilint-experimental.yaml\",\n    conf,\n    indicator_funcs,\n    nb_glob=Path(\"example_nbs/experimental/\"),\n)\nassert num_warns == 0\nconf[\"exclusions\"] = None\n\n\nconf[\"exclusions\"] = \"\"\"nbs/example_nbs/exploratory/syntax_error.ipynb\"\"\"\n_, all_warns, num_warns = lint_nbs(\n    \"scilint-exploratory.yaml\",\n    conf,\n    indicator_funcs,\n    nb_glob=Path(\"example_nbs/exploratory/\"),\n)\nassert num_warns == 3\nconf[\"exclusions\"] = None"
+  },
+  {
+    "objectID": "scilint.html#display_warning_report",
+    "href": "scilint.html#display_warning_report",
+    "title": "Data Science Notebook Linting",
+    "section": "display_warning_report",
+    "text": "display_warning_report\n\nsource\n\ndisplay_warning_report\n\n display_warning_report (all_warns:pandas.core.frame.DataFrame)"
+  },
+  {
+    "objectID": "scilint.html#persist_results",
+    "href": "scilint.html#persist_results",
+    "title": "Data Science Notebook Linting",
+    "section": "_persist_results",
+    "text": "_persist_results\n\nimport tempfile\n\n\nwith tempfile.TemporaryDirectory() as tmp_dir:\n    report = pd.DataFrame({\"a\": [1, 2, 3]})\n    _persist_results(report, report, {\"indicators\": [], \"out_dir\": tmp_dir})\n    assert pd.read_csv(Path(tmp_dir, \"scilint_report.csv\"), index_col=0).equals(\n        pd.DataFrame({\"a\": [1, 2, 3]})\n    )\n    assert pd.read_csv(Path(tmp_dir, \"scilint_warnings.csv\")).equals(\n        pd.DataFrame({\"a\": [1, 2, 3]})\n    )\n    with open(Path(tmp_dir, \"scilint_config.json\")) as infile:\n        assert json.load(infile) == {\"out_dir\": tmp_dir}"
+  },
+  {
+    "objectID": "scilint.html#load_conf",
+    "href": "scilint.html#load_conf",
+    "title": "Data Science Notebook Linting",
+    "section": "_load_conf",
+    "text": "_load_conf\n\nexperimental_spec_path = Path(\n    Path(\".\"), \"example_nbs\", \"experimental\", \"scilint-experimental.yaml\"\n)\nexperimental_spec = _load_conf(experimental_spec_path)\nassert experimental_spec[\"precision\"] == 3\nassert experimental_spec[\"fail_over\"] == 3\n\n\nexperimental_spec = _load_conf(experimental_spec_path, fail_over=-1, precision=1)\nassert experimental_spec[\"precision\"] == 1\nassert experimental_spec[\"fail_over\"] == -1"
+  },
+  {
+    "objectID": "scilint.html#lint",
+    "href": "scilint.html#lint",
+    "title": "Data Science Notebook Linting",
+    "section": "lint",
+    "text": "lint\n\nsource\n\nlint\n\n lint (display_report:bool=True, nb_glob:pathlib.Path=None,\n       specs_glob:pathlib.Path=Path('/home/runner/work/scilint/scilint'),\n       exclusions:str=None, fail_over:int=None, out_dir:int=None,\n       precision:int=None, print_syntax_errors:bool=None,\n       exit_on_failure:bool=True)\n\n\nlint()\n\nLinting success for: scilint-default.yaml, no issues found\nLinting success for: scilint-validated.yaml, no issues found\nLinting success for: scilint-experimental.yaml, warnings (3) &lt;= than threshold (3) \nLinting success for: scilint-exploratory.yaml, warnings (1) &lt;= than threshold (2) \nLinting skipped for: scilint-legacy.yaml as evaluate is set to false\nLinting skipped for: scilint-no-nbs.yaml as no notebooks found matching path expression\n\n******************************************Begin Scilint Warning Report*****************************************\n+---------------------------+--------------------------+-------------------------+---------+------------+-------------+\n| spec_name                 | notebook                 | indicator               |   value | operator   |   threshold |\n+===========================+==========================+=========================+=========+============+=============+\n| scilint-experimental.yaml | experimental/non_nbdev   | tests_func_coverage_pct |       0 | lt         |        20   |\n+---------------------------+--------------------------+-------------------------+---------+------------+-------------+\n| scilint-experimental.yaml | experimental/non_nbdev   | tests_per_func_mean     |       0 | lt         |         0.5 |\n+---------------------------+--------------------------+-------------------------+---------+------------+-------------+\n| scilint-experimental.yaml | experimental/non_nbdev   | markdown_code_pct       |       0 | lt         |         5   |\n+---------------------------+--------------------------+-------------------------+---------+------------+-------------+\n| scilint-exploratory.yaml  | exploratory/syntax_error | has_syntax_error        |       1 | equals     |         1   |\n+---------------------------+--------------------------+-------------------------+---------+------------+-------------+\n\n******************************************End Scilint Warning Report*******************************************\n\n4 warnings founds, within tolerated thresholds for all specs\n\n\n0\n\n\n\nassert (\n    lint(\n        nb_glob=str(Path(Path(\".\").resolve(), \"example_nbs\", \"experimental\")),\n        specs_glob=str(Path(Path(\".\").resolve(), \"example_nbs\", \"experimental\")),\n    )\n    == 0\n)\n\nLinting success for: scilint-experimental.yaml, warnings (3) &lt;= than threshold (3) \n\n******************************************Begin Scilint Warning Report*****************************************\n+---------------------------+------------------------+-------------------------+---------+------------+-------------+\n| spec_name                 | notebook               | indicator               |   value | operator   |   threshold |\n+===========================+========================+=========================+=========+============+=============+\n| scilint-experimental.yaml | experimental/non_nbdev | tests_func_coverage_pct |       0 | lt         |        20   |\n+---------------------------+------------------------+-------------------------+---------+------------+-------------+\n| scilint-experimental.yaml | experimental/non_nbdev | tests_per_func_mean     |       0 | lt         |         0.5 |\n+---------------------------+------------------------+-------------------------+---------+------------+-------------+\n| scilint-experimental.yaml | experimental/non_nbdev | markdown_code_pct       |       0 | lt         |         5   |\n+---------------------------+------------------------+-------------------------+---------+------------+-------------+\n\n******************************************End Scilint Warning Report*******************************************\n\n3 warnings founds, within tolerated thresholds for all specs\n\n\n\nassert (\n    lint(\n        specs_glob=str(Path(Path(\".\").resolve(), \"example_nbs\", \"experimental\")),\n        exit_on_failure=False,\n        display_report=False,\n    )\n    &gt; 0\n)\n\nLinting success for: scilint-experimental.yaml, warnings (3) &lt;= than threshold (3) \nLinting failed for: scilint-default, total warnings (15) exceeded threshold (1)\n\n\n\nassert (\n    lint(\n        nb_glob=\"example_nbs\",\n        specs_glob=\"example_nbs\",\n        display_report=False,\n        exit_on_failure=False,\n    )\n    &gt; 0\n)\n\nLinting skipped for: scilint-validated.yaml as no notebooks found matching path expression\nLinting skipped for: scilint-experimental.yaml as no notebooks found matching path expression\nLinting skipped for: scilint-exploratory.yaml as no notebooks found matching path expression\nLinting skipped for: scilint-legacy.yaml as no notebooks found matching path expression\nLinting skipped for: scilint-no-nbs.yaml as no notebooks found matching path expression\nLinting failed for: scilint-default, total warnings (18) exceeded threshold (1)\n\n\n\nassert lint(nb_glob=\"example_nbs\") == 0\n\nLinting success for: scilint-default.yaml, no issues found\nLinting skipped for: scilint-validated.yaml as no notebooks found matching path expression\nLinting skipped for: scilint-experimental.yaml as no notebooks found matching path expression\nLinting skipped for: scilint-exploratory.yaml as no notebooks found matching path expression\nLinting skipped for: scilint-legacy.yaml as no notebooks found matching path expression\nLinting skipped for: scilint-no-nbs.yaml as no notebooks found matching path expression\nNo issues found during linting"
+  },
+  {
+    "objectID": "scilint.html#build",
+    "href": "scilint.html#build",
+    "title": "Data Science Notebook Linting",
+    "section": "build",
+    "text": "build\n\nsource\n\nbuild\n\n build (display_report:bool=True, nb_glob:pathlib.Path=None,\n        specs_glob:pathlib.Path=Path('/home/runner/work/scilint/scilint'),\n        exclusions:str=None, fail_over:int=None, out_dir:int=None,\n        precision:int=None, print_syntax_errors:bool=None,\n        exit_on_failure:bool=True)"
+  },
+  {
+    "objectID": "scilint.html#scilint_tidy",
+    "href": "scilint.html#scilint_tidy",
+    "title": "Data Science Notebook Linting",
+    "section": "scilint_tidy",
+    "text": "scilint_tidy\n\nsource\n\nscilint_tidy\n\n scilint_tidy (nb_glob:pathlib.Path=None, log_level:str='warn')"
+  },
+  {
+    "objectID": "scilint.html#scilint_lint",
+    "href": "scilint.html#scilint_lint",
+    "title": "Data Science Notebook Linting",
+    "section": "scilint_lint",
+    "text": "scilint_lint\n\nsource\n\nscilint_lint\n\n scilint_lint (display_report:&lt;Printthelintreport&gt;=False,\n               nb_glob:pathlib.Path=None, specs_glob:pathlib.Path=Path('/h\n               ome/runner/work/scilint/scilint'), exclusions:str=None,\n               fail_over:int=None, out_dir:str=None, precision:int=None,\n               print_syntax_errors:bool=None, exit_on_failure:bool=True,\n               log_level:str='warn')\n\n\nscilint_lint()\n\nLinting success for: scilint-default.yaml, no issues found\nLinting success for: scilint-validated.yaml, no issues found\nLinting success for: scilint-experimental.yaml, warnings (3) &lt;= than threshold (3) \nLinting success for: scilint-exploratory.yaml, warnings (1) &lt;= than threshold (2) \nLinting skipped for: scilint-legacy.yaml as evaluate is set to false\nLinting skipped for: scilint-no-nbs.yaml as no notebooks found matching path expression\n4 warnings founds, within tolerated thresholds for all specs"
+  },
+  {
+    "objectID": "scilint.html#scilint_build",
+    "href": "scilint.html#scilint_build",
+    "title": "Data Science Notebook Linting",
+    "section": "scilint_build",
+    "text": "scilint_build\n\nsource\n\nscilint_build\n\n scilint_build (display_report:&lt;Printthelintreport&gt;=False,\n                nb_glob:pathlib.Path=None, specs_glob:pathlib.Path=Path('/\n                home/runner/work/scilint/scilint'), exclusions:str=None,\n                fail_over:int=None, out_dir:int=None, precision:int=None,\n                print_syntax_errors:bool=None, exit_on_failure:bool=True,\n                log_level:str='warn')"
+  },
+  {
+    "objectID": "scilint.html#scilint_ci",
+    "href": "scilint.html#scilint_ci",
+    "title": "Data Science Notebook Linting",
+    "section": "scilint_ci",
+    "text": "scilint_ci\n\nsource\n\nscilint_ci\n\n scilint_ci (display_report:&lt;Printthelintreport&gt;=False,\n             nb_glob:pathlib.Path=None, specs_glob:pathlib.Path=Path('/hom\n             e/runner/work/scilint/scilint'), exclusions:str=None,\n             fail_over:int=None, out_dir:int=None, precision:int=None,\n             print_syntax_errors:bool=None, exit_on_failure:bool=True,\n             log_level:str='warn')"
+  }
+]

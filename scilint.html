@@ -1,0 +1,1385 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.3.450">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="description" content="infuse quality into notebook based workflows with a new type of build tool.">
+
+<title>scilint - Data Science Notebook Linting</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<script src="site_libs/quarto-html/quarto.js"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 20,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+
+<link rel="stylesheet" href="styles.css">
+<meta property="og:title" content="scilint - Data Science Notebook Linting">
+<meta property="og:description" content="infuse quality into notebook based workflows with a new type of build tool.">
+<meta property="og:site-name" content="scilint">
+<meta name="twitter:title" content="scilint - Data Science Notebook Linting">
+<meta name="twitter:description" content="infuse quality into notebook based workflows with a new type of build tool.">
+<meta name="twitter:card" content="summary">
+</head>
+
+<body class="nav-sidebar floating nav-fixed">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg navbar-dark ">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container">
+    <a class="navbar-brand" href="./index.html">
+    <span class="navbar-title">scilint</span>
+    </a>
+  </div>
+        <div class="quarto-navbar-tools ms-auto">
+</div>
+          <div id="quarto-search" class="" title="Search"></div>
+      </div> <!-- /container-fluid -->
+    </nav>
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+      <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./scilint.html">Data Science Notebook Linting</a></li></ol></nav>
+      <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+      </a>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal sidebar-navigation floating overflow-auto">
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">🧐 <code>scilint</code></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./indicators.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">indicators</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./scilint.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text">Data Science Notebook Linting</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./utils.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Utilities</span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true">
+ <span class="menu-text">example_nbs</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./example_nbs/nbdev.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">nbdev format notebook Example</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./example_nbs/nbdev_high_quality.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">nbdev format notebook Example</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./example_nbs/non_nbdev.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">non_nbdev.html</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./example_nbs/non_nbdev_low_quality.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Preprocess Data</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./example_nbs/syntax_error.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">syntax_error.html</span></a>
+  </div>
+</li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" aria-expanded="false">
+ <span class="menu-text">experimental</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./example_nbs/experimental/nbdev.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">nbdev format notebook Example</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" aria-expanded="true">
+ <span class="menu-text">example_nbs</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" aria-expanded="false">
+ <span class="menu-text">experimental</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./example_nbs/experimental/non_nbdev.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">non_nbdev.html</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" aria-expanded="true">
+ <span class="menu-text">example_nbs</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-5" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-6" aria-expanded="false">
+ <span class="menu-text">exploratory</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-6" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-6" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./example_nbs/exploratory/nbdev.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">nbdev format notebook Example</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-7" aria-expanded="true">
+ <span class="menu-text">example_nbs</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-7" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-7" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-8" aria-expanded="false">
+ <span class="menu-text">exploratory</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-8" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-8" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./example_nbs/exploratory/non_nbdev.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">non_nbdev.html</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-9" aria-expanded="true">
+ <span class="menu-text">example_nbs</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-9" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-9" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-10" aria-expanded="false">
+ <span class="menu-text">exploratory</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-10" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-10" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./example_nbs/exploratory/syntax_error.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">syntax_error.html</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-11" aria-expanded="true">
+ <span class="menu-text">example_nbs</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-11" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-11" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-12" aria-expanded="false">
+ <span class="menu-text">legacy</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-12" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-12" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./example_nbs/legacy/non_nbdev_low_quality.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Preprocess Data</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-13" aria-expanded="true">
+ <span class="menu-text">example_nbs</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-13" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-13" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-14" aria-expanded="false">
+ <span class="menu-text">legacy</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-14" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-14" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./example_nbs/legacy/syntax_error.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">syntax_error.html</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-15" aria-expanded="true">
+ <span class="menu-text">example_nbs</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-15" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-15" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-16" aria-expanded="false">
+ <span class="menu-text">no_spec_provided</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-16" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-16" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./example_nbs/no_spec_provided/nbdev.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">nbdev format notebook Example</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-17" aria-expanded="true">
+ <span class="menu-text">example_nbs</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-17" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-17" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-18" aria-expanded="false">
+ <span class="menu-text">validated</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-18" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-18" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./example_nbs/validated/nbdev_high_quality.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">nbdev format notebook Example</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+      </ul>
+  </li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#test-data-prep" id="toc-test-data-prep" class="nav-link active" data-scroll-target="#test-data-prep">Test Data Prep</a></li>
+  <li><a href="#tidy" id="toc-tidy" class="nav-link" data-scroll-target="#tidy">Tidy</a>
+  <ul class="collapse">
+  <li><a href="#tidy-1" id="toc-tidy-1" class="nav-link" data-scroll-target="#tidy-1">tidy</a></li>
+  <li><a href="#tidy_from_glob" id="toc-tidy_from_glob" class="nav-link" data-scroll-target="#tidy_from_glob">tidy_from_glob</a></li>
+  </ul></li>
+  <li><a href="#helpers" id="toc-helpers" class="nav-link" data-scroll-target="#helpers">Helpers</a>
+  <ul class="collapse">
+  <li><a href="#get_default_spec" id="toc-get_default_spec" class="nav-link" data-scroll-target="#get_default_spec"><code>get_default_spec</code></a>
+  <ul class="collapse">
+  <li><a href="#get_default_spec-1" id="toc-get_default_spec-1" class="nav-link" data-scroll-target="#get_default_spec-1">get_default_spec</a></li>
+  </ul></li>
+  </ul></li>
+  <li><a href="#linting-functions" id="toc-linting-functions" class="nav-link" data-scroll-target="#linting-functions">Linting Functions</a>
+  <ul class="collapse">
+  <li><a href="#lint_nb" id="toc-lint_nb" class="nav-link" data-scroll-target="#lint_nb"><code>lint_nb</code></a>
+  <ul class="collapse">
+  <li><a href="#lint_nb-1" id="toc-lint_nb-1" class="nav-link" data-scroll-target="#lint_nb-1">lint_nb</a></li>
+  </ul></li>
+  <li><a href="#calculate_warnings" id="toc-calculate_warnings" class="nav-link" data-scroll-target="#calculate_warnings"><code>_calculate_warnings</code></a></li>
+  <li><a href="#reshape_warnings" id="toc-reshape_warnings" class="nav-link" data-scroll-target="#reshape_warnings"><code>_reshape_warnings</code></a></li>
+  <li><a href="#lint_nbs" id="toc-lint_nbs" class="nav-link" data-scroll-target="#lint_nbs"><code>lint_nbs</code></a>
+  <ul class="collapse">
+  <li><a href="#lint_nbs-1" id="toc-lint_nbs-1" class="nav-link" data-scroll-target="#lint_nbs-1">lint_nbs</a></li>
+  </ul></li>
+  <li><a href="#map_paths_to_specs" id="toc-map_paths_to_specs" class="nav-link" data-scroll-target="#map_paths_to_specs"><code>_map_paths_to_specs</code></a></li>
+  <li><a href="#testing-lint_nbs" id="toc-testing-lint_nbs" class="nav-link" data-scroll-target="#testing-lint_nbs">Testing <code>lint_nbs</code></a></li>
+  <li><a href="#display_warning_report" id="toc-display_warning_report" class="nav-link" data-scroll-target="#display_warning_report"><code>display_warning_report</code></a>
+  <ul class="collapse">
+  <li><a href="#display_warning_report-1" id="toc-display_warning_report-1" class="nav-link" data-scroll-target="#display_warning_report-1">display_warning_report</a></li>
+  </ul></li>
+  <li><a href="#persist_results" id="toc-persist_results" class="nav-link" data-scroll-target="#persist_results"><code>_persist_results</code></a></li>
+  <li><a href="#load_conf" id="toc-load_conf" class="nav-link" data-scroll-target="#load_conf"><code>_load_conf</code></a></li>
+  <li><a href="#lint" id="toc-lint" class="nav-link" data-scroll-target="#lint"><code>lint</code></a>
+  <ul class="collapse">
+  <li><a href="#lint-1" id="toc-lint-1" class="nav-link" data-scroll-target="#lint-1">lint</a></li>
+  </ul></li>
+  <li><a href="#build" id="toc-build" class="nav-link" data-scroll-target="#build"><code>build</code></a>
+  <ul class="collapse">
+  <li><a href="#build-1" id="toc-build-1" class="nav-link" data-scroll-target="#build-1">build</a></li>
+  </ul></li>
+  </ul></li>
+  <li><a href="#console-scripts" id="toc-console-scripts" class="nav-link" data-scroll-target="#console-scripts">Console Scripts</a>
+  <ul class="collapse">
+  <li><a href="#scilint_tidy" id="toc-scilint_tidy" class="nav-link" data-scroll-target="#scilint_tidy"><code>scilint_tidy</code></a>
+  <ul class="collapse">
+  <li><a href="#scilint_tidy-1" id="toc-scilint_tidy-1" class="nav-link" data-scroll-target="#scilint_tidy-1">scilint_tidy</a></li>
+  </ul></li>
+  <li><a href="#scilint_lint" id="toc-scilint_lint" class="nav-link" data-scroll-target="#scilint_lint"><code>scilint_lint</code></a>
+  <ul class="collapse">
+  <li><a href="#scilint_lint-1" id="toc-scilint_lint-1" class="nav-link" data-scroll-target="#scilint_lint-1">scilint_lint</a></li>
+  </ul></li>
+  <li><a href="#scilint_build" id="toc-scilint_build" class="nav-link" data-scroll-target="#scilint_build"><code>scilint_build</code></a>
+  <ul class="collapse">
+  <li><a href="#scilint_build-1" id="toc-scilint_build-1" class="nav-link" data-scroll-target="#scilint_build-1">scilint_build</a></li>
+  </ul></li>
+  <li><a href="#scilint_ci" id="toc-scilint_ci" class="nav-link" data-scroll-target="#scilint_ci"><code>scilint_ci</code></a>
+  <ul class="collapse">
+  <li><a href="#scilint_ci-1" id="toc-scilint_ci-1" class="nav-link" data-scroll-target="#scilint_ci-1">scilint_ci</a></li>
+  </ul></li>
+  </ul></li>
+  </ul>
+<div class="toc-actions"><div><i class="bi bi-github"></i></div><div class="action-links"><p><a href="https://github.com/newday-data/scilint/tree/{branch}/issues/new" class="toc-action">Report an issue</a></p></div></div></nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Data Science Notebook Linting</h1>
+</div>
+
+<div>
+  <div class="description">
+    infuse quality into notebook based workflows with a new type of build tool.
+  </div>
+</div>
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+</header>
+
+<!-- WARNING: THIS FILE WAS AUTOGENERATED! DO NOT EDIT! -->
+<section id="test-data-prep" class="level1">
+<h1>Test Data Prep</h1>
+<div class="cell" data-tags="[]">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>nbdev_path <span class="op">=</span> Path(Path(<span class="st">"."</span>).resolve(), <span class="st">"example_nbs"</span>, <span class="st">"nbdev.ipynb"</span>)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>nbdev_hq_path <span class="op">=</span> Path(Path(<span class="st">"."</span>).resolve(), <span class="st">"example_nbs"</span>, <span class="st">"nbdev_high_quality.ipynb"</span>)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>non_nbdev_path <span class="op">=</span> Path(Path(<span class="st">"."</span>).resolve(), <span class="st">"example_nbs"</span>, <span class="st">"non_nbdev.ipynb"</span>)</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>non_nbdev_lq_path <span class="op">=</span> Path(</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>    Path(<span class="st">"."</span>).resolve(), <span class="st">"example_nbs"</span>, <span class="st">"non_nbdev_low_quality.ipynb"</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>index_path <span class="op">=</span> Path(Path(<span class="st">"."</span>).resolve(), <span class="st">"index.ipynb"</span>)</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>syntax_error_path <span class="op">=</span> Path(Path(<span class="st">"."</span>).resolve(), <span class="st">"syntax_error.ipynb"</span>)</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>nbdev_nb <span class="op">=</span> read_nb(nbdev_path)</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>nbdev_hq_nb <span class="op">=</span> read_nb(nbdev_hq_path)</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>non_nbdev_nb <span class="op">=</span> read_nb(non_nbdev_path)</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>non_nbdev_lq_nb <span class="op">=</span> read_nb(non_nbdev_lq_path)</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>index <span class="op">=</span> read_nb(index_path)</span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>syntax_error <span class="op">=</span> read_nb(index_path)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="tidy" class="level1">
+<h1>Tidy</h1>
+<p>simple wrapper around no-decisions version of nbqa</p>
+<div class="cell" data-tags="[]">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>project_root: Path <span class="op">=</span> find_project_root(<span class="bu">tuple</span>([<span class="bu">str</span>(Path(<span class="st">"."</span>).resolve())]))</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="cf">assert</span> os.path.basename(project_root) <span class="op">==</span> <span class="st">"scilint"</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<hr>
+<p><a href="https://github.com/newday-data/scilint/tree/%7Bbranch%7D/blob/main/scilint/scilint.py#L45" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<section id="tidy-1" class="level3">
+<h3 class="anchored" data-anchor-id="tidy-1">tidy</h3>
+<blockquote class="blockquote">
+<pre><code> tidy (root_dir:pathlib.Path=None)</code></pre>
+</blockquote>
+<hr>
+<p><a href="https://github.com/newday-data/scilint/tree/%7Bbranch%7D/blob/main/scilint/scilint.py#L53" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="tidy_from_glob" class="level3">
+<h3 class="anchored" data-anchor-id="tidy_from_glob">tidy_from_glob</h3>
+<blockquote class="blockquote">
+<pre><code> tidy_from_glob (nb_glob)</code></pre>
+</blockquote>
+<div class="cell" data-tags="[]">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>project_root: Path <span class="op">=</span> find_project_root(<span class="bu">tuple</span>([<span class="bu">str</span>(Path(<span class="st">"."</span>).resolve())]))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+</section>
+<section id="helpers" class="level1">
+<h1>Helpers</h1>
+<section id="get_default_spec" class="level2">
+<h2 class="anchored" data-anchor-id="get_default_spec"><a href="https://newday-data.github.io/scilint/scilint.html#get_default_spec"><code>get_default_spec</code></a></h2>
+<hr>
+<p><a href="https://github.com/newday-data/scilint/tree/%7Bbranch%7D/blob/main/scilint/scilint.py#L58" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<section id="get_default_spec-1" class="level3">
+<h3 class="anchored" data-anchor-id="get_default_spec-1">get_default_spec</h3>
+<blockquote class="blockquote">
+<pre><code> get_default_spec ()</code></pre>
+</blockquote>
+</section>
+</section>
+</section>
+<section id="linting-functions" class="level1">
+<h1>Linting Functions</h1>
+<section id="lint_nb" class="level2">
+<h2 class="anchored" data-anchor-id="lint_nb"><a href="https://newday-data.github.io/scilint/scilint.html#lint_nb"><code>lint_nb</code></a></h2>
+<hr>
+<p><a href="https://github.com/newday-data/scilint/tree/%7Bbranch%7D/blob/main/scilint/scilint.py#L82" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<section id="lint_nb-1" class="level3">
+<h3 class="anchored" data-anchor-id="lint_nb-1">lint_nb</h3>
+<blockquote class="blockquote">
+<pre><code> lint_nb (spec_name:str, nb_path:pathlib.Path, conf:Dict[str,Any],
+          indicators:Dict[str,Callable], include_in_scoring:bool,
+          out_dir:str)</code></pre>
+</blockquote>
+<div class="cell" data-tags="[]">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co"> test</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+</section>
+<section id="calculate_warnings" class="level2">
+<h2 class="anchored" data-anchor-id="calculate_warnings"><a href="https://newday-data.github.io/scilint/scilint.html#_calculate_warnings"><code>_calculate_warnings</code></a></h2>
+<div class="cell" data-tags="[]">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co"> test</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="reshape_warnings" class="level2">
+<h2 class="anchored" data-anchor-id="reshape_warnings"><a href="https://newday-data.github.io/scilint/scilint.html#_reshape_warnings"><code>_reshape_warnings</code></a></h2>
+<div class="cell" data-tags="[]">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co"> test</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell" data-tags="[]">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>raises <span class="op">=</span> <span class="va">False</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="cf">try</span>:</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>    _get_nb_display_name(<span class="st">"paren"</span>, nbdev_path)</span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a><span class="cf">except</span> <span class="pp">ValueError</span>:</span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>    raises <span class="op">=</span> <span class="va">True</span></span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a><span class="cf">assert</span> raises</span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a><span class="cf">assert</span> <span class="st">"example_nbs/nbdev"</span> <span class="op">==</span> _get_nb_display_name(<span class="st">"parent"</span>, nbdev_path)</span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a><span class="cf">assert</span> <span class="bu">str</span>(nbdev_path) <span class="op">==</span> _get_nb_display_name(<span class="st">"abs"</span>, nbdev_path)</span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a><span class="cf">assert</span> <span class="st">"nbdev"</span> <span class="op">==</span> _get_nb_display_name(<span class="st">"stem"</span>, nbdev_path)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="lint_nbs" class="level2">
+<h2 class="anchored" data-anchor-id="lint_nbs"><a href="https://newday-data.github.io/scilint/scilint.html#lint_nbs"><code>lint_nbs</code></a></h2>
+<hr>
+<p><a href="https://github.com/newday-data/scilint/tree/%7Bbranch%7D/blob/main/scilint/scilint.py#L183" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<section id="lint_nbs-1" class="level3">
+<h3 class="anchored" data-anchor-id="lint_nbs-1">lint_nbs</h3>
+<blockquote class="blockquote">
+<pre><code> lint_nbs (spec_name:str, conf:Dict[str,Any],
+           indicators:Dict[str,Callable],
+           nb_paths:Iterable[pathlib.Path]=None, out_dir:str=None,
+           nb_glob:pathlib.Path=None)</code></pre>
+</blockquote>
+</section>
+</section>
+<section id="map_paths_to_specs" class="level2">
+<h2 class="anchored" data-anchor-id="map_paths_to_specs"><code>_map_paths_to_specs</code></h2>
+<div class="cell" data-tags="[]">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>legacy_dir <span class="op">=</span> Path(Path(<span class="st">"."</span>).resolve(), <span class="st">"example_nbs/legacy"</span>)</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>legacy_spec_nbs <span class="op">=</span> _map_paths_specs(legacy_dir, legacy_dir)</span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>legacy_spec <span class="op">=</span> Path(Path(<span class="st">"."</span>).resolve(), <span class="st">"example_nbs"</span>, <span class="st">"legacy"</span>, <span class="st">"scilint-legacy.yaml"</span>)</span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a><span class="cf">assert</span> legacy_spec <span class="kw">in</span> legacy_spec_nbs</span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a><span class="cf">assert</span> <span class="bu">len</span>(legacy_spec_nbs[legacy_spec]) <span class="op">==</span> <span class="dv">2</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell" data-tags="[]">
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>legacy_dir <span class="op">=</span> Path(Path(<span class="st">"."</span>).resolve(), <span class="st">"example_nbs/legacy"</span>)</span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>legacy_spec_nbs <span class="op">=</span> _map_paths_specs(legacy_dir)</span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>legacy_spec <span class="op">=</span> Path(Path(<span class="st">"."</span>).resolve(), <span class="st">"example_nbs"</span>, <span class="st">"legacy"</span>, <span class="st">"scilint-legacy.yaml"</span>)</span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a><span class="cf">assert</span> legacy_spec <span class="kw">in</span> legacy_spec_nbs</span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a><span class="cf">assert</span> <span class="bu">len</span>(legacy_spec_nbs[legacy_spec]) <span class="op">==</span> <span class="dv">2</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell" data-tags="[]">
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>no_spec_dir <span class="op">=</span> Path(Path(<span class="st">"."</span>).resolve(), <span class="st">"example_nbs/no_spec_provided/"</span>)</span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>no_spec_nbs <span class="op">=</span> _map_paths_specs(no_spec_dir, no_spec_dir)</span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a><span class="cf">assert</span> Path(<span class="st">"scilint-default"</span>) <span class="kw">in</span> no_spec_nbs</span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a><span class="cf">assert</span> <span class="bu">len</span>(no_spec_nbs) <span class="op">==</span> <span class="dv">1</span></span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a><span class="cf">assert</span> <span class="bu">len</span>(no_spec_nbs[Path(<span class="st">"scilint-default"</span>)]) <span class="op">==</span> <span class="dv">1</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell" data-tags="[]">
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>spec_nbs <span class="op">=</span> _map_paths_specs()</span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a><span class="cf">assert</span> <span class="bu">len</span>(spec_nbs[Path(Path(<span class="st">"."</span>).resolve(), <span class="st">"scilint-default.yaml"</span>)]) <span class="op">==</span> <span class="dv">10</span></span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a><span class="cf">assert</span> (</span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>    <span class="bu">len</span>(</span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>        spec_nbs[</span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a>            Path(</span>
+<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a>                Path(<span class="st">"."</span>).resolve(),</span>
+<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a>                <span class="st">"example_nbs"</span>,</span>
+<span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a>                <span class="st">"exploratory"</span>,</span>
+<span id="cb16-10"><a href="#cb16-10" aria-hidden="true" tabindex="-1"></a>                <span class="ss">f"scilint-exploratory.yaml"</span>,</span>
+<span id="cb16-11"><a href="#cb16-11" aria-hidden="true" tabindex="-1"></a>            )</span>
+<span id="cb16-12"><a href="#cb16-12" aria-hidden="true" tabindex="-1"></a>        ]</span>
+<span id="cb16-13"><a href="#cb16-13" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb16-14"><a href="#cb16-14" aria-hidden="true" tabindex="-1"></a>    <span class="op">==</span> <span class="dv">3</span></span>
+<span id="cb16-15"><a href="#cb16-15" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb16-16"><a href="#cb16-16" aria-hidden="true" tabindex="-1"></a><span class="cf">assert</span> (</span>
+<span id="cb16-17"><a href="#cb16-17" aria-hidden="true" tabindex="-1"></a>    <span class="bu">len</span>(</span>
+<span id="cb16-18"><a href="#cb16-18" aria-hidden="true" tabindex="-1"></a>        spec_nbs[</span>
+<span id="cb16-19"><a href="#cb16-19" aria-hidden="true" tabindex="-1"></a>            Path(</span>
+<span id="cb16-20"><a href="#cb16-20" aria-hidden="true" tabindex="-1"></a>                Path(<span class="st">"."</span>).resolve(),</span>
+<span id="cb16-21"><a href="#cb16-21" aria-hidden="true" tabindex="-1"></a>                <span class="st">"example_nbs"</span>,</span>
+<span id="cb16-22"><a href="#cb16-22" aria-hidden="true" tabindex="-1"></a>                <span class="st">"experimental"</span>,</span>
+<span id="cb16-23"><a href="#cb16-23" aria-hidden="true" tabindex="-1"></a>                <span class="ss">f"scilint-experimental.yaml"</span>,</span>
+<span id="cb16-24"><a href="#cb16-24" aria-hidden="true" tabindex="-1"></a>            )</span>
+<span id="cb16-25"><a href="#cb16-25" aria-hidden="true" tabindex="-1"></a>        ]</span>
+<span id="cb16-26"><a href="#cb16-26" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb16-27"><a href="#cb16-27" aria-hidden="true" tabindex="-1"></a>    <span class="op">==</span> <span class="dv">2</span></span>
+<span id="cb16-28"><a href="#cb16-28" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb16-29"><a href="#cb16-29" aria-hidden="true" tabindex="-1"></a><span class="cf">assert</span> (</span>
+<span id="cb16-30"><a href="#cb16-30" aria-hidden="true" tabindex="-1"></a>    <span class="bu">len</span>(</span>
+<span id="cb16-31"><a href="#cb16-31" aria-hidden="true" tabindex="-1"></a>        spec_nbs[</span>
+<span id="cb16-32"><a href="#cb16-32" aria-hidden="true" tabindex="-1"></a>            Path(</span>
+<span id="cb16-33"><a href="#cb16-33" aria-hidden="true" tabindex="-1"></a>                Path(<span class="st">"."</span>).resolve(),</span>
+<span id="cb16-34"><a href="#cb16-34" aria-hidden="true" tabindex="-1"></a>                <span class="st">"example_nbs"</span>,</span>
+<span id="cb16-35"><a href="#cb16-35" aria-hidden="true" tabindex="-1"></a>                <span class="st">"validated"</span>,</span>
+<span id="cb16-36"><a href="#cb16-36" aria-hidden="true" tabindex="-1"></a>                <span class="ss">f"scilint-validated.yaml"</span>,</span>
+<span id="cb16-37"><a href="#cb16-37" aria-hidden="true" tabindex="-1"></a>            )</span>
+<span id="cb16-38"><a href="#cb16-38" aria-hidden="true" tabindex="-1"></a>        ]</span>
+<span id="cb16-39"><a href="#cb16-39" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb16-40"><a href="#cb16-40" aria-hidden="true" tabindex="-1"></a>    <span class="op">==</span> <span class="dv">1</span></span>
+<span id="cb16-41"><a href="#cb16-41" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell" data-tags="[]">
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>spec_nbs <span class="op">=</span> _map_paths_specs(specs_glob<span class="op">=</span>get_project_root())</span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a><span class="cf">assert</span> <span class="bu">sorted</span>([k.name <span class="cf">for</span> k <span class="kw">in</span> spec_nbs.keys()]) <span class="op">==</span> <span class="bu">sorted</span>(</span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>    [</span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>        <span class="st">"scilint-default.yaml"</span>,</span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a>        <span class="st">"scilint-validated.yaml"</span>,</span>
+<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a>        <span class="st">"scilint-experimental.yaml"</span>,</span>
+<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a>        <span class="st">"scilint-exploratory.yaml"</span>,</span>
+<span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a>        <span class="st">"scilint-legacy.yaml"</span>,</span>
+<span id="cb17-9"><a href="#cb17-9" aria-hidden="true" tabindex="-1"></a>        <span class="st">"scilint-no-nbs.yaml"</span>,</span>
+<span id="cb17-10"><a href="#cb17-10" aria-hidden="true" tabindex="-1"></a>    ]</span>
+<span id="cb17-11"><a href="#cb17-11" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="testing-lint_nbs" class="level2">
+<h2 class="anchored" data-anchor-id="testing-lint_nbs">Testing <a href="https://newday-data.github.io/scilint/scilint.html#lint_nbs"><code>lint_nbs</code></a></h2>
+<div class="cell" data-tags="[]">
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>conf <span class="op">=</span> yaml.safe_load(Path(<span class="st">"scilint-default.yaml"</span>).read_text())</span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>default_spec_paths <span class="op">=</span> <span class="bu">list</span>(_map_paths_specs().values())[<span class="dv">0</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell" data-tags="[]">
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>lint_nbs(<span class="st">"scilint-default.yaml"</span>, conf, indicator_funcs, nb_paths<span class="op">=</span>default_spec_paths)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<pre><code>(                                              spec_name  calls_per_func_mean   
+ nbs/utils                          scilint-default.yaml                1.800  \
+ example_nbs/nbdev                  scilint-default.yaml                2.071   
+ no_spec_provided/nbdev             scilint-default.yaml                2.071   
+ example_nbs/non_nbdev_low_quality  scilint-default.yaml                1.444   
+ example_nbs/nbdev_high_quality     scilint-default.yaml                2.308   
+ nbs/scilint                        scilint-default.yaml                2.389   
+ example_nbs/non_nbdev              scilint-default.yaml                1.000   
+ nbs/indicators                     scilint-default.yaml                3.550   
+ nbs/index                          scilint-default.yaml                  NaN   
+ example_nbs/syntax_error           scilint-default.yaml                  NaN   
+ 
+                                    calls_per_func_median  tests_per_func_mean   
+ nbs/utils                                            1.5                1.364  \
+ example_nbs/nbdev                                    1.0                1.071   
+ no_spec_provided/nbdev                               1.0                1.071   
+ example_nbs/non_nbdev_low_quality                    1.0                0.000   
+ example_nbs/nbdev_high_quality                       1.0                1.385   
+ nbs/scilint                                          1.0                1.737   
+ example_nbs/non_nbdev                                1.0                0.000   
+ nbs/indicators                                       4.0                3.480   
+ nbs/index                                            NaN                  NaN   
+ example_nbs/syntax_error                             NaN                  NaN   
+ 
+                                    tests_func_coverage_pct  in_func_pct   
+ nbs/utils                                           63.636       51.899  \
+ example_nbs/nbdev                                   42.857       50.725   
+ no_spec_provided/nbdev                              42.857       50.725   
+ example_nbs/non_nbdev_low_quality                    0.000       45.000   
+ example_nbs/nbdev_high_quality                      69.231       44.118   
+ nbs/scilint                                         31.579       36.747   
+ example_nbs/non_nbdev                                0.000       35.714   
+ nbs/indicators                                      76.000       27.869   
+ nbs/index                                              NaN          NaN   
+ example_nbs/syntax_error                               NaN          NaN   
+ 
+                                    markdown_code_pct  loc_per_md_section   
+ nbs/utils                                     27.273             798.375  \
+ example_nbs/nbdev                             30.769             546.444   
+ no_spec_provided/nbdev                        30.769             546.444   
+ example_nbs/non_nbdev_low_quality             15.789            2955.000   
+ example_nbs/nbdev_high_quality                30.769             553.111   
+ nbs/scilint                                   29.167            1103.810   
+ example_nbs/non_nbdev                          0.000                 NaN   
+ nbs/indicators                                37.333             678.111   
+ nbs/index                                        NaN                 NaN   
+ example_nbs/syntax_error                         NaN                 NaN   
+ 
+                                    total_code_len  has_syntax_error   
+ nbs/utils                                  6387.0             False  \
+ example_nbs/nbdev                          4918.0             False   
+ no_spec_provided/nbdev                     4918.0             False   
+ example_nbs/non_nbdev_low_quality          2955.0             False   
+ example_nbs/nbdev_high_quality             4978.0             False   
+ nbs/scilint                               23180.0             False   
+ example_nbs/non_nbdev                      1233.0             False   
+ nbs/indicators                            18309.0             False   
+ nbs/index                                     0.0             False   
+ example_nbs/syntax_error                      NaN              True   
+ 
+                                    include_in_scoring  
+ nbs/utils                                        True  
+ example_nbs/nbdev                               False  
+ no_spec_provided/nbdev                          False  
+ example_nbs/non_nbdev_low_quality               False  
+ example_nbs/nbdev_high_quality                  False  
+ nbs/scilint                                      True  
+ example_nbs/non_nbdev                           False  
+ nbs/indicators                                   True  
+ nbs/index                                        True  
+ example_nbs/syntax_error                        False  ,
+ Empty DataFrame
+ Columns: [spec_name, notebook, indicator, value, operator, threshold]
+ Index: [],
+ 0)</code></pre>
+</div>
+</div>
+<div class="cell" data-tags="[]">
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>lint_report, all_warns, num_warns <span class="op">=</span> lint_nbs(</span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>    <span class="st">"scilint-default.yaml"</span>, conf, indicator_funcs, nb_paths<span class="op">=</span>default_spec_paths</span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a><span class="cf">assert</span> num_warns <span class="op">==</span> <span class="dv">0</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell" data-tags="[]">
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>conf[<span class="st">"exclusions"</span>] <span class="op">=</span> <span class="va">None</span></span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>lint_report, all_warns, num_warns <span class="op">=</span> lint_nbs(</span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>    <span class="st">"scilint-default.yaml"</span>, conf, indicator_funcs, nb_paths<span class="op">=</span>default_spec_paths</span>
+<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a><span class="cf">assert</span> num_warns <span class="op">==</span> <span class="dv">7</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell" data-tags="[]">
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>conf <span class="op">=</span> yaml.safe_load(</span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>    Path(</span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>        Path(<span class="st">"."</span>).resolve(), <span class="st">"example_nbs"</span>, <span class="st">"experimental"</span>, <span class="st">"scilint-experimental.yaml"</span></span>
+<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a>    ).read_text()</span>
+<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a>lint_report, all_warns, num_warns <span class="op">=</span> lint_nbs(</span>
+<span id="cb23-7"><a href="#cb23-7" aria-hidden="true" tabindex="-1"></a>    <span class="st">"scilint-experimental.yaml"</span>,</span>
+<span id="cb23-8"><a href="#cb23-8" aria-hidden="true" tabindex="-1"></a>    conf,</span>
+<span id="cb23-9"><a href="#cb23-9" aria-hidden="true" tabindex="-1"></a>    indicator_funcs,</span>
+<span id="cb23-10"><a href="#cb23-10" aria-hidden="true" tabindex="-1"></a>    nb_glob<span class="op">=</span>Path(<span class="st">"example_nbs/experimental/"</span>),</span>
+<span id="cb23-11"><a href="#cb23-11" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb23-12"><a href="#cb23-12" aria-hidden="true" tabindex="-1"></a><span class="cf">assert</span> num_warns <span class="op">==</span> <span class="dv">3</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell" data-tags="[]">
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>conf[<span class="st">"exclusions"</span>] <span class="op">=</span> <span class="st">"""nbs/example_nbs/,nbs/index.ipynb"""</span></span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>_, all_warns, num_warns <span class="op">=</span> lint_nbs(</span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>    <span class="st">"scilint-experimental.yaml"</span>,</span>
+<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a>    conf,</span>
+<span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a>    indicator_funcs,</span>
+<span id="cb24-6"><a href="#cb24-6" aria-hidden="true" tabindex="-1"></a>    nb_glob<span class="op">=</span>Path(<span class="st">"example_nbs/experimental/"</span>),</span>
+<span id="cb24-7"><a href="#cb24-7" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb24-8"><a href="#cb24-8" aria-hidden="true" tabindex="-1"></a><span class="cf">assert</span> num_warns <span class="op">==</span> <span class="dv">0</span></span>
+<span id="cb24-9"><a href="#cb24-9" aria-hidden="true" tabindex="-1"></a>conf[<span class="st">"exclusions"</span>] <span class="op">=</span> <span class="va">None</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell" data-tags="[]">
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>conf[<span class="st">"exclusions"</span>] <span class="op">=</span> <span class="st">"""nbs/example_nbs/experimental/non_nbdev.ipynb"""</span></span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>_, all_warns, num_warns <span class="op">=</span> lint_nbs(</span>
+<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a>    <span class="st">"scilint-experimental.yaml"</span>,</span>
+<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a>    conf,</span>
+<span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a>    indicator_funcs,</span>
+<span id="cb25-6"><a href="#cb25-6" aria-hidden="true" tabindex="-1"></a>    nb_glob<span class="op">=</span>Path(<span class="st">"example_nbs/experimental/"</span>),</span>
+<span id="cb25-7"><a href="#cb25-7" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb25-8"><a href="#cb25-8" aria-hidden="true" tabindex="-1"></a><span class="cf">assert</span> num_warns <span class="op">==</span> <span class="dv">0</span></span>
+<span id="cb25-9"><a href="#cb25-9" aria-hidden="true" tabindex="-1"></a>conf[<span class="st">"exclusions"</span>] <span class="op">=</span> <span class="va">None</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell" data-tags="[]">
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>conf[<span class="st">"exclusions"</span>] <span class="op">=</span> <span class="st">"""nbs/example_nbs/exploratory/syntax_error.ipynb"""</span></span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>_, all_warns, num_warns <span class="op">=</span> lint_nbs(</span>
+<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a>    <span class="st">"scilint-exploratory.yaml"</span>,</span>
+<span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a>    conf,</span>
+<span id="cb26-5"><a href="#cb26-5" aria-hidden="true" tabindex="-1"></a>    indicator_funcs,</span>
+<span id="cb26-6"><a href="#cb26-6" aria-hidden="true" tabindex="-1"></a>    nb_glob<span class="op">=</span>Path(<span class="st">"example_nbs/exploratory/"</span>),</span>
+<span id="cb26-7"><a href="#cb26-7" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb26-8"><a href="#cb26-8" aria-hidden="true" tabindex="-1"></a><span class="cf">assert</span> num_warns <span class="op">==</span> <span class="dv">3</span></span>
+<span id="cb26-9"><a href="#cb26-9" aria-hidden="true" tabindex="-1"></a>conf[<span class="st">"exclusions"</span>] <span class="op">=</span> <span class="va">None</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="display_warning_report" class="level2">
+<h2 class="anchored" data-anchor-id="display_warning_report"><a href="https://newday-data.github.io/scilint/scilint.html#display_warning_report"><code>display_warning_report</code></a></h2>
+<hr>
+<p><a href="https://github.com/newday-data/scilint/tree/%7Bbranch%7D/blob/main/scilint/scilint.py#L273" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<section id="display_warning_report-1" class="level3">
+<h3 class="anchored" data-anchor-id="display_warning_report-1">display_warning_report</h3>
+<blockquote class="blockquote">
+<pre><code> display_warning_report (all_warns:pandas.core.frame.DataFrame)</code></pre>
+</blockquote>
+</section>
+</section>
+<section id="persist_results" class="level2">
+<h2 class="anchored" data-anchor-id="persist_results"><a href="https://newday-data.github.io/scilint/scilint.html#_persist_results"><code>_persist_results</code></a></h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> tempfile</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell" data-tags="[]">
+<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> tempfile.TemporaryDirectory() <span class="im">as</span> tmp_dir:</span>
+<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a>    report <span class="op">=</span> pd.DataFrame({<span class="st">"a"</span>: [<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>]})</span>
+<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a>    _persist_results(report, report, {<span class="st">"indicators"</span>: [], <span class="st">"out_dir"</span>: tmp_dir})</span>
+<span id="cb29-4"><a href="#cb29-4" aria-hidden="true" tabindex="-1"></a>    <span class="cf">assert</span> pd.read_csv(Path(tmp_dir, <span class="st">"scilint_report.csv"</span>), index_col<span class="op">=</span><span class="dv">0</span>).equals(</span>
+<span id="cb29-5"><a href="#cb29-5" aria-hidden="true" tabindex="-1"></a>        pd.DataFrame({<span class="st">"a"</span>: [<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>]})</span>
+<span id="cb29-6"><a href="#cb29-6" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb29-7"><a href="#cb29-7" aria-hidden="true" tabindex="-1"></a>    <span class="cf">assert</span> pd.read_csv(Path(tmp_dir, <span class="st">"scilint_warnings.csv"</span>)).equals(</span>
+<span id="cb29-8"><a href="#cb29-8" aria-hidden="true" tabindex="-1"></a>        pd.DataFrame({<span class="st">"a"</span>: [<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>]})</span>
+<span id="cb29-9"><a href="#cb29-9" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb29-10"><a href="#cb29-10" aria-hidden="true" tabindex="-1"></a>    <span class="cf">with</span> <span class="bu">open</span>(Path(tmp_dir, <span class="st">"scilint_config.json"</span>)) <span class="im">as</span> infile:</span>
+<span id="cb29-11"><a href="#cb29-11" aria-hidden="true" tabindex="-1"></a>        <span class="cf">assert</span> json.load(infile) <span class="op">==</span> {<span class="st">"out_dir"</span>: tmp_dir}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="load_conf" class="level2">
+<h2 class="anchored" data-anchor-id="load_conf"><a href="https://newday-data.github.io/scilint/scilint.html#_load_conf"><code>_load_conf</code></a></h2>
+<div class="cell" data-tags="[]">
+<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a>experimental_spec_path <span class="op">=</span> Path(</span>
+<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a>    Path(<span class="st">"."</span>), <span class="st">"example_nbs"</span>, <span class="st">"experimental"</span>, <span class="st">"scilint-experimental.yaml"</span></span>
+<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb30-4"><a href="#cb30-4" aria-hidden="true" tabindex="-1"></a>experimental_spec <span class="op">=</span> _load_conf(experimental_spec_path)</span>
+<span id="cb30-5"><a href="#cb30-5" aria-hidden="true" tabindex="-1"></a><span class="cf">assert</span> experimental_spec[<span class="st">"precision"</span>] <span class="op">==</span> <span class="dv">3</span></span>
+<span id="cb30-6"><a href="#cb30-6" aria-hidden="true" tabindex="-1"></a><span class="cf">assert</span> experimental_spec[<span class="st">"fail_over"</span>] <span class="op">==</span> <span class="dv">3</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell" data-tags="[]">
+<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a>experimental_spec <span class="op">=</span> _load_conf(experimental_spec_path, fail_over<span class="op">=-</span><span class="dv">1</span>, precision<span class="op">=</span><span class="dv">1</span>)</span>
+<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a><span class="cf">assert</span> experimental_spec[<span class="st">"precision"</span>] <span class="op">==</span> <span class="dv">1</span></span>
+<span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a><span class="cf">assert</span> experimental_spec[<span class="st">"fail_over"</span>] <span class="op">==</span> <span class="op">-</span><span class="dv">1</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="lint" class="level2">
+<h2 class="anchored" data-anchor-id="lint"><a href="https://newday-data.github.io/scilint/scilint.html#lint"><code>lint</code></a></h2>
+<hr>
+<p><a href="https://github.com/newday-data/scilint/tree/%7Bbranch%7D/blob/main/scilint/scilint.py#L329" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<section id="lint-1" class="level3">
+<h3 class="anchored" data-anchor-id="lint-1">lint</h3>
+<blockquote class="blockquote">
+<pre><code> lint (display_report:bool=True, nb_glob:pathlib.Path=None,
+       specs_glob:pathlib.Path=Path('/home/runner/work/scilint/scilint'),
+       exclusions:str=None, fail_over:int=None, out_dir:int=None,
+       precision:int=None, print_syntax_errors:bool=None,
+       exit_on_failure:bool=True)</code></pre>
+</blockquote>
+<div class="cell" data-tags="[]">
+<div class="sourceCode cell-code" id="cb33"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a>lint()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Linting success for: scilint-default.yaml, no issues found
+Linting success for: scilint-validated.yaml, no issues found
+Linting success for: scilint-experimental.yaml, warnings (3) &lt;= than threshold (3) 
+Linting success for: scilint-exploratory.yaml, warnings (1) &lt;= than threshold (2) 
+Linting skipped for: scilint-legacy.yaml as evaluate is set to false
+Linting skipped for: scilint-no-nbs.yaml as no notebooks found matching path expression
+
+******************************************Begin Scilint Warning Report*****************************************
++---------------------------+--------------------------+-------------------------+---------+------------+-------------+
+| spec_name                 | notebook                 | indicator               |   value | operator   |   threshold |
++===========================+==========================+=========================+=========+============+=============+
+| scilint-experimental.yaml | experimental/non_nbdev   | tests_func_coverage_pct |       0 | lt         |        20   |
++---------------------------+--------------------------+-------------------------+---------+------------+-------------+
+| scilint-experimental.yaml | experimental/non_nbdev   | tests_per_func_mean     |       0 | lt         |         0.5 |
++---------------------------+--------------------------+-------------------------+---------+------------+-------------+
+| scilint-experimental.yaml | experimental/non_nbdev   | markdown_code_pct       |       0 | lt         |         5   |
++---------------------------+--------------------------+-------------------------+---------+------------+-------------+
+| scilint-exploratory.yaml  | exploratory/syntax_error | has_syntax_error        |       1 | equals     |         1   |
++---------------------------+--------------------------+-------------------------+---------+------------+-------------+
+
+******************************************End Scilint Warning Report*******************************************
+
+4 warnings founds, within tolerated thresholds for all specs</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<pre><code>0</code></pre>
+</div>
+</div>
+<div class="cell" data-tags="[]">
+<div class="sourceCode cell-code" id="cb36"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a><span class="cf">assert</span> (</span>
+<span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a>    lint(</span>
+<span id="cb36-3"><a href="#cb36-3" aria-hidden="true" tabindex="-1"></a>        nb_glob<span class="op">=</span><span class="bu">str</span>(Path(Path(<span class="st">"."</span>).resolve(), <span class="st">"example_nbs"</span>, <span class="st">"experimental"</span>)),</span>
+<span id="cb36-4"><a href="#cb36-4" aria-hidden="true" tabindex="-1"></a>        specs_glob<span class="op">=</span><span class="bu">str</span>(Path(Path(<span class="st">"."</span>).resolve(), <span class="st">"example_nbs"</span>, <span class="st">"experimental"</span>)),</span>
+<span id="cb36-5"><a href="#cb36-5" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb36-6"><a href="#cb36-6" aria-hidden="true" tabindex="-1"></a>    <span class="op">==</span> <span class="dv">0</span></span>
+<span id="cb36-7"><a href="#cb36-7" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Linting success for: scilint-experimental.yaml, warnings (3) &lt;= than threshold (3) 
+
+******************************************Begin Scilint Warning Report*****************************************
++---------------------------+------------------------+-------------------------+---------+------------+-------------+
+| spec_name                 | notebook               | indicator               |   value | operator   |   threshold |
++===========================+========================+=========================+=========+============+=============+
+| scilint-experimental.yaml | experimental/non_nbdev | tests_func_coverage_pct |       0 | lt         |        20   |
++---------------------------+------------------------+-------------------------+---------+------------+-------------+
+| scilint-experimental.yaml | experimental/non_nbdev | tests_per_func_mean     |       0 | lt         |         0.5 |
++---------------------------+------------------------+-------------------------+---------+------------+-------------+
+| scilint-experimental.yaml | experimental/non_nbdev | markdown_code_pct       |       0 | lt         |         5   |
++---------------------------+------------------------+-------------------------+---------+------------+-------------+
+
+******************************************End Scilint Warning Report*******************************************
+
+3 warnings founds, within tolerated thresholds for all specs</code></pre>
+</div>
+</div>
+<div class="cell" data-tags="[]">
+<div class="sourceCode cell-code" id="cb38"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a><span class="cf">assert</span> (</span>
+<span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a>    lint(</span>
+<span id="cb38-3"><a href="#cb38-3" aria-hidden="true" tabindex="-1"></a>        specs_glob<span class="op">=</span><span class="bu">str</span>(Path(Path(<span class="st">"."</span>).resolve(), <span class="st">"example_nbs"</span>, <span class="st">"experimental"</span>)),</span>
+<span id="cb38-4"><a href="#cb38-4" aria-hidden="true" tabindex="-1"></a>        exit_on_failure<span class="op">=</span><span class="va">False</span>,</span>
+<span id="cb38-5"><a href="#cb38-5" aria-hidden="true" tabindex="-1"></a>        display_report<span class="op">=</span><span class="va">False</span>,</span>
+<span id="cb38-6"><a href="#cb38-6" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb38-7"><a href="#cb38-7" aria-hidden="true" tabindex="-1"></a>    <span class="op">&gt;</span> <span class="dv">0</span></span>
+<span id="cb38-8"><a href="#cb38-8" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Linting success for: scilint-experimental.yaml, warnings (3) &lt;= than threshold (3) 
+Linting failed for: scilint-default, total warnings (15) exceeded threshold (1)</code></pre>
+</div>
+</div>
+<div class="cell" data-tags="[]">
+<div class="sourceCode cell-code" id="cb40"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a><span class="cf">assert</span> (</span>
+<span id="cb40-2"><a href="#cb40-2" aria-hidden="true" tabindex="-1"></a>    lint(</span>
+<span id="cb40-3"><a href="#cb40-3" aria-hidden="true" tabindex="-1"></a>        nb_glob<span class="op">=</span><span class="st">"example_nbs"</span>,</span>
+<span id="cb40-4"><a href="#cb40-4" aria-hidden="true" tabindex="-1"></a>        specs_glob<span class="op">=</span><span class="st">"example_nbs"</span>,</span>
+<span id="cb40-5"><a href="#cb40-5" aria-hidden="true" tabindex="-1"></a>        display_report<span class="op">=</span><span class="va">False</span>,</span>
+<span id="cb40-6"><a href="#cb40-6" aria-hidden="true" tabindex="-1"></a>        exit_on_failure<span class="op">=</span><span class="va">False</span>,</span>
+<span id="cb40-7"><a href="#cb40-7" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb40-8"><a href="#cb40-8" aria-hidden="true" tabindex="-1"></a>    <span class="op">&gt;</span> <span class="dv">0</span></span>
+<span id="cb40-9"><a href="#cb40-9" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Linting skipped for: scilint-validated.yaml as no notebooks found matching path expression
+Linting skipped for: scilint-experimental.yaml as no notebooks found matching path expression
+Linting skipped for: scilint-exploratory.yaml as no notebooks found matching path expression
+Linting skipped for: scilint-legacy.yaml as no notebooks found matching path expression
+Linting skipped for: scilint-no-nbs.yaml as no notebooks found matching path expression
+Linting failed for: scilint-default, total warnings (18) exceeded threshold (1)</code></pre>
+</div>
+</div>
+<div class="cell" data-tags="[]">
+<div class="sourceCode cell-code" id="cb42"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a><span class="cf">assert</span> lint(nb_glob<span class="op">=</span><span class="st">"example_nbs"</span>) <span class="op">==</span> <span class="dv">0</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Linting success for: scilint-default.yaml, no issues found
+Linting skipped for: scilint-validated.yaml as no notebooks found matching path expression
+Linting skipped for: scilint-experimental.yaml as no notebooks found matching path expression
+Linting skipped for: scilint-exploratory.yaml as no notebooks found matching path expression
+Linting skipped for: scilint-legacy.yaml as no notebooks found matching path expression
+Linting skipped for: scilint-no-nbs.yaml as no notebooks found matching path expression
+No issues found during linting</code></pre>
+</div>
+</div>
+</section>
+</section>
+<section id="build" class="level2">
+<h2 class="anchored" data-anchor-id="build"><a href="https://newday-data.github.io/scilint/scilint.html#build"><code>build</code></a></h2>
+<hr>
+<p><a href="https://github.com/newday-data/scilint/tree/%7Bbranch%7D/blob/main/scilint/scilint.py#L408" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<section id="build-1" class="level3">
+<h3 class="anchored" data-anchor-id="build-1">build</h3>
+<blockquote class="blockquote">
+<pre><code> build (display_report:bool=True, nb_glob:pathlib.Path=None,
+        specs_glob:pathlib.Path=Path('/home/runner/work/scilint/scilint'),
+        exclusions:str=None, fail_over:int=None, out_dir:int=None,
+        precision:int=None, print_syntax_errors:bool=None,
+        exit_on_failure:bool=True)</code></pre>
+</blockquote>
+</section>
+</section>
+</section>
+<section id="console-scripts" class="level1">
+<h1>Console Scripts</h1>
+<section id="scilint_tidy" class="level2">
+<h2 class="anchored" data-anchor-id="scilint_tidy"><a href="https://newday-data.github.io/scilint/scilint.html#scilint_tidy"><code>scilint_tidy</code></a></h2>
+<hr>
+<p><a href="https://github.com/newday-data/scilint/tree/%7Bbranch%7D/blob/main/scilint/scilint.py#L444" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<section id="scilint_tidy-1" class="level3">
+<h3 class="anchored" data-anchor-id="scilint_tidy-1">scilint_tidy</h3>
+<blockquote class="blockquote">
+<pre><code> scilint_tidy (nb_glob:pathlib.Path=None, log_level:str='warn')</code></pre>
+</blockquote>
+</section>
+</section>
+<section id="scilint_lint" class="level2">
+<h2 class="anchored" data-anchor-id="scilint_lint"><a href="https://newday-data.github.io/scilint/scilint.html#scilint_lint"><code>scilint_lint</code></a></h2>
+<hr>
+<p><a href="https://github.com/newday-data/scilint/tree/%7Bbranch%7D/blob/main/scilint/scilint.py#L450" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<section id="scilint_lint-1" class="level3">
+<h3 class="anchored" data-anchor-id="scilint_lint-1">scilint_lint</h3>
+<blockquote class="blockquote">
+<pre><code> scilint_lint (display_report:&lt;Printthelintreport&gt;=False,
+               nb_glob:pathlib.Path=None, specs_glob:pathlib.Path=Path('/h
+               ome/runner/work/scilint/scilint'), exclusions:str=None,
+               fail_over:int=None, out_dir:str=None, precision:int=None,
+               print_syntax_errors:bool=None, exit_on_failure:bool=True,
+               log_level:str='warn')</code></pre>
+</blockquote>
+<div class="cell" data-tags="[]">
+<div class="sourceCode cell-code" id="cb47"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a>scilint_lint()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Linting success for: scilint-default.yaml, no issues found
+Linting success for: scilint-validated.yaml, no issues found
+Linting success for: scilint-experimental.yaml, warnings (3) &lt;= than threshold (3) 
+Linting success for: scilint-exploratory.yaml, warnings (1) &lt;= than threshold (2) 
+Linting skipped for: scilint-legacy.yaml as evaluate is set to false
+Linting skipped for: scilint-no-nbs.yaml as no notebooks found matching path expression
+4 warnings founds, within tolerated thresholds for all specs</code></pre>
+</div>
+</div>
+</section>
+</section>
+<section id="scilint_build" class="level2">
+<h2 class="anchored" data-anchor-id="scilint_build"><a href="https://newday-data.github.io/scilint/scilint.html#scilint_build"><code>scilint_build</code></a></h2>
+<hr>
+<p><a href="https://github.com/newday-data/scilint/tree/%7Bbranch%7D/blob/main/scilint/scilint.py#L476" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<section id="scilint_build-1" class="level3">
+<h3 class="anchored" data-anchor-id="scilint_build-1">scilint_build</h3>
+<blockquote class="blockquote">
+<pre><code> scilint_build (display_report:&lt;Printthelintreport&gt;=False,
+                nb_glob:pathlib.Path=None, specs_glob:pathlib.Path=Path('/
+                home/runner/work/scilint/scilint'), exclusions:str=None,
+                fail_over:int=None, out_dir:int=None, precision:int=None,
+                print_syntax_errors:bool=None, exit_on_failure:bool=True,
+                log_level:str='warn')</code></pre>
+</blockquote>
+</section>
+</section>
+<section id="scilint_ci" class="level2">
+<h2 class="anchored" data-anchor-id="scilint_ci"><a href="https://newday-data.github.io/scilint/scilint.html#scilint_ci"><code>scilint_ci</code></a></h2>
+<hr>
+<p><a href="https://github.com/newday-data/scilint/tree/%7Bbranch%7D/blob/main/scilint/scilint.py#L502" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<section id="scilint_ci-1" class="level3">
+<h3 class="anchored" data-anchor-id="scilint_ci-1">scilint_ci</h3>
+<blockquote class="blockquote">
+<pre><code> scilint_ci (display_report:&lt;Printthelintreport&gt;=False,
+             nb_glob:pathlib.Path=None, specs_glob:pathlib.Path=Path('/hom
+             e/runner/work/scilint/scilint'), exclusions:str=None,
+             fail_over:int=None, out_dir:int=None, precision:int=None,
+             print_syntax_errors:bool=None, exit_on_failure:bool=True,
+             log_level:str='warn')</code></pre>
+</blockquote>
+
+
+</section>
+</section>
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    text: function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+</body></html>

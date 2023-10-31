@@ -1,0 +1,935 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.3.450">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>scilint - 🧐 scilint</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<script src="site_libs/quarto-html/quarto.js"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 20,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+
+<link rel="stylesheet" href="styles.css">
+<meta property="og:title" content="scilint - 🧐 scilint">
+<meta property="og:description" content="">
+<meta property="og:image" content="https://badge.fury.io/py/scilint.svg">
+<meta property="og:site-name" content="scilint">
+<meta name="twitter:title" content="scilint - 🧐 scilint">
+<meta name="twitter:description" content="">
+<meta name="twitter:image" content="https://badge.fury.io/py/scilint.svg">
+<meta name="twitter:card" content="summary_large_image">
+</head>
+
+<body class="nav-sidebar floating nav-fixed">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg navbar-dark ">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container">
+    <a class="navbar-brand" href="./index.html">
+    <span class="navbar-title">scilint</span>
+    </a>
+  </div>
+        <div class="quarto-navbar-tools ms-auto">
+</div>
+          <div id="quarto-search" class="" title="Search"></div>
+      </div> <!-- /container-fluid -->
+    </nav>
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+      <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./index.html">🧐 <code>scilint</code></a></li></ol></nav>
+      <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+      </a>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal sidebar-navigation floating overflow-auto">
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text">🧐 <code>scilint</code></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./indicators.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">indicators</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./scilint.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Data Science Notebook Linting</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./utils.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Utilities</span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true">
+ <span class="menu-text">example_nbs</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./example_nbs/nbdev.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">nbdev format notebook Example</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./example_nbs/nbdev_high_quality.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">nbdev format notebook Example</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./example_nbs/non_nbdev.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">non_nbdev.html</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./example_nbs/non_nbdev_low_quality.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Preprocess Data</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./example_nbs/syntax_error.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">syntax_error.html</span></a>
+  </div>
+</li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" aria-expanded="false">
+ <span class="menu-text">experimental</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./example_nbs/experimental/nbdev.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">nbdev format notebook Example</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" aria-expanded="true">
+ <span class="menu-text">example_nbs</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" aria-expanded="false">
+ <span class="menu-text">experimental</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./example_nbs/experimental/non_nbdev.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">non_nbdev.html</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" aria-expanded="true">
+ <span class="menu-text">example_nbs</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-5" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-6" aria-expanded="false">
+ <span class="menu-text">exploratory</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-6" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-6" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./example_nbs/exploratory/nbdev.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">nbdev format notebook Example</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-7" aria-expanded="true">
+ <span class="menu-text">example_nbs</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-7" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-7" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-8" aria-expanded="false">
+ <span class="menu-text">exploratory</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-8" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-8" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./example_nbs/exploratory/non_nbdev.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">non_nbdev.html</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-9" aria-expanded="true">
+ <span class="menu-text">example_nbs</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-9" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-9" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-10" aria-expanded="false">
+ <span class="menu-text">exploratory</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-10" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-10" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./example_nbs/exploratory/syntax_error.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">syntax_error.html</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-11" aria-expanded="true">
+ <span class="menu-text">example_nbs</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-11" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-11" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-12" aria-expanded="false">
+ <span class="menu-text">legacy</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-12" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-12" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./example_nbs/legacy/non_nbdev_low_quality.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Preprocess Data</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-13" aria-expanded="true">
+ <span class="menu-text">example_nbs</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-13" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-13" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-14" aria-expanded="false">
+ <span class="menu-text">legacy</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-14" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-14" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./example_nbs/legacy/syntax_error.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">syntax_error.html</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-15" aria-expanded="true">
+ <span class="menu-text">example_nbs</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-15" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-15" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-16" aria-expanded="false">
+ <span class="menu-text">no_spec_provided</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-16" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-16" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./example_nbs/no_spec_provided/nbdev.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">nbdev format notebook Example</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-17" aria-expanded="true">
+ <span class="menu-text">example_nbs</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-17" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-17" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-18" aria-expanded="false">
+ <span class="menu-text">validated</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-18" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-18" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./example_nbs/validated/nbdev_high_quality.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">nbdev format notebook Example</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+      </ul>
+  </li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#why-do-i-need-quality-notebooks" id="toc-why-do-i-need-quality-notebooks" class="nav-link active" data-scroll-target="#why-do-i-need-quality-notebooks">🤔 Why do I need quality notebooks?</a></li>
+  <li><a href="#what-is-notebook-quality" id="toc-what-is-notebook-quality" class="nav-link" data-scroll-target="#what-is-notebook-quality">✅ What is Notebook Quality?</a></li>
+  <li><a href="#getting-started" id="toc-getting-started" class="nav-link" data-scroll-target="#getting-started">🚀 Getting Started</a>
+  <ul class="collapse">
+  <li><a href="#install" id="toc-install" class="nav-link" data-scroll-target="#install">Install</a></li>
+  <li><a href="#commands" id="toc-commands" class="nav-link" data-scroll-target="#commands">Commands</a>
+  <ul class="collapse">
+  <li><a href="#scilint_lint" id="toc-scilint_lint" class="nav-link" data-scroll-target="#scilint_lint"><strong><code>scilint_lint</code></strong></a></li>
+  <li><a href="#scilint_tidy" id="toc-scilint_tidy" class="nav-link" data-scroll-target="#scilint_tidy"><strong><code>scilint_tidy</code></strong></a></li>
+  <li><a href="#scilint_build" id="toc-scilint_build" class="nav-link" data-scroll-target="#scilint_build"><strong><code>scilint_build</code></strong></a></li>
+  </ul></li>
+  <li><a href="#scilint_ci-nbdev-only" id="toc-scilint_ci-nbdev-only" class="nav-link" data-scroll-target="#scilint_ci-nbdev-only"><strong><code>scilint_ci</code></strong> [<code>nbdev</code> only]</a></li>
+  </ul></li>
+  <li><a href="#quality-indicators" id="toc-quality-indicators" class="nav-link" data-scroll-target="#quality-indicators">📈 Quality Indicators</a>
+  <ul class="collapse">
+  <li><a href="#adding-new-indicators" id="toc-adding-new-indicators" class="nav-link" data-scroll-target="#adding-new-indicators">➕ Adding New Indicators</a></li>
+  </ul></li>
+  <li><a href="#quality-specs-a-quality-standard" id="toc-quality-specs-a-quality-standard" class="nav-link" data-scroll-target="#quality-specs-a-quality-standard">👓 Quality Specs (&amp; a Quality Standard)</a>
+  <ul class="collapse">
+  <li><a href="#reference-quality-standard" id="toc-reference-quality-standard" class="nav-link" data-scroll-target="#reference-quality-standard">Reference Quality Standard</a></li>
+  <li><a href="#what-is-a-quality-spec-in-practice" id="toc-what-is-a-quality-spec-in-practice" class="nav-link" data-scroll-target="#what-is-a-quality-spec-in-practice">What is a Quality Spec in practice?</a></li>
+  <li><a href="#what-does-a-lint-report-look-like" id="toc-what-does-a-lint-report-look-like" class="nav-link" data-scroll-target="#what-does-a-lint-report-look-like">What does a lint report look like?</a></li>
+  </ul></li>
+  <li><a href="#changing-behaviour---recommended-usage" id="toc-changing-behaviour---recommended-usage" class="nav-link" data-scroll-target="#changing-behaviour---recommended-usage">🔁 Changing Behaviour - Recommended Usage</a></li>
+  <li><a href="#standing-on-the-shoulders-of-giants---an-nbdev-library" id="toc-standing-on-the-shoulders-of-giants---an-nbdev-library" class="nav-link" data-scroll-target="#standing-on-the-shoulders-of-giants---an-nbdev-library">🙌 Standing on the shoulders of giants - <em>an nbdev library</em></a>
+  <ul class="collapse">
+  <li><a href="#make-the-switch-to-nbdev" id="toc-make-the-switch-to-nbdev" class="nav-link" data-scroll-target="#make-the-switch-to-nbdev">🤓 Make the switch to <code>nbdev</code>!</a></li>
+  </ul></li>
+  <li><a href="#contributing" id="toc-contributing" class="nav-link" data-scroll-target="#contributing">👍 Contributing</a></li>
+  </ul>
+<div class="toc-actions"><div><i class="bi bi-github"></i></div><div class="action-links"><p><a href="https://github.com/newday-data/scilint/tree/{branch}/issues/new" class="toc-action">Report an issue</a></p></div></div></nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">🧐 <code>scilint</code></h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+</header>
+
+<!-- WARNING: THIS FILE WAS AUTOGENERATED! DO NOT EDIT! -->
+<p align="center">
+<a href="https://badge.fury.io/py/scilint"> <img src="https://badge.fury.io/py/scilint.svg" alt="Pypi Package"> </a>
+</p>
+<p><code>scilint</code> aims to <strong>bring a style and quality standard into notebook based Data Science workflows</strong>. How you define a quality notebook is difficult and somewhat subjective. It can have the obvious meaning of being free of bugs but also legibility and ease of comprehension are important too.</p>
+<p><code>scilint</code> takes the approach of breaking down potentially quality relevant aspects of the notebook and providing what we believe are sensible defaults that potentially correlate with higher quality workflows. We also let users define the quality line as they see fit through configuration of existing thresholds and ability to add new metrics (coming soon). As use of the library grows we anticipate being able to statistically relate some of the quality relevant attributes to key delivery metrics like “change failure rate” or “lead time to production”.</p>
+<section id="why-do-i-need-quality-notebooks" class="level1">
+<h1>🤔 Why do I need quality notebooks?</h1>
+<p><em>If you prefer to move out of notebook-based workflows, post-exploration to an IDE+Python mix I encourage you to have another ponder on the benefits of staying in a notebook-based workflow. Notebooks have a strong visual emphasis and proximity to data. They are also the primary axis of change within Data Science - new ideas are gained from diving into data. So instead of packing up your code, re-writing it for elsewhere and all the waste that entails bring quality to your exploration workflow and spend more time building stuff that matters.</em></p>
+<p>If you’re still not convinced watch this <a href="https://www.youtube.com/watch?v=9Q6sLbz37gk">video</a> where <strong>Jeremy Howard</strong> does a far better job of explaining why notebooks are for serious development too!</p>
+</section>
+<section id="what-is-notebook-quality" class="level1">
+<h1>✅ What is Notebook Quality?</h1>
+<p>This is a good question and this library does not pretend to have the answer. But we feel the problem space is worth exploring because the value of high quality deliveries means lower time-to-market, less time in re-work or rote porting of code and frees people up to think about and solve hard problems. That said, there are some practices that we have observed producing “better” notebooks workflows from experience in production Data Science teams. These are:</p>
+<ul>
+<li><strong>Extracting code to small modular functions</strong></li>
+<li><strong>Testing those functions work in a variety of scenarios</strong></li>
+<li>Putting sufficient <strong>emphasis on legibility and ease of comprehension</strong> through adequate use of markdown</li>
+</ul>
+<p>These are the starting premises that permit the notebook quality conversation to start. To bring this to life a little, we would say that <strong>the notebook on the left is of lower quality than the notebook on the right</strong>..</p>
+<p align="center">
+<img src="nbs/images/scilint_before_after_prep.png" alt="Low vs High" width="738" border="3px solid black">
+</p>
+</section>
+<section id="getting-started" class="level1">
+<h1>🚀 Getting Started</h1>
+<blockquote class="blockquote">
+<p>Please note <code>scilint</code> is only tested on linux and macos currently.</p>
+</blockquote>
+<section id="install" class="level2">
+<h2 class="anchored" data-anchor-id="install">Install</h2>
+<p><code>pip install scilint</code></p>
+</section>
+<section id="commands" class="level2">
+<h2 class="anchored" data-anchor-id="commands">Commands</h2>
+<section id="scilint_lint" class="level3">
+<h3 class="anchored" data-anchor-id="scilint_lint"><strong><a href="https://newday-data.github.io/scilint/scilint.html#scilint_lint"><code>scilint_lint</code></a></strong></h3>
+<p>Exposes potential quality issues within your notebook using some pre-defined checks. Default threshold values for these checks are provided that will enable a build to be marked as passed or failed.</p>
+<details>
+<summary>
+<b>Show parameters</b>
+</summary>
+<section id="fail_over" class="level4">
+<h4 class="anchored" data-anchor-id="fail_over"><code>--fail_over</code></h4>
+<blockquote class="blockquote">
+<p>For now a very basic failure threshold is set by providing a number of warnings that will be accepted without failing the build. The default is 1 but this can be increased via the <code>--fail_over</code> parameter. As the library matures we will revisit adding more nuanced options.</p>
+</blockquote>
+</section>
+<section id="exclusions" class="level4">
+<h4 class="anchored" data-anchor-id="exclusions"><code>--exclusions</code></h4>
+<blockquote class="blockquote">
+<p>You can exclude individual notebooks or directories using the <code>--exclusions</code> parameter. This is a comma separated list of paths where you can provide directories like “dir/” or specific notebooks like “somenotebook.ipynb”</p>
+</blockquote>
+</section>
+<section id="display_report" class="level4">
+<h4 class="anchored" data-anchor-id="display_report"><code>--display_report</code></h4>
+<blockquote class="blockquote">
+<p>Print the lint warnings report as a markdown formatted table.</p>
+</blockquote>
+</section>
+<section id="out_dir" class="level4">
+<h4 class="anchored" data-anchor-id="out_dir"><code>--out_dir</code></h4>
+<blockquote class="blockquote">
+<p>Directory to persist the lint_report, warning_violations and the confgiruation used.</p>
+</blockquote>
+</section>
+<section id="print_syntax_errors" class="level4">
+<h4 class="anchored" data-anchor-id="print_syntax_errors"><code>--print_syntax_errors</code></h4>
+<blockquote class="blockquote">
+<p>The code is parsed using the <code>ast</code> module if that parsing fails due to syntax errors that is noted in the warning report but the exact syntax error is not provided. With this flag the <code>SyntaxError</code> reason message that failed notebook parsing will be printed to the screen for each offending notebook.</p>
+</blockquote>
+</section></details>
+<p align="center">
+<img src="nbs/images/scilint_lint.png" alt="scilint_lint" width="738" border="3px solid black">
+</p>
+</section>
+</section>
+<section id="scilint_tidy" class="level3">
+<h3 class="anchored" data-anchor-id="scilint_tidy"><strong><a href="https://newday-data.github.io/scilint/scilint.html#scilint_tidy"><code>scilint_tidy</code></a></strong></h3>
+<p>To get a consistent style across your notebooks you can run <a href="https://newday-data.github.io/scilint/scilint.html#scilint_tidy"><code>scilint_tidy</code></a>; this currently runs <code>autoflake</code>, <code>black</code> and <code>isort</code> <strong>in-place across all of the notebooks in your project</strong>. This function wraps an opinionated flavour of the excellent <a href="https://github.com/nbQA-dev/nbQA">nbQA</a> library.</p>
+<blockquote class="blockquote">
+<p>⚠️Note: as this <strong>command runs in-place it will edit your existing notebooks</strong>. If you would like to test what this formatting does without actually affecting their state then we recommended trying this the first time from a clean git state. That way you can stash the changes if you are not happy with them.</p>
+</blockquote>
+<p align="center">
+<img src="nbs/images/scilint_tidy.png" alt="scilint_lint" width="738">
+</p>
+</section>
+<section id="scilint_build" class="level3">
+<h3 class="anchored" data-anchor-id="scilint_build"><strong><a href="https://newday-data.github.io/scilint/scilint.html#scilint_build"><code>scilint_build</code></a></strong></h3>
+<p>Chains existing functions together to form a build script for notebook based projects. Has two versions which are executed automatically on detection of whether your project uses <code>nbdev</code> or not.</p>
+<ol type="1">
+<li>Non-nbdev projects chain these commands: <a href="https://newday-data.github.io/scilint/scilint.html#scilint_tidy"><code>scilint_tidy</code></a>, <a href="https://newday-data.github.io/scilint/scilint.html#scilint_lint"><code>scilint_lint</code></a></li>
+<li><code>nbdev</code> projects chain the following commands: <a href="https://newday-data.github.io/scilint/scilint.html#scilint_tidy"><code>scilint_tidy</code></a>, <a href="https://nbdev.fast.ai/api/export.html">nbdev_export</a>, <a href="https://nbdev.fast.ai/api/test.html">nbdev_test</a>, <a href="https://newday-data.github.io/scilint/scilint.html#scilint_lint"><code>scilint_lint</code></a>, <a href="https://nbdev.fast.ai/api/clean.html">nbdev_clean</a></li>
+</ol>
+<p align="center">
+<img src="nbs/images/scilint_build.png" alt="scilint_lint" width="738">
+</p>
+</section>
+</section>
+<section id="scilint_ci-nbdev-only" class="level2">
+<h2 class="anchored" data-anchor-id="scilint_ci-nbdev-only"><strong><a href="https://newday-data.github.io/scilint/scilint.html#scilint_ci"><code>scilint_ci</code></a></strong> [<code>nbdev</code> only]</h2>
+<p>Adds documentation generation to <a href="https://newday-data.github.io/scilint/scilint.html#scilint_build"><code>scilint_build</code></a>. This requires an <code>nbdev</code> project and a working quarto build. Quarto is a core part of the nbdev system, if you are having trouble installing it, check out the <code>nbdev</code> Github <a href="https://github.com/fastai/nbdev">page</a>. For more details on the Quarto project, check out their home <a href="https://quarto.org/">page</a>.</p>
+</section>
+
+<section id="quality-indicators" class="level1">
+<h1>📈 Quality Indicators</h1>
+<p>The below are potential quality indicators that you can use to set a minimum bar for quality and comprehensibility within your projects. These are not exhaustive or definite quality indicators - they are a starting point to open the conversation about what it means to have a high quality notebook in practice.</p>
+<ol type="1">
+<li>Calls-Per-Function (CPF):** compares the <strong>amount of calls to the amount of functions</strong>. <em>Looks for possible relationship between function definitions and usage.</em></li>
+<li>In-Function-Percent (IFP): the <strong>percentage of code that is within a function</strong> rather than outside function scope.</li>
+<li>Tests-Per-Function-Mean (TPF: the <strong>average number of tests (where test==assert) for all functions</strong>. <em>Mean value so may be dominated by outliers.</em></li>
+<li>Tests-Function-Coverage-Pct (TFC): what <strong>percentage of all functions have at least one test</strong>. <em>Note: this is coverage at function-level not line-based coverage.</em></li>
+<li>MarkdownToCodeRatio (MCP): what is the <strong>ratio of markdown cells to code cells</strong>.</li>
+<li>TotalCodeLen (TCL): the <strong>total line length</strong> of the notebook code cells.</li>
+<li>Loc-Per-MD-Section (LPS): the <strong>lines of code per Markdown section</strong> header.</li>
+<li>SyntaxErrors (SYN): if the code within the notebook has <strong>invalid Python syntax</strong>.</li>
+</ol>
+<blockquote class="blockquote">
+<p><em>as already stated there is no definitive answer as to whether any of these are low or high quality. However there are reasons to believe inituitively that higher or lower values of the above will produce higher quality notebooks. There are many questions left to answer, like the role of docstrings, comments and type annotations; their effectiveness may warrant inclusion but that is an open question at the moment. As this library is used and refined with more projects and more experimental metrics then these intuitions can evaluated more rigorously.</em></p>
+</blockquote>
+<section id="adding-new-indicators" class="level2">
+<h2 class="anchored" data-anchor-id="adding-new-indicators">➕ Adding New Indicators</h2>
+<p>For now post your ideas as a feature request and we can discuss, if accepted you can provide a PR. We are looking for a more rigorous way link indicator and effectivess, until that is found discussion is the best we can do!</p>
+</section>
+</section>
+<section id="quality-specs-a-quality-standard" class="level1">
+<h1>👓 Quality Specs (&amp; a Quality Standard)</h1>
+<p>Often in Software Engineering code is both likely to go into production and likely to continue to be used once it does. In this enviroment it makes sense for codebases to have a single quality standard. In the <strong>explore vs exploit</strong> decision making <a href="https://en.wikipedia.org/wiki/Exploration-exploitation_dilemma">trade-off</a> this environment could be classified as <strong>high exploit</strong>.</p>
+<p>For problems that are <strong>high explore</strong>, like most Data Science work, we argue that <strong>a single quality bar is not sufficient</strong>. <code>scilint</code> promotes adopting a <em>progressive consolidation</em>* approach where exploration code starts with a speed of exploration goal and this may gradually shift to increase the emphasis on quality and reuse as the utility of the workflow becomes proven.</p>
+<p>This feature is known as “Quality Specs” and it allows multiple different specifications of quality to exist within a project. The standard can be a relatively low bar for exploration work but can become more demanding as you are closer to the productionisation of your work.</p>
+<p>*<em>(term first used by <a href="https://gael-varoquaux.info/">Gaël Varoqouax</a>; see <a href="https://gael-varoquaux.info/programming/software-for-reproducible-science-lets-not-have-a-misunderstanding.html">here</a> for argument expansion).</em></p>
+<section id="reference-quality-standard" class="level2">
+<h2 class="anchored" data-anchor-id="reference-quality-standard">Reference Quality Standard</h2>
+<blockquote class="blockquote">
+<p>The progressive consolidation workflow that we use on projects is the reference implementation for <code>scilint</code> and is summarised in the below image:</p>
+</blockquote>
+<p align="center">
+<img src="nbs/images/quality_standard.png" alt="Quality Standard" width="738" border="3px solid white">
+</p>
+<ul>
+<li><strong>Legacy:</strong> especially on larger projects there may be a large number of legacy notebooks that are not in use and no there is no obvious value in improving their quality. This could be removed from the workflow if you have enforced a quality standard from the outset.</li>
+<li><strong>Exploratory:</strong> exploratory workflows are typically off-line and involve much iteration. The benefit of some quality bar here is that it aids collaboration, review and generally helps perform team-based Data Science easier.</li>
+<li><strong>Experimental:</strong> we split production workflows into two groups: experimental and validated. Experimental notebooks are, as the name suggests, experiments that are yet to be proven. As they are released to customers they should have a reasonably high quality standard but not the same as validated work.</li>
+<li><strong>Validated:</strong> we need to have the most confidence that all validated learning activity (experiments which have been accepted and scaled out to all users) will run properly for along time after it is written.</li>
+</ul>
+</section>
+<section id="what-is-a-quality-spec-in-practice" class="level2">
+<h2 class="anchored" data-anchor-id="what-is-a-quality-spec-in-practice">What is a Quality Spec in practice?</h2>
+<p>A quality spec in practice is just a yaml configuration file of the properties of the quality spec. It contains threshold values for warning along with some other settings. To adopt a multi-spec standard place a spec file into each directory that you want to have different standards for. Look at <code>nbs/examples/nbs</code> to see an example of a multi-spec standard.</p>
+<pre><code>---
+  exclusions: ~
+  fail_over: 1
+  out_dir: "/tmp/scilint/"
+  precision: 3
+  print_syntax_errors: false
+  evaluate: true
+  warnings:
+    lt:
+      calls_per_func_median: 1
+      calls_per_func_mean: 1
+      in_func_pct: 20
+      tests_func_coverage_pct: 20
+      tests_per_func_mean: 0.5
+      markdown_code_pct: 5
+    gt:
+      total_code_len: 50000
+      loc_per_md_section: 2000
+    equals:
+      has_syntax_error: true</code></pre>
+</section>
+<section id="what-does-a-lint-report-look-like" class="level2">
+<h2 class="anchored" data-anchor-id="what-does-a-lint-report-look-like">What does a lint report look like?</h2>
+<p>The lint warnings are printed to the console and a more thorough report is generated and saved as a CSV file which looks like this:</p>
+<p align="center">
+<img src="nbs/images/sample_report.png" alt="Sample Report" width="738" border="3px solid white">
+</p>
+</section>
+</section>
+<section id="changing-behaviour---recommended-usage" class="level1">
+<h1>🔁 Changing Behaviour - Recommended Usage</h1>
+<p>Infusing quality into workflows is aided by having timely, short-cycle feedback of issues. Addtionally whatever quality bar you choose as a team, it should be non-negotiable that way you can spend time thinking about what matters like the problem you are trying to solve not nitpicking on small details repeatedly.</p>
+<p>We recommend using <code>scilint</code> in the following way to maximise benefit:</p>
+<ol type="1">
+<li>Decide upon a quality standard including the different specs for your ideal team workflow from idea to production - or just use the reference standard of: <code>legacy, exploratory=&gt;experimental=&gt;validated</code>. If you don’t want the complexity of a multi-spec standard you can just use a single default spec.</li>
+<li>Set <code>fail_over</code> to 1 - there is a temptation to slide this value to meet the amount of warning you have - it is probably easier to enforce a <code>fail_over</code> of 1 and to discuss the value of the thresholds instead if you feel the warning is not warranted.</li>
+<li>Open a terminal environment alongside your notebook environment: run <a href="https://newday-data.github.io/scilint/scilint.html#scilint_build"><code>scilint_build</code></a> often to check your project is in good shape</li>
+<li>Add pre-commit hooks to run <a href="https://newday-data.github.io/scilint/scilint.html#scilint_build"><code>scilint_build</code></a> or <a href="https://newday-data.github.io/scilint/scilint.html#scilint_ci"><code>scilint_ci</code></a> (<code>nbdev</code> only) before your changes are commited. Don’t forget to commit your work often!</li>
+<li>Add a CI build job that runs <a href="https://newday-data.github.io/scilint/scilint.html#scilint_build"><code>scilint_build</code></a> or <a href="https://newday-data.github.io/scilint/scilint.html#scilint_ci"><code>scilint_ci</code></a>. A Github action workflow is included in this repo that does just that.</li>
+</ol>
+<p align="center">
+<img src="nbs/images/scilint_pre_commit.png" alt="Pre-commit hook" width="738" border="3px solid black">
+</p>
+</section>
+<section id="standing-on-the-shoulders-of-giants---an-nbdev-library" class="level1">
+<h1>🙌 Standing on the shoulders of giants - <em>an nbdev library</em></h1>
+<blockquote class="blockquote">
+<p><code>scilint</code> is written on top of the excellent <code>nbdev</code> library. This library is revolutionary as it truly optimises all the benefits of notebooks and compensates for most of their weaker points. For more information on <code>nbdev</code> see the <a href="https://nbdev.fast.ai/">homepage</a> or <a href="https://github.com/fastai/nbdev">github repo</a></p>
+</blockquote>
+<section id="make-the-switch-to-nbdev" class="level2">
+<h2 class="anchored" data-anchor-id="make-the-switch-to-nbdev">🤓 Make the switch to <code>nbdev</code>!</h2>
+<p>In case you hadn’t guessed yet we are big <code>nbdev</code> fans. <code>scilint</code> has a better developer experience on an <code>nbdev</code> project and is more fully featured but mostly because it will really help you when trying to move from exploratory development to production processes.</p>
+<p>Converting your libraries to <code>nbdev</code> is not required for this tool to work but we argue that it would confer many benefits if you are part of a Production Data Science team. <code>nbdev</code> contains many features that are useful for Data Science workflows; too many in fact to cover here. We will focus on the major features we consider to have the most impact:</p>
+<ol type="1">
+<li>Explicit <strong>separation of exploration from what is <em>fundamental</em> for the workflow to execute</strong> using the <code>export</code> directive.</li>
+<li>Introducing a fit-for-purpose <strong>test runner for notebooks</strong>.</li>
+<li><strong>In-flow documentation</strong> of a notebook that is focused on the reader and powerfully expressive thanks to Quarto Markdown (aids building towards published reproducible research)</li>
+<li><strong>Git friendly workflow</strong> via pre-commit hooks.</li>
+<li>Being able to build a <strong>modular notebook workflow as it is easy to export and import functions from notebooks</strong> in your project - this puts shared reusable functions within reach of the team easily.</li>
+</ol>
+</section>
+</section>
+<section id="contributing" class="level1">
+<h1>👍 Contributing</h1>
+<p>After you clone this repository, please run <code>nbdev_install_hooks</code> in your terminal. This sets up git hooks, which clean up the notebooks to remove the extraneous stuff stored in the notebooks (e.g.&nbsp;which cells you ran) which causes unnecessary merge conflicts.</p>
+<p>To run the tests in parallel, launch nbdev_test.</p>
+<p>Before submitting a PR, check that the local library and notebooks match.</p>
+<p>If you made a change to the notebooks in one of the exported cells, you can export it to the library with nbdev_prepare. If you made a change to the library, you can export it back to the notebooks with nbdev_update.</p>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    text: function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+</body></html>
