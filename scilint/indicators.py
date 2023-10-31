@@ -31,7 +31,7 @@ class CodeParseError(Exception):
 def gen_parse_filename(code: str, now: datetime = None):
     cleaned_code = re.sub("\W+", "-", code)[:10].strip("-")
     if now is None:
-        now = datetime.datetime.now()
+        now = datetime.datetime.utcnow()
     return cleaned_code + "_" + now.strftime("%Y%m%d_%H_%M_%S") + ".py"
 
 # %% ../nbs/indicators.ipynb 11
