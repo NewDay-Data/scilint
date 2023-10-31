@@ -32,27 +32,29 @@ def gen_parse_filename(code: str, now: datetime = None):
     cleaned_code = re.sub("\W+", "-", code)[:10].strip("-")
     if now is None:
         now = datetime.datetime.now()
-    return cleaned_code + "_" + now.strftime("%Y%m%d_%H_%M_%S")
+    return cleaned_code + "_" + now.strftime("%Y%m%d_%H_%M_%S") + ".py"
 
 # %% ../nbs/indicators.ipynb 11
 def _count_func_calls(code, func_defs, out_dir=None):
     func_calls = Counter({k: 0 for k in func_defs})
+
+    def get_func_name(node):
+        if isinstance(node, ast.Name):
+            return node.id
+        elif isinstance(node, ast.Attribute):
+            return node.attr
+        return None
+
     try:
         for stmt in ast.walk(ast.parse(code)):
-            if isinstance(stmt, ast.Call) and not isinstance(stmt.func, ast.Call):
-                if type(stmt.func) == ast.Subscript:
-                    func_name = stmt.func.value.id
-                else:
-                    func_name = (
-                        stmt.func.id if "id" in stmt.func.__dict__ else stmt.func.attr
-                    )
-                if func_name in func_defs:
-                    if func_name in func_calls:
-                        func_calls[func_name] += 1
+            if isinstance(stmt, ast.Call):
+                func_name = get_func_name(stmt.func)
+                if func_name and func_name in func_defs:
+                    func_calls[func_name] += 1
     except AttributeError as ae:
         if out_dir is not None:
             debug_path = Path(out_dir, gen_parse_filename(code))
-            with open(debug_path) as debug_file:
+            with open(debug_path, "w") as debug_file:
                 debug_file.write(code)
             logging.getLogger().info(
                 f"Parse failure code dump written to: {debug_path}"
@@ -79,7 +81,7 @@ def _get_func_defs(code, ignore_private_prefix=True, out_dir=None):
     except AttributeError as ae:
         if out_dir is not None:
             debug_path = Path(out_dir, gen_parse_filename(code))
-            with open(debug_path) as debug_file:
+            with open(debug_path, "w") as debug_file:
                 debug_file.write(code)
             logging.getLogger().info(
                 f"Parse failure code dump written to: {debug_path}"
@@ -107,7 +109,7 @@ def calls_per_func_median(nb, out_dir=None):
         warnings.filterwarnings(action="ignore", message="Mean of empty slice")
         return pd.Series(calls_per_func(nb)).median()
 
-# %% ../nbs/indicators.ipynb 34
+# %% ../nbs/indicators.ipynb 32
 def _count_inline_asserts(code, func_defs, out_dir=None):
     inline_func_asserts = Counter({k: 0 for k in func_defs})
 
@@ -116,17 +118,26 @@ def _count_inline_asserts(code, func_defs, out_dir=None):
             if isinstance(stmt, ast.Assert):
                 for assert_st in ast.walk(stmt):
                     if isinstance(assert_st, ast.Call):
-                        func_name = (
-                            assert_st.func.id
-                            if "id" in assert_st.func.__dict__
-                            else assert_st.func.attr
-                        )
+                        if hasattr(assert_st.func, "id"):
+                            func_name = assert_st.func.id
+                        elif hasattr(assert_st.func, "attr"):
+                            func_name = assert_st.func.attr
+                        elif isinstance(assert_st.func, ast.Call) and hasattr(
+                            assert_st.func.func, "id"
+                        ):
+                            # Handle case where function name is result of another function call
+                            func_name = assert_st.func.func.id
+                            # Skip counting the outer function call
+                            continue
+                        else:
+                            continue
+
                         if func_name in inline_func_asserts:
                             inline_func_asserts[func_name] += 1
     except AttributeError as ae:
         if out_dir is not None:
             debug_path = Path(out_dir, gen_parse_filename(code))
-            with open(debug_path) as debug_file:
+            with open(debug_path, "w") as debug_file:
                 debug_file.write(code)
             logging.getLogger().info(
                 f"Parse failure code dump written to: {debug_path}"
@@ -137,14 +148,14 @@ def _count_inline_asserts(code, func_defs, out_dir=None):
         )
     return inline_func_asserts
 
-# %% ../nbs/indicators.ipynb 36
-def _count_func_ret_asserts(nb_cell_code, out_dir=None):
+# %% ../nbs/indicators.ipynb 35
+def _count_func_ret_asserts(code, out_dir=None):
     ret_vals = {}
-    func_defs = _get_func_defs(nb_cell_code)
+    func_defs = _get_func_defs(code)
     func_ret_asserts = Counter({k: 0 for k in func_defs})
     assert_func_counts = {}
     try:
-        for stmt in ast.walk(ast.parse(nb_cell_code)):
+        for stmt in ast.walk(ast.parse(code)):
             if isinstance(stmt, ast.Assign) and isinstance(stmt.value, ast.Call):
                 _update_ret_vals(stmt, ret_vals)
 
@@ -156,7 +167,7 @@ def _count_func_ret_asserts(nb_cell_code, out_dir=None):
     except AttributeError as ae:
         if out_dir is not None:
             debug_path = Path(out_dir, gen_parse_filename(code))
-            with open(debug_path) as debug_file:
+            with open(debug_path, "w") as debug_file:
                 debug_file.write(code)
             logging.getLogger().info(
                 f"Parse failure code dump written to: {debug_path}"
@@ -167,7 +178,7 @@ def _count_func_ret_asserts(nb_cell_code, out_dir=None):
         )
     return func_ret_asserts
 
-# %% ../nbs/indicators.ipynb 37
+# %% ../nbs/indicators.ipynb 36
 def _incr_assert_count(
     assert_id, ret_vals, func_ret_asserts, assert_func_counts, return_var
 ):
@@ -179,32 +190,24 @@ def _incr_assert_count(
         if return_var in ret_vals:
             func_ret_asserts[ret_vals[return_var]] += 1
 
-# %% ../nbs/indicators.ipynb 39
+# %% ../nbs/indicators.ipynb 38
 def _update_ret_vals(stmt, ret_vals):
-    if isinstance(stmt.value.func, ast.Subscript):
-        func_name = stmt.func.value.id
+    func_name = None
+
+    if isinstance(stmt.value.func, ast.Name):
+        func_name = stmt.value.func.id
     elif isinstance(stmt.value.func, ast.Attribute):
         func_name = stmt.value.func.attr
-    else:
-        if hasattr(stmt.value.func, "id"):
-            func_name = stmt.value.func.id
-        elif hasattr(stmt.value.func, "id"):
-            func_name = stmt.value.func.id
-        elif hasattr(stmt, "func") and hasattr(stmt.func, "attr"):
-            func_name = stmt.func.attr
-        elif hasattr(stmt.value.func, "func"):
-            func_name = (
-                stmt.value.func.func.id
-                if hasattr(stmt.value.func.func, "id")
-                else stmt.value.func.func.attr
-            )
-    if isinstance(stmt.targets[0], ast.Name):
-        ret_vals[stmt.targets[0].id] = func_name
-    elif isinstance(stmt.targets[0], ast.Tuple):
-        for elts in stmt.targets[0].elts:
-            ret_vals[elts.id] = func_name
 
-# %% ../nbs/indicators.ipynb 41
+    if func_name:
+        if isinstance(stmt.targets[0], ast.Name):
+            ret_vals[stmt.targets[0].id] = func_name
+        elif isinstance(stmt.targets[0], ast.Tuple):
+            for elts in stmt.targets[0].elts:
+                if isinstance(elts, ast.Name):
+                    ret_vals[elts.id] = func_name
+
+# %% ../nbs/indicators.ipynb 40
 def traverse_asserts(
     stmt: ast.AST, ret_vals, func_ret_asserts, assert_func_counts, node: ast.AST
 ):
@@ -231,7 +234,7 @@ def traverse_asserts(
                 stmt, ret_vals, func_ret_asserts, assert_func_counts, child
             )
 
-# %% ../nbs/indicators.ipynb 44
+# %% ../nbs/indicators.ipynb 43
 def tests_per_function(nb, out_dir=None):
     nb_cell_code = "\n".join(
         [
@@ -242,32 +245,30 @@ def tests_per_function(nb, out_dir=None):
     )
     return _tests_per_function_code(nb_cell_code, out_dir)
 
-# %% ../nbs/indicators.ipynb 46
+# %% ../nbs/indicators.ipynb 45
 def _tests_per_function_code(nb_cell_code, out_dir=None):
     func_ret_asserts = _count_func_ret_asserts(nb_cell_code, out_dir)
     inline_asserts = _count_inline_asserts(
-        nb_cell_code, _get_func_defs(nb_cell_code, out_dir)
+        nb_cell_code, _get_func_defs(nb_cell_code, out_dir), out_dir
     )
 
     func_ret_asserts.update(inline_asserts)
     return pd.Series(func_ret_asserts)
 
-# %% ../nbs/indicators.ipynb 50
+# %% ../nbs/indicators.ipynb 49
 def tests_per_func_mean(nb, out_dir=None):
     return tests_per_function(nb, out_dir).mean()
 
-# %% ../nbs/indicators.ipynb 52
+# %% ../nbs/indicators.ipynb 51
 def tests_func_coverage_pct(nb, out_dir=None):
     return tests_per_function(nb, out_dir).clip(upper=1).mean() * 100
 
 # %% ../nbs/indicators.ipynb 57
-def calc_ifp(nb_cell_code, out_dir=None):
+def calc_ifp(code, out_dir=None):
     stmts_in_func = 0
     stmts_outside_func = 0
     try:
-        for stmt in ast.walk(
-            ast.parse(remove_ipython_special_directives(nb_cell_code))
-        ):
+        for stmt in ast.walk(ast.parse(remove_ipython_special_directives(code))):
             if isinstance(stmt, ast.FunctionDef) and not stmt.name.startswith("_"):
                 for body_item in stmt.body:
                     stmts_in_func += 1
@@ -278,7 +279,7 @@ def calc_ifp(nb_cell_code, out_dir=None):
     except AttributeError as ae:
         if out_dir is not None:
             debug_path = Path(out_dir, gen_parse_filename(code))
-            with open(debug_path) as debug_file:
+            with open(debug_path, "w") as debug_file:
                 debug_file.write(code)
             logging.getLogger().info(
                 f"Parse failure code dump written to: {debug_path}"
